@@ -10,13 +10,11 @@ function App() {
   //Placeholder for now
    useEffect( () => {
     const get_devices = async() => {
-      let res = await fetch("http://127.0.0.1:8080/api/device/");
+      const res = await fetch("http://127.0.0.1:8080/api/device/");
       if (!res.ok) {
         throw new Error("Cannot connect to host. :) ")
-      } 
-      let blob = await res.blob();
-      console.log(blob);
-      let data: Device[] = await res.json();
+      }
+      const data: Device[] = await res.json();
       console.log(data);
       setDevices(data);
     };
