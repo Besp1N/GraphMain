@@ -3,6 +3,7 @@ package com.kacper.backend.sensor;
 import com.kacper.backend.device.Device;
 import com.kacper.backend.device.DeviceRepository;
 import com.kacper.backend.device.DeviceService;
+import com.kacper.backend.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,5 +35,17 @@ public class SensorService
         deviceRepository.save(device);
 
         return device;
+    }
+
+    public Sensor getSensorById(Integer sensorId) {
+        return sensorRepository.findById(sensorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sensor " + sensorId.toString() + " Not found"
+        ));
+    }
+
+    public Sensor deleteSensorById(Integer sensorId) {
+        Sensor sensor = getSensorById(sensorId);
+        sensorRepository.delete(sensor);
+        return sensor;
     }
 }
