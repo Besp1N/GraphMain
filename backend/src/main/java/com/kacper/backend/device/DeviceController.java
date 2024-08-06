@@ -2,8 +2,6 @@ package com.kacper.backend.device;
 
 
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,15 +18,15 @@ public class DeviceController
 
     // Admin endpoint
     @PostMapping("/")
-    public DeviceCreationResponse addDevice(
+    public DevicePresentationResponse addDevice(
             @Valid @RequestBody DeviceRequest deviceRequest
     ) {
         return deviceService.addDevice(deviceRequest);
     }
 
     @GetMapping("/")
-    public List<Device> getAllDevicesInfo() {
-        return deviceService.getAllDevicesInfo();
+    public List<DevicePresentationResponse> getAllDevicesPresentationInfo() {
+        return deviceService.getAllDevicesPresentationInfo();
     }
 
     @GetMapping("/{id}")
