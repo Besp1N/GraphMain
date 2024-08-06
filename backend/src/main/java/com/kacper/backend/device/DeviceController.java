@@ -24,6 +24,13 @@ public class DeviceController
         return deviceService.addDevice(deviceRequest);
     }
 
+    @DeleteMapping("/{deviceId}")
+    public Device deleteDevice(
+            @PathVariable Integer deviceId
+    ) {
+        return deviceService.deleteDevice(deviceId);
+    }
+
     @GetMapping("/")
     public List<DevicePresentationResponse> getAllDevicesPresentationInfo() {
         return deviceService.getAllDevicesPresentationInfo();

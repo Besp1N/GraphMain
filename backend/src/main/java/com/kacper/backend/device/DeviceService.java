@@ -38,14 +38,13 @@ public class DeviceService
                 .collect(Collectors.toList());
     }
 
-
     // for debugging or sth ( make private in future )
     public Device getDeviceById(Integer id) {
         return deviceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Device " + id.toString() + " Not found"));
     }
 
-
+    // Change it for SensorPresentationMapper
     public DeviceSensorsPresentationResponse getDeviceSensorsPresentationInfo(Integer deviceId) {
         Device device = getDeviceById(deviceId);
         return new DeviceSensorsPresentationResponse(
@@ -60,5 +59,11 @@ public class DeviceService
                         ))
                         .collect(Collectors.toList())
         );
+    }
+
+    public Device deleteDevice(Integer deviceId) {
+        Device device = getDeviceById(deviceId);
+        deviceRepository.delete(device);
+        return device;
     }
 }
