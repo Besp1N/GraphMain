@@ -1,7 +1,7 @@
 package com.kacper.backend.device;
 
 import com.kacper.backend.exception.ResourceNotFoundException;
-import com.kacper.backend.sensor.SensorRequest;
+import com.kacper.backend.sensor.SensorPresentationResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,9 +38,27 @@ public class DeviceService
                 .collect(Collectors.toList());
     }
 
+
+    // for debugging or sth ( make private in future )
     public Device getDeviceById(Integer id) {
         return deviceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Device " + id.toString() + " Not found"));
     }
 
+
+    public DeviceSensorsPresentationResponse getDeviceSensorsPresentationInfo(Integer deviceId) {
+        Device device = getDeviceById(deviceId);
+        return new DeviceSensorsPresentationResponse(
+                device.getId(),
+                device.getDeviceName(),
+                device.getDeviceType(),
+                device.getSensors().stream()
+                        .map(sensor -> new SensorPresentationResponse(
+                                sensor.getId(),
+                                sensor.getSensorName(),
+                                sensor.getSensorType()
+                        ))
+                        .collect(Collectors.toList())
+        );
+    }
 }

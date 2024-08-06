@@ -29,6 +29,13 @@ public class DeviceController
         return deviceService.getAllDevicesPresentationInfo();
     }
 
+    @GetMapping("/info/{deviceId}")
+    public DeviceSensorsPresentationResponse getDeviceSensorsPresentationInfo(
+            @PathVariable Integer deviceId
+    ) {
+        return deviceService.getDeviceSensorsPresentationInfo(deviceId);
+    }
+
     @GetMapping("/{id}")
     public Device getDeviceById(@PathVariable Integer id) {
         return deviceService.getDeviceById(id);
