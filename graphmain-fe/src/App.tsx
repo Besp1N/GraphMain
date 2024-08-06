@@ -1,28 +1,34 @@
 
-import { createTheme, TableBody, TableCell, TableHead, ThemeProvider }  from '@mui/material';
-import * as MUI from '@mui/material';
+import { createTheme, ThemeProvider }  from '@mui/material';
 import './App.css'
-import TableRow from './components/row';
+import { useEffect, useState } from 'react';
+import { Device } from './entities';
+import DeviceInfoTable from './components/device/deviceInfoTable';
 
 function App() {
-  
-  const data = [1, 2, 3, 4, 12];
+  const [devices, setDevices] = useState<Device[]>([]);
+  //Placeholder for now
+   useEffect( () => {
+    const get_devices = async() => {
+      let res = await fetch("http://127.0.0.1:8080/api/device/");
+      if (!res.ok) {
+        throw new Error("Cannot connect to host. :) ")
+      } 
+      let blob = await res.blob();
+      console.log(blob);
+      let data: Device[] = await res.json();
+      console.log(data);
+      setDevices(data);
+    };
+    get_devices();
+  }, []);
   const theme = createTheme();
   return (
     <ThemeProvider theme={theme}>
-      <h1>Vite + React</h1>
-      <MUI.Table>
-        <TableHead>
-          <MUI.TableRow>
-              <TableCell>
-                Timestamp
-              </TableCell>
-            </MUI.TableRow>
-          </TableHead>
-        <TableBody>
-          <TableRow data={data} timestamp={1221} />
-        </TableBody>
-      </MUI.Table>
+      <h1>GraphMain Development App</h1>
+      <div className='center'>
+        <DeviceInfoTable devices={devices} />
+      </div>
       <p className="read-the-docs">
         Hello world!
       </p>
