@@ -36,6 +36,7 @@ public class DeviceController
         return deviceService.getDeviceSensorsPresentationInfo(deviceId);
     }
 
+    // returns whole device object (including sensors + measurements)
     @GetMapping("/{id}")
     public Device getDeviceById(@PathVariable Integer id) {
         return deviceService.getDeviceById(id);
