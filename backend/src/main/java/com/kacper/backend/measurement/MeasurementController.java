@@ -2,6 +2,9 @@ package com.kacper.backend.measurement;
 
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Measurement controller class.
+ */
 @RestController
 @RequestMapping("/api/measurement")
 public class MeasurementController
