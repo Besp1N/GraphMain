@@ -129,31 +129,24 @@ public class DeviceService
 
         Device device = sensor.getDevice();
 
-        // This is count of measurements of sensor
-        int size = 2;
-
         // Convert from seconds to LocalDateTime
         LocalDateTime fromTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(from), ZoneId.systemDefault());
         LocalDateTime toTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(to), ZoneId.systemDefault());
 
-        Debug.dd(fromTime);
-
-        PageRequest pageable = PageRequest.of(numPage, size);
+        PageRequest pageable = PageRequest.of(numPage, 2);
         Page<Measurement> measurementsPage = measurementRepository.findAllBySensorId(sensorId, pageable);
         List<Measurement> measurements = measurementsPage.getContent();
-
-        SensorMeasurementsPresentationResponse sensorMeasurements = new SensorMeasurementsPresentationResponse(
-                sensor.getId(),
-                sensor.getSensorName(),
-                sensor.getSensorType(),
-                measurements
-        );
 
         return new DeviceMeasurementPresentation(
                 device.getId(),
                 device.getDeviceName(),
                 device.getDeviceType(),
-                sensorMeasurements
+                new SensorMeasurementsPresentationResponse(
+                        sensor.getId(),
+                        sensor.getSensorName(),
+                        sensor.getSensorType(),
+                        measurements
+                )
         );
     }
 }
