@@ -80,11 +80,14 @@ public class DeviceController
      * @return DeviceMeasurementPresentation with specific sensor information + measurements of sensor
      */
     // Device + ONE sensor + measurements
-    @GetMapping("/measurement/{sensorId}")
+    @GetMapping("/measurement/{sensorId}/{numPage}/{from}/{to}")
     public DeviceMeasurementPresentation getDeviceSensorMeasurementPresentationInfo(
-            @PathVariable Integer sensorId
+            @PathVariable Integer sensorId,
+            @PathVariable Integer numPage,
+            @PathVariable Integer from,
+            @PathVariable Integer to
     ) {
-        return deviceService.getDeviceSensorMeasurementPresentationInfo(sensorId);
+        return deviceService.getDeviceSensorMeasurementPresentationInfo(sensorId, numPage, from, to);
     }
 
     /**

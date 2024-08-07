@@ -1,6 +1,7 @@
 package com.kacper.backend.device;
 
 import com.kacper.backend.sensor.Sensor;
+import com.kacper.backend.sensor.SensorMeasurementsPresentationResponse;
 
 /**
  * Used for response in the API
@@ -16,6 +17,6 @@ public record DeviceMeasurementPresentation(
         Integer deviceId,
         String deviceName,
         String deviceType,
-        Sensor sensor
+        SensorMeasurementsPresentationResponse sensor
 ) {
 }
