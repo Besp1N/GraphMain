@@ -12,6 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -128,6 +131,13 @@ public class DeviceService
 
         // This is count of measurements of sensor
         int size = 2;
+
+        // Convert from seconds to LocalDateTime
+        LocalDateTime fromTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(from), ZoneId.systemDefault());
+        LocalDateTime toTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(to), ZoneId.systemDefault());
+
+        Debug.dd(fromTime);
+
         PageRequest pageable = PageRequest.of(numPage, size);
         Page<Measurement> measurementsPage = measurementRepository.findAllBySensorId(sensorId, pageable);
         List<Measurement> measurements = measurementsPage.getContent();
