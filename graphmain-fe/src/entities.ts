@@ -1,4 +1,6 @@
 // This file contains all relevant Spring Boot entities mappings that may be serialized and sent via JSON.
+export type Entity = Device | Sensor | Measurment;
+
 /**
  * Type representing Device entity in Spring-Boot backend.
  */

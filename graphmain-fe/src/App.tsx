@@ -4,19 +4,19 @@ import './App.css'
 import { useEffect, useState } from 'react';
 import { Device } from './entities';
 import DeviceInfoTable from './components/device/deviceInfoTable';
+import { getDevice } from './http/fetch';
 
 function App() {
   const [devices, setDevices] = useState<Device[]>([]);
   //Placeholder for now
    useEffect( () => {
     const get_devices = async() => {
-      const res = await fetch("http://127.0.0.1:8080/api/device/");
-      if (!res.ok) {
-        throw new Error("Cannot connect to host. :) ")
+      const data = await getDevice(1);
+      if (data == undefined) {
+        return;
       }
-      const data: Device[] = await res.json();
-      console.log(data);
-      setDevices(data);
+      setDevices([data]);
+
     };
     get_devices();
   }, []);
