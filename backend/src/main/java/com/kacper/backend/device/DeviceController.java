@@ -36,11 +36,20 @@ public class DeviceController
         return deviceService.getAllDevicesPresentationInfo();
     }
 
-    @GetMapping("/info/{deviceId}")
+    // Device + sensors
+    @GetMapping("/sensor/{deviceId}")
     public DeviceSensorsPresentationResponse getDeviceSensorsPresentationInfo(
             @PathVariable Integer deviceId
     ) {
         return deviceService.getDeviceSensorsPresentationInfo(deviceId);
+    }
+
+    // Device + ONE sensor + measurements
+    @GetMapping("/measurement/{sensorId}")
+    public DeviceMeasurementPresentation getDeviceSensorMeasurementPresentationInfo(
+            @PathVariable Integer sensorId
+    ) {
+        return deviceService.getDeviceSensorMeasurementPresentationInfo(sensorId);
     }
 
     // returns whole device object (including sensors + measurements)
