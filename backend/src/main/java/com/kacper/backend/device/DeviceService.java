@@ -1,26 +1,47 @@
 package com.kacper.backend.device;
 
 import com.kacper.backend.exception.ResourceNotFoundException;
+import com.kacper.backend.sensor.Sensor;
 import com.kacper.backend.sensor.SensorPresentationResponse;
+import com.kacper.backend.sensor.SensorRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Business logic for the device
+ *
+ * @author Kacper Karabinowski
+ */
 @Service
 public class DeviceService
 {
     private final DeviceRepository deviceRepository;
     private final DevicePresentationMapper devicePresentationMapper;
+    private final SensorRepository sensorRepository;
 
+    /**
+     * Injected by the constructor
+     *
+     * @param deviceRepository is the repository for the device
+     * @param devicePresentationMapper is the mapper for the device
+     * @param sensorRepository is the repository for the sensor
+     */
     public DeviceService(
             DeviceRepository deviceRepository,
-            DevicePresentationMapper devicePresentationMapper
+            DevicePresentationMapper devicePresentationMapper,
+            SensorRepository sensorRepository
     ) {
         this.deviceRepository = deviceRepository;
         this.devicePresentationMapper = devicePresentationMapper;
+        this.sensorRepository = sensorRepository;
     }
 
+    /**
+     * @param deviceRequest is the request for the device
+     * @return the mapped response for the device
+     */
     public DevicePresentationResponse addDevice(DeviceRequest deviceRequest) {
         Device device =  Device.builder()
                 .deviceName(deviceRequest.deviceName())
@@ -32,18 +53,29 @@ public class DeviceService
         return devicePresentationMapper.apply(savedDevice);
     }
 
+    /**
+     * @return the list of all devices mapped to the response
+     */
     public List<DevicePresentationResponse> getAllDevicesPresentationInfo() {
         return deviceRepository.findAll().stream()
                 .map(devicePresentationMapper)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @param id is the id of the device
+     * @return the device with the given id
+     */
     // for debugging or sth ( make private in future )
     public Device getDeviceById(Integer id) {
         return deviceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Device " + id.toString() + " Not found"));
     }
 
+    /**
+     * @param deviceId is the id of the device
+     * @return the device with the given id and its sensors mapped to the response
+     */
     // Change it for SensorPresentationMapper
     public DeviceSensorsPresentationResponse getDeviceSensorsPresentationInfo(Integer deviceId) {
         Device device = getDeviceById(deviceId);
@@ -61,9 +93,33 @@ public class DeviceService
         );
     }
 
+    /**
+     * @param deviceId is the id of the device
+     * @return the device with the given id and its sensors and its measurements
+     */
     public Device deleteDevice(Integer deviceId) {
         Device device = getDeviceById(deviceId);
         deviceRepository.delete(device);
         return device;
+    }
+
+    /**
+     * @param sensorId is the id of the sensor
+     * @return the device with the given sensor and its measurements mapped to response
+     */
+    public DeviceMeasurementPresentation getDeviceSensorMeasurementPresentationInfo(
+            Integer sensorId
+    ) {
+        Sensor sensor = sensorRepository.findById(sensorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sensor " + sensorId.toString() + " Not found"));
+
+        Device device = sensor.getDevice();
+
+        return new DeviceMeasurementPresentation(
+                device.getId(),
+                device.getDeviceName(),
+                device.getDeviceType(),
+                sensor
+        );
     }
 }

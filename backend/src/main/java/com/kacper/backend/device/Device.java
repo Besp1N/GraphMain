@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Represents the device entity in the database
+ */
 @Entity
 @Data
 @Builder
