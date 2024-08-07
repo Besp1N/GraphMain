@@ -6,16 +6,32 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Device controller class.
+ * Handles all requests related to devices.
+ *
+ * @author Kacper Karabinowski
+ */
 @RestController
-@RequestMapping("/api/device")
+@RequestMapping("/api/v1/device")
 public class DeviceController
 {
     private final DeviceService deviceService;
 
+    /**
+     * @param deviceService is injected automatically by Spring
+     * @see DeviceService
+     */
     public DeviceController(DeviceService deviceService) {
         this.deviceService = deviceService;
     }
 
+    /**
+     * Adds a device to the database (Admin)
+     *
+     * @param deviceRequest is a request body
+     * @return DevicePresentationResponse
+     */
     // Admin endpoint
     @PostMapping("/")
     public DevicePresentationResponse addDevice(
@@ -24,6 +40,13 @@ public class DeviceController
         return deviceService.addDevice(deviceRequest);
     }
 
+    /**
+     * Deletes a device from the database (Admin)
+     *
+     * @param deviceId is a path variable
+     * @return Device - whole object included sensors and measurements (CascadeType.ALL)
+     */
+    // Admin endpoint
     @DeleteMapping("/{deviceId}")
     public Device deleteDevice(
             @PathVariable Integer deviceId
@@ -31,11 +54,19 @@ public class DeviceController
         return deviceService.deleteDevice(deviceId);
     }
 
+    /**
+     * @return List of DevicePresentationResponse with basic information (device name, device type + id)
+     */
     @GetMapping("/")
     public List<DevicePresentationResponse> getAllDevicesPresentationInfo() {
         return deviceService.getAllDevicesPresentationInfo();
     }
 
+    /**
+     * @param deviceId is a path variable
+     * @return DeviceSensorsPresentationResponse with basic information about device
+     * and sensors (sensor name, sensor type + id)
+     */
     // Device + sensors
     @GetMapping("/sensor/{deviceId}")
     public DeviceSensorsPresentationResponse getDeviceSensorsPresentationInfo(
@@ -44,6 +75,10 @@ public class DeviceController
         return deviceService.getDeviceSensorsPresentationInfo(deviceId);
     }
 
+    /**
+     * @param sensorId is a path variable
+     * @return DeviceMeasurementPresentation with specific sensor information + measurements of sensor
+     */
     // Device + ONE sensor + measurements
     @GetMapping("/measurement/{sensorId}")
     public DeviceMeasurementPresentation getDeviceSensorMeasurementPresentationInfo(
@@ -52,9 +87,13 @@ public class DeviceController
         return deviceService.getDeviceSensorMeasurementPresentationInfo(sensorId);
     }
 
+    /**
+     * @param deviceId is a path variable
+     * @return Device - whole object included ALL sensors and ALL measurements of ALL sensors,
+     */
     // returns whole device object (including sensors + measurements)
-    @GetMapping("/{id}")
-    public Device getDeviceById(@PathVariable Integer id) {
-        return deviceService.getDeviceById(id);
+    @GetMapping("/{deviceId}")
+    public Device getDeviceById(@PathVariable Integer deviceId) {
+        return deviceService.getDeviceById(deviceId);
     }
 }

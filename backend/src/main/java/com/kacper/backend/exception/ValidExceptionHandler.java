@@ -10,9 +10,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Valid exception handler class.
+ *
+ * @author Kacper Karabinowski
+ */
 @RestControllerAdvice
 public class ValidExceptionHandler extends RuntimeException
 {
+    /**
+     * @param ex exception
+     * @return response entity with hashmap messages and status 400
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();

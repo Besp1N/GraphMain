@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents the measurement entity in the database
+ */
 @Entity
 @Data
 @Builder

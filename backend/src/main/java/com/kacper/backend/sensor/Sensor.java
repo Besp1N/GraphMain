@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Represents the sensor entity in the database
+ */
 @Entity
 @Data
 @Builder
