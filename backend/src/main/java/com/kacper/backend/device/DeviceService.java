@@ -1,9 +1,15 @@
 package com.kacper.backend.device;
 
 import com.kacper.backend.exception.ResourceNotFoundException;
+import com.kacper.backend.measurement.Measurement;
+import com.kacper.backend.measurement.MeasurementRepository;
 import com.kacper.backend.sensor.Sensor;
+import com.kacper.backend.sensor.SensorMeasurementsPresentationResponse;
 import com.kacper.backend.sensor.SensorPresentationResponse;
 import com.kacper.backend.sensor.SensorRepository;
+import com.kacper.backend.utlils.Debug;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +26,7 @@ public class DeviceService
     private final DeviceRepository deviceRepository;
     private final DevicePresentationMapper devicePresentationMapper;
     private final SensorRepository sensorRepository;
+    private final MeasurementRepository measurementRepository;
 
     /**
      * Injected by the constructor
@@ -31,11 +38,12 @@ public class DeviceService
     public DeviceService(
             DeviceRepository deviceRepository,
             DevicePresentationMapper devicePresentationMapper,
-            SensorRepository sensorRepository
-    ) {
+            SensorRepository sensorRepository,
+            MeasurementRepository measurementRepository) {
         this.deviceRepository = deviceRepository;
         this.devicePresentationMapper = devicePresentationMapper;
         this.sensorRepository = sensorRepository;
+        this.measurementRepository = measurementRepository;
     }
 
     /**
@@ -108,18 +116,34 @@ public class DeviceService
      * @return the device with the given sensor and its measurements mapped to response
      */
     public DeviceMeasurementPresentation getDeviceSensorMeasurementPresentationInfo(
-            Integer sensorId
+            Integer sensorId,
+            Integer numPage,
+            Integer from,
+            Integer to
     ) {
         Sensor sensor = sensorRepository.findById(sensorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Sensor " + sensorId.toString() + " Not found"));
 
         Device device = sensor.getDevice();
 
+        // This is count of measurements of sensor
+        int size = 2;
+        PageRequest pageable = PageRequest.of(numPage, size);
+        Page<Measurement> measurementsPage = measurementRepository.findAllBySensorId(sensorId, pageable);
+        List<Measurement> measurements = measurementsPage.getContent();
+
+        SensorMeasurementsPresentationResponse sensorMeasurements = new SensorMeasurementsPresentationResponse(
+                sensor.getId(),
+                sensor.getSensorName(),
+                sensor.getSensorType(),
+                measurements
+        );
+
         return new DeviceMeasurementPresentation(
                 device.getId(),
                 device.getDeviceName(),
                 device.getDeviceType(),
-                sensor
+                sensorMeasurements
         );
     }
 }
