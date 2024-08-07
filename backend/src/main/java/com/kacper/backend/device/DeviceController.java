@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * @author Kacper Karabinowski
- * @version 1.0
  * Device controller class.
+ * Handles all requests related to devices.
+ *
+ * @author Kacper Karabinowski
  */
 @RestController
 @RequestMapping("/api/v1/device")
@@ -19,15 +20,17 @@ public class DeviceController
 
     /**
      * @param deviceService is injected automatically by Spring
+     * @see DeviceService
      */
     public DeviceController(DeviceService deviceService) {
         this.deviceService = deviceService;
     }
 
     /**
+     * Adds a device to the database (Admin)
+     *
      * @param deviceRequest is a request body
      * @return DevicePresentationResponse
-     * Adds a device to the database (Admin)
      */
     // Admin endpoint
     @PostMapping("/")
@@ -38,9 +41,10 @@ public class DeviceController
     }
 
     /**
+     * Deletes a device from the database (Admin)
+     *
      * @param deviceId is a path variable
-     * @return Device - whole object included sensors and measurements,
-     * because of cascade type all
+     * @return Device - whole object included sensors and measurements (CascadeType.ALL)
      */
     // Admin endpoint
     @DeleteMapping("/{deviceId}")
@@ -51,8 +55,7 @@ public class DeviceController
     }
 
     /**
-     * @return List of DevicePresentationResponse
-     * Returns all devices with basic information (device name, device type + id)
+     * @return List of DevicePresentationResponse with basic information (device name, device type + id)
      */
     @GetMapping("/")
     public List<DevicePresentationResponse> getAllDevicesPresentationInfo() {
@@ -63,7 +66,6 @@ public class DeviceController
      * @param deviceId is a path variable
      * @return DeviceSensorsPresentationResponse with basic information about device
      * and sensors (sensor name, sensor type + id)
-     *
      */
     // Device + sensors
     @GetMapping("/sensor/{deviceId}")
