@@ -1,23 +1,27 @@
-import { Entity, Device, } from "../entities"
+import { Device, } from "../entities"
 export enum BackendEndpoint  {
-    Devices = "api/device/",
-    Sensors = "api/sensor/"    
+    Device = "api/v1/device/",
+    Sensor = "api/v1/sensor/"    
 }
-const backendURL = "http://127.0.0.1:8080";
+export const BACKEND_URI = "http://127.0.0.1:8080";
 /**
- * Function for fetching a single device entity via id.
+ * Function for fetching a single device entity via id. Includes sensor data.
  */
 export async function getDevice(id: Device["id"]): Promise<Option<Device>> {
-    return await fetchEntity<Device>(`${backendURL}/${BackendEndpoint.Devices}${id}`);
+    return await fetchEntity<Device>(`${BACKEND_URI}/${BackendEndpoint.Device}sensor/${id}`);
 }  
+
+/**
+ * Function for getting an array of devices with no sensor data.
+ * May be extended with optional parameters for filtering.
+ */
+export async function getDevices(): Promise<Option<Device[]>> {
+    return await fetchEntity<Device[]>(`${BACKEND_URI}/${BackendEndpoint.Device}`);
+}
 export type Option<T> = T | undefined;
 
 
-/**
- * Function for getting an array of devices.
- * May be extended with optional parameters for filtering.
- */
-export async function fetchEntity<T extends Entity>(uri: string, headers?: RequestInit): Promise<Option<T>> {
+export async function fetchEntity<T>(uri: string, headers?: RequestInit): Promise<Option<T>> {
     let data;
     try {
         const res = await fetch(uri, headers);

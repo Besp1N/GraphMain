@@ -1,37 +1,18 @@
+import { createTheme, ThemeProvider } from "@mui/material";
+import "./App.css";
 
-import { createTheme, ThemeProvider }  from '@mui/material';
-import './App.css'
-import { useEffect, useState } from 'react';
-import { Device } from './entities';
-import DeviceInfoTable from './components/device/deviceInfoTable';
-import { getDevice } from './http/fetch';
+import AllDevicesPage from "./components/pages/allDevices";
+import DeviceDetailsPage from "./components/pages/deviceDetails";
 
 function App() {
-  const [devices, setDevices] = useState<Device[]>([]);
-  //Placeholder for now
-   useEffect( () => {
-    const get_devices = async() => {
-      const data = await getDevice(1);
-      if (data == undefined) {
-        return;
-      }
-      setDevices([data]);
-
-    };
-    get_devices();
-  }, []);
   const theme = createTheme();
   return (
     <ThemeProvider theme={theme}>
       <h1>GraphMain Development App</h1>
-      <div className='center'>
-        <DeviceInfoTable devices={devices} />
-      </div>
-      <p className="read-the-docs">
-        Hello world!
-      </p>
-      </ThemeProvider>
-    )
+      <AllDevicesPage />
+      <DeviceDetailsPage id={1} />
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;
