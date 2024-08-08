@@ -30,5 +30,3 @@ export type Measurement = {
     timestamp: Date,
     sensor: Sensor["id"] | undefined
 }
-
-

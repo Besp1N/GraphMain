@@ -5,7 +5,7 @@ import { FC } from "react";
 import DeviceDetailsPage from "./components/pages/deviceDetails";
 import AllDevicesPage from "./components/pages/allDevices";
 import Root from "./components/pages/root";
-import MeasurementsTablePage from "./components/pages/measurementsTable";
+import MeasurementsTablePage from "./components/pages/measurementsTablePage.tsx";
 
 const router = createBrowserRouter([
   {
