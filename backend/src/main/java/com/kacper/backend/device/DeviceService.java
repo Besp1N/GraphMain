@@ -133,7 +133,7 @@ public class DeviceService
         LocalDateTime toTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(to), ZoneId.systemDefault());
 
         // Second argument is page size, change it if needed
-        PageRequest pageable = PageRequest.of(numPage, 2);
+        PageRequest pageable = PageRequest.of(numPage, 5);
         Page<Measurement> measurementsPage = measurementRepository
                 .findAllBySensorIdAndTimestampBetween(sensorId, fromTime, toTime, pageable);
         List<Measurement> measurements = measurementsPage.getContent();

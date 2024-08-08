@@ -11,61 +11,63 @@ import {
 } from "@mui/material";
 import { FC, PropsWithChildren } from "react";
 import { Measurement } from "../../entities";
-interface IMeasurmentTableProps extends PropsWithChildren {
+
+interface IMeasurementTableProps extends PropsWithChildren {
   title: string;
   measurements: Measurement[];
 }
-//TODO: split it
-const MeasurementTable: FC<IMeasurmentTableProps> = function ({
-  title,
-  measurements,
-}) {
-  console.log(measurements);
+
+const MeasurementTable: FC<IMeasurementTableProps> = function (
+    {
+        title,
+        measurements = [],
+    }) {
   return (
-    <Container maxWidth="md" style={{ marginTop: "20px" }}>
-      <Typography variant="h5" component="div" gutterBottom>
-        {title}
-      </Typography>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <strong>Timestamp</strong>
-              </TableCell>
-              <TableCell align="right">
-                <strong>Measurement (Unit)</strong>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {measurements.length > 0 ? (
-              measurements.map((measurement) => (
-                <TableRow key={measurement.id}>
-                  <TableCell>
-                    {new Date(measurement.timestamp).toLocaleString("pl-PL", {
-                      dateStyle: "short",
-                      timeStyle: "medium",
-                    })}
-                  </TableCell>
-                  <TableCell align="right">
-                    {measurement.id} {measurement.unit}
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
+      <Container maxWidth="md" style={{ marginTop: "20px" }}>
+        <Typography variant="h5" component="div" gutterBottom>
+          {title}
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={2} align="center">
-                  <Typography variant="body2" color="textSecondary">
-                    No measurements available.
-                  </Typography>
+                <TableCell>
+                  <strong>Timestamp</strong>
+                </TableCell>
+                <TableCell align="right">
+                  <strong>Measurement (Unit)</strong>
                 </TableCell>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Container>
+            </TableHead>
+            <TableBody>
+              {measurements.length > 0 ? (
+                  measurements.map((measurement) => (
+                      <TableRow key={measurement.id}>
+                        <TableCell>
+                          {new Date(measurement.timestamp).toLocaleString("pl-PL", {
+                            dateStyle: "short",
+                            timeStyle: "medium",
+                          })}
+                        </TableCell>
+                        <TableCell align="right">
+                          {measurement.value} {measurement.unit}
+                        </TableCell>
+                      </TableRow>
+                  ))
+              ) : (
+                  <TableRow>
+                    <TableCell colSpan={2} align="center">
+                      <Typography variant="body2" color="textSecondary">
+                        No measurements available.
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Container>
   );
 };
+
 export default MeasurementTable;
