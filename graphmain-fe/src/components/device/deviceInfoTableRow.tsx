@@ -1,14 +1,12 @@
 import { TableCell, TableRow } from "@mui/material";
 import type { Device } from "../../entities";
-import { BACKEND_URI, BackendEndpoint } from "../../http/fetch";
+import { Link } from "react-router-dom";
 export default function DeviceInfoTableRow({ device }: { device: Device }) {
   return (
     <TableRow>
       <TableCell>{device.id}</TableCell>
       <TableCell>
-        <a href={`${BACKEND_URI}/${BackendEndpoint.Device}info/${device.id}`}>
-          {device.deviceName}
-        </a>
+        <Link to={`/devices/${device.id}`}>{device.deviceName}</Link>
       </TableCell>
       <TableCell>{device.deviceType}</TableCell>
     </TableRow>

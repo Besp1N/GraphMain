@@ -1,25 +1,24 @@
-import { useEffect, useState } from "react";
-import { Device } from "../../entities";
-import DeviceInfoTable from "../../components/device/deviceInfoTable";
+import { FC } from "react";
 import { getDevices } from "../../http/fetch";
+import { useFetchSafe } from "../../http/hooks";
+import DeviceInfoTable from "../device/deviceInfoTable";
+import ErrorInfo from "../ui/errorInfo";
+import Spinner from "../ui/spinner";
+const AllDevicesPage: FC = function () {
+  const { loading, error, data: devices } = useFetchSafe(getDevices);
+  if (loading) {
+    return <Spinner />;
+  }
 
-export default function AllDevicesPage() {
-  const [devices, setDevices] = useState<Device[]>([]);
-  //Placeholder for now
-  useEffect(() => {
-    const get_devices = async () => {
-      const data = await getDevices();
-      if (data == undefined) {
-        return;
-      }
-      setDevices(data);
-    };
-    get_devices();
-  }, []);
+  if (error) {
+    return <ErrorInfo error={error} />;
+  }
 
   return (
     <section className="center">
-      <DeviceInfoTable devices={devices} />
+      <DeviceInfoTable devices={devices ?? []} />
     </section>
   );
-}
+};
+
+export default AllDevicesPage;

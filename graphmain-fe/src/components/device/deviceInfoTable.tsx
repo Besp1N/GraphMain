@@ -11,6 +11,11 @@ import DeviceInfoTableRow from "./deviceInfoTableRow";
  * React Component responsible for displaying a list of devices in a from of a table.
  */
 export default function DeviceInfoTable({ devices }: { devices: Device[] }) {
+  if (devices.length === 0) {
+    <div>
+      <b>No devices found!</b>
+    </div>;
+  }
   return (
     <Table>
       <TableHead>
