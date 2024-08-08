@@ -137,11 +137,14 @@ public class DeviceService
         Page<Measurement> measurementsPage = measurementRepository
                 .findAllBySensorIdAndTimestampBetween(sensorId, fromTime, toTime, pageable);
         List<Measurement> measurements = measurementsPage.getContent();
+        int totalPages = measurementsPage.getTotalPages();
+
 
         return new DeviceMeasurementPresentation(
                 device.getId(),
                 device.getDeviceName(),
                 device.getDeviceType(),
+                totalPages,
                 new SensorMeasurementsPresentationResponse(
                         sensor.getId(),
                         sensor.getSensorName(),

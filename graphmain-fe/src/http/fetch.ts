@@ -25,7 +25,12 @@ export async function getDevices(): Promise<Result<Option<Device[]>>> {
 
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function getMeasurements(sensor: Sensor["id"], page: number = 0, from?: EpochTimeStamp, to?: EpochTimeStamp): Promise<Result<Option<Measurement[]>>> {
+export async function getMeasurements(
+    sensor: Sensor["id"],
+    page: number = 0,
+    from?: EpochTimeStamp,
+    to?: EpochTimeStamp
+): Promise<Result<Option<Measurement[]>>> {
     if (from == undefined) {
         from =  Math.floor((Date.now() / 1000) - (60 * 60 * 24 * 7));
     }

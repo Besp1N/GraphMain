@@ -17,6 +17,7 @@ public record DeviceMeasurementPresentation(
         Integer deviceId,
         String deviceName,
         String deviceType,
+        Integer totalPages,
         SensorMeasurementsPresentationResponse sensor
 ) {
 }
