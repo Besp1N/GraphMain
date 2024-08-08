@@ -42,7 +42,8 @@ public class DeviceService
             DeviceRepository deviceRepository,
             DevicePresentationMapper devicePresentationMapper,
             SensorRepository sensorRepository,
-            MeasurementRepository measurementRepository) {
+            MeasurementRepository measurementRepository
+    ) {
         this.deviceRepository = deviceRepository;
         this.devicePresentationMapper = devicePresentationMapper;
         this.sensorRepository = sensorRepository;
@@ -124,17 +125,17 @@ public class DeviceService
             Integer from,
             Integer to
     ) {
-        Sensor sensor = sensorRepository.findById(sensorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Sensor " + sensorId.toString() + " Not found"));
-
+        Sensor sensor = getSensorById(sensorId);
         Device device = sensor.getDevice();
 
         // Convert from seconds to LocalDateTime
         LocalDateTime fromTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(from), ZoneId.systemDefault());
         LocalDateTime toTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(to), ZoneId.systemDefault());
 
+        // Second argument is page size, change it if needed
         PageRequest pageable = PageRequest.of(numPage, 2);
-        Page<Measurement> measurementsPage = measurementRepository.findAllBySensorId(sensorId, pageable);
+        Page<Measurement> measurementsPage = measurementRepository
+                .findAllBySensorIdAndTimestampBetween(sensorId, fromTime, toTime, pageable);
         List<Measurement> measurements = measurementsPage.getContent();
 
         return new DeviceMeasurementPresentation(
@@ -148,5 +149,10 @@ public class DeviceService
                         measurements
                 )
         );
+    }
+
+    private Sensor getSensorById(Integer sensorId) {
+        return sensorRepository.findById(sensorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sensor " + sensorId.toString() + " Not found"));
     }
 }
