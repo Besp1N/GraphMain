@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
  * @author Kacper Karabinowski
  */
 @RestController
-@RequestMapping("/api/sensor")
+@RequestMapping("/api/v1/sensor")
 public class SensorController
 {
     private final SensorService sensorService;
