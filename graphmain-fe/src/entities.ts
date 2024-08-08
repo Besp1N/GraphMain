@@ -27,7 +27,7 @@ export type Sensor = {
 export type Measurement = {
     id: number,
     unit: string,
-    timestap: Date,
+    timestamp: Date,
     sensor: Sensor["id"] | undefined
 }
 

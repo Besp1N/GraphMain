@@ -25,14 +25,13 @@ export async function getDevices(): Promise<Result<Option<Device[]>>> {
 
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function getMeasurements(sensor: Sensor["id"], page: number = 1, from?: EpochTimeStamp, to?: EpochTimeStamp): Promise<Result<Option<Measurement[]>>> {
+export async function getMeasurements(sensor: Sensor["id"], page: number = 0, from?: EpochTimeStamp, to?: EpochTimeStamp): Promise<Result<Option<Measurement[]>>> {
     if (from == undefined) {
-        from = Date.now();
+        from =  Math.floor((Date.now() / 1000) - (60 * 60 * 24 * 7));
     }
     if(to == undefined) {
-        to = Date.now() - 60 * 60 * 24 * 7;
+        to = Math.floor(Date.now() / 1000);
     }
-    console.log(`${BACKEND_URI}/${BackendEndpoint.Device}measurement/${sensor}?from=${from}&to=${to}&numPage=${page}`);
     return await fetchSafe<Measurement[]>(`${BACKEND_URI}/${BackendEndpoint.Device}measurement/${sensor}?from=${from}&to=${to}&numPage=${page}`);
 
 }

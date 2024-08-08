@@ -23,7 +23,7 @@ const MeasurementsTablePage = function () {
   }
   return (
     <MeasurementTable
-      measurements={measurements ?? []}
+      measurements={measurements.sensor.measurementList ?? []}
       title="All recent measurements"
     />
   );

@@ -20,6 +20,7 @@ const MeasurementTable: FC<IMeasurmentTableProps> = function ({
   title,
   measurements,
 }) {
+  console.log(measurements);
   return (
     <Container maxWidth="md" style={{ marginTop: "20px" }}>
       <Typography variant="h5" component="div" gutterBottom>
@@ -42,7 +43,10 @@ const MeasurementTable: FC<IMeasurmentTableProps> = function ({
               measurements.map((measurement) => (
                 <TableRow key={measurement.id}>
                   <TableCell>
-                    {new Date(measurement.timestap).toLocaleString()}
+                    {new Date(measurement.timestamp).toLocaleString("pl-PL", {
+                      dateStyle: "short",
+                      timeStyle: "medium",
+                    })}
                   </TableCell>
                   <TableCell align="right">
                     {measurement.id} {measurement.unit}
