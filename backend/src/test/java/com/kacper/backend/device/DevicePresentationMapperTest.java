@@ -6,6 +6,11 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests for the DevicePresentationMapper class
+ *
+ * @author Kacper Karabinowski
+ */
 class DevicePresentationMapperTest {
 
     @Test

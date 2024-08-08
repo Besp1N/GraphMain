@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
  * @author Kacper Karabinowski
  */
 @RestController
-@RequestMapping("/api/measurement")
+@RequestMapping("/api/v1/measurement")
 public class MeasurementController
 {
     private final MeasurementService measurementService;
