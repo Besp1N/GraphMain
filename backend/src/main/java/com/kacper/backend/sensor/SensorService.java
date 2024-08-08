@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Service class for managing sensors.
  * Handles operations related to sensors such as adding, retrieving, and deleting sensors.
+ *
+ * @author Kacper karabinowski
  */
 @Service
 public class SensorService
@@ -51,9 +53,9 @@ public class SensorService
                 .sensorName(sensorRequest.sensorName())
                 .build();
 
-        device.getSensors().add(sensor);
+//        device.getSensors().add(sensor);
         sensorRepository.save(sensor);
-        deviceRepository.save(device);
+//        deviceRepository.save(device);
 
         return device;
     }
