@@ -8,7 +8,7 @@ A IoT Predictime Maintenace Project. Created during Internship in GlobalLogic Po
 
 - [@Kacper Karabinowski](https://github.com/Besp1N)
 - [@Klaudiusz Petryk](https://github.com/PendolinoVoyager)
-- [@Tsimur Khudayarau](https://www.github.com/octokatherine)
+- [@Tsimur Khudayarau](https://github.com/RooDie10)
 - [@Sabina Kubiyeva](https://www.github.com/octokatherine)
 
 
