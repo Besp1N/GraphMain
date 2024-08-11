@@ -62,12 +62,14 @@ public class DeviceServiceTest {
         // Given
         Integer sensorId = 1;
         int numPage = 0;
-        int from = 1722992400; // Example epoch seconds
-        int to = 1723078800; // Example epoch seconds
+        int from = 1722992400;
+        int to = 1723078800;
 
         LocalDateTime fromTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(from), ZoneId.systemDefault());
         LocalDateTime toTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(to), ZoneId.systemDefault());
-        PageRequest pageable = PageRequest.of(numPage, 2);
+
+
+        PageRequest pageable = PageRequest.of(numPage, 5);
         Page<Measurement> measurementsPage = new PageImpl<>(measurements);
 
         when(sensorRepository.findById(sensorId)).thenReturn(java.util.Optional.of(sensor));
@@ -89,4 +91,5 @@ public class DeviceServiceTest {
         verify(sensorRepository, times(1)).findById(sensorId);
         verify(measurementRepository, times(1)).findAllBySensorIdAndTimestampBetween(sensorId, fromTime, toTime, pageable);
     }
+
 }
