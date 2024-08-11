@@ -1,15 +1,12 @@
 import { Device, Measurement, Sensor, } from "../entities"
-export enum BackendEndpoint  {
-    Device = "api/v1/device/",
-    Sensor = "api/v1/sensor/"
-}
+
 export const BACKEND_URI = "http://127.0.0.1:8080";
 
 /**
  * Function for fetching a single device entity via id. Includes sensor data.
  */
 export async function getDevice(id: Device["id"]): Promise<Result<Option<Device>>> {
- return await fetchSafe<Device>(`${BACKEND_URI}/${BackendEndpoint.Device}sensor/${id}`);
+ return await fetchSafe<Device>(`${BACKEND_URI}/api/v1/device/sensor/${id}`);
 }
 
 /**
@@ -17,10 +14,24 @@ export async function getDevice(id: Device["id"]): Promise<Result<Option<Device>
  * May be extended with optional parameters for filtering.
  */
 export async function getDevices(): Promise<Result<Option<Device[]>>> {
-    return await fetchSafe<Device[]>(`${BACKEND_URI}/${BackendEndpoint.Device}`);
+    return await fetchSafe<Device[]>(`${BACKEND_URI}/api/v1/device/`);
 
 }
 
+export type MeasurmentDataForSensor = {
+    
+        deviceId: number,
+        deviceName: string,
+        deviceType: string,
+        totalPages: number,
+        sensor: {
+            id: number,
+            sensorName: string,
+            sensorType: string,
+            measurementList: Measurement[]
+        }
+    
+};
 /**
  * Fetch API implementation that never throws and suggests to check if the data is null.
 
@@ -30,47 +41,18 @@ export async function getMeasurements(
     page: number = 0,
     from?: EpochTimeStamp,
     to?: EpochTimeStamp
-): Promise<Result<Option<{ measurements: Measurement[], totalPages: number }>>> {
+): Promise<Result<Option<MeasurmentDataForSensor>>> {
+
     if (from === undefined) {
         from = Math.floor((Date.now() / 1000) - (60 * 60 * 24 * 7)); // default to last 7 days
     }
     if (to === undefined) {
         to = Math.floor(Date.now() / 1000); // default to now
     }
-
-    try {
-        const response = await fetchSafe<{
-            deviceId: number,
-            deviceName: string,
-            deviceType: string,
-            totalPages: number,
-            sensor: {
-                id: number,
-                sensorName: string,
-                sensorType: string,
-                measurementList: Measurement[]
-            }
-        }>(
-            `${BACKEND_URI}/${BackendEndpoint.Device}measurement/${sensor}?from=${from}&to=${to}&numPage=${page}`
-        );
-
-        // Check if response is an Error
-        if (response instanceof Error) {
-            throw response;
-        }
-
-        // Ensure the response contains the necessary data
-        if (response && response.sensor) {
-            return {
-                measurements: response.sensor.measurementList, // Path to measurementList
-                totalPages: response.totalPages
-            };
-        } else {
-            throw new Error('Invalid data format from backend');
-        }
-    } catch (error) {
-        return error as Error;
-    }
+    return await fetchSafe<MeasurmentDataForSensor>(
+        `${BACKEND_URI}/api/v1/device/measurement/${sensor}?from=${from}&to=${to}&numPage=${page}`
+    );
+   
 }
 
 
