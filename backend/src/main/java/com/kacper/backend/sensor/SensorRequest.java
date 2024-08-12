@@ -13,6 +13,9 @@ public record SensorRequest(
         String sensorName,
 
         @NotBlank(message = "Sensor type can not be blank")
-        String sensorType
+        String sensorType,
+
+        @NotBlank(message = "Unit can not be blank")
+        String unit
 ) {
 }

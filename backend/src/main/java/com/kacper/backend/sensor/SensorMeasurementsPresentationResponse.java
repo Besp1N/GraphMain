@@ -8,6 +8,7 @@ public record SensorMeasurementsPresentationResponse(
         Integer id,
         String sensorName,
         String sensorType,
+        String unit,
         List<Measurement> measurementList
 ) {
 }
