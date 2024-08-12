@@ -10,6 +10,7 @@ package com.kacper.backend.sensor;
 public record SensorPresentationResponse(
         Integer id,
         String sensorName,
-        String sensorType
+        String sensorType,
+        String unit
 ) {
 }

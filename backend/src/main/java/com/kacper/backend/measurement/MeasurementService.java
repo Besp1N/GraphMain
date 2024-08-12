@@ -44,7 +44,6 @@ public class MeasurementService
         return measurementRepository.save(
                 Measurement.builder()
                         .value(measurementRequest.value())
-                        .unit(measurementRequest.unit())
                         .timestamp(measurementRequest.timestamp())
                         .sensor(sensor)
                         .build()

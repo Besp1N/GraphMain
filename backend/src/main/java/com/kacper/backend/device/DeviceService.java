@@ -99,7 +99,8 @@ public class DeviceService
                         .map(sensor -> new SensorPresentationResponse(
                                 sensor.getId(),
                                 sensor.getSensorName(),
-                                sensor.getSensorType()
+                                sensor.getSensorType(),
+                                sensor.getUnit()
                         ))
                         .collect(Collectors.toList())
         );
@@ -149,6 +150,7 @@ public class DeviceService
                         sensor.getId(),
                         sensor.getSensorName(),
                         sensor.getSensorType(),
+                        sensor.getUnit(),
                         measurements
                 )
         );

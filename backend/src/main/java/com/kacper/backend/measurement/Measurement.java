@@ -32,12 +32,6 @@ public class Measurement
     private Double value;
 
     @Column(
-            name = "unit",
-            nullable = false
-    )
-    private String unit;
-
-    @Column(
             name = "timestamp",
             nullable = false
     )

@@ -38,6 +38,12 @@ public class Sensor
     )
     private String sensorName;
 
+    @Column(
+            name = "unit",
+            nullable = false
+    )
+    private String unit;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id")

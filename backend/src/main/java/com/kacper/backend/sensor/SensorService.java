@@ -18,21 +18,17 @@ public class SensorService
 {
     private final SensorRepository sensorRepository;
     private final DeviceService deviceService;
-    private final DeviceRepository deviceRepository;
 
     /**
      * @param sensorRepository The repository for managing sensor entities.
      * @param deviceService The service for managing device operations.
-     * @param deviceRepository The repository for managing device entities.
      */
     public SensorService(
             SensorRepository sensorRepository,
-            DeviceService deviceService,
-            DeviceRepository deviceRepository
+            DeviceService deviceService
     ) {
         this.sensorRepository = sensorRepository;
         this.deviceService = deviceService;
-        this.deviceRepository = deviceRepository;
     }
 
     /**
@@ -51,11 +47,10 @@ public class SensorService
                 .device(device)
                 .sensorType(sensorRequest.sensorType())
                 .sensorName(sensorRequest.sensorName())
+                .unit(sensorRequest.unit())
                 .build();
 
-//        device.getSensors().add(sensor);
         sensorRepository.save(sensor);
-//        deviceRepository.save(device);
 
         return device;
     }
