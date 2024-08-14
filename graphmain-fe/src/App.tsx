@@ -6,12 +6,23 @@ import DeviceDetailsPage from "./components/pages/deviceDetails";
 import AllDevicesPage from "./components/pages/allDevices";
 import Root from "./components/pages/root";
 import MeasurementsTablePage from "./components/pages/measurementsTablePage.tsx";
+import { AuthProvider } from "./store/authStore.tsx";
+import LoginPage from "./components/pages/loginPage.tsx";
+import LogoutPage from "./components/pages/logoutPage.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
     children: [
+      {
+        path: "/login",
+        element: <LoginPage />,
+      },
+      {
+        path: "/logout",
+        element: <LogoutPage />,
+      },
       {
         path: "/devices",
         element: <AllDevicesPage />,
@@ -31,9 +42,11 @@ const router = createBrowserRouter([
 const App: FC = function () {
   const theme = createTheme();
   return (
-    <ThemeProvider theme={theme}>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </AuthProvider>
   );
 };
 

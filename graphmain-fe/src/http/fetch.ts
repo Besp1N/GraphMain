@@ -1,25 +1,75 @@
 import { Device, Measurement, Sensor, } from "../entities"
+import { getToken } from "./authUtils";
 
 export const BACKEND_URI = "http://127.0.0.1:8080";
-
 /**
- * Function for fetching a single device entity via id. Includes sensor data.
+ * Custom error class to signify an error that is directly related to an undesired status code when fetching.
  */
-export async function getDevice(id: Device["id"]): Promise<Result<Option<Device>>> {
- return await fetchSafe<Device>(`${BACKEND_URI}/api/v1/device/sensor/${id}`);
+export class HttpError extends Error {
+    public statusCode: number;
+
+    constructor(message: string, statusCode: number) {
+        super(message);
+        this.name = this.constructor.name; // Set the name to the derived class's name
+        this.statusCode = statusCode;
+    }
+
+    /**
+     * Creates an appropriate HttpError subclass based on the HTTP response status.
+     * @param res The response object from a fetch request.
+     * @returns An instance of a specific HttpError subclass.
+     */
+    static async from_response(res: Response): Promise<HttpError> {
+        const message = await res.text(); // Retrieve the error message from the response body
+
+        switch (res.status) {
+            case 400:
+                return new BadRequestError(message);
+            case 401:
+                return new UnauthorizedError(message);
+            case 403:
+                return new ForbiddenError(message);
+            case 404:
+                return new NotFoundError(message);
+            case 500:
+                return new InternalServerError(message);
+            default:
+                return new HttpError(message || `Unexpected error with status ${res.status}`, res.status);
+        }
+    }
 }
+  export class BadRequestError extends HttpError {
+    constructor(message = "Bad Request") {
+      super(message, 400);
+      this.name = "BadRequestError";
+    }
+  }
+  
+  export class UnauthorizedError extends HttpError {
+    constructor(message = "Unauthorized") {
+      super(message, 401);
+    }
+  }
+  
+  export class ForbiddenError extends HttpError {
+    constructor(message = "Forbidden") {
+      super(message, 403);
+    }
+  }
+  
+  export class NotFoundError extends HttpError {
+    constructor(message = "Not Found") {
+      super(message, 404);
+    }
+  }
+  
+  export class InternalServerError extends HttpError {
+    constructor(message = "Internal Server Error") {
+      super(message, 500);
+    }
+  }
 
-/**
- * Function for getting an array of devices with no sensor data.
- * May be extended with optional parameters for filtering.
- */
-export async function getDevices(): Promise<Result<Option<Device[]>>> {
-    return await fetchSafe<Device[]>(`${BACKEND_URI}/api/v1/device/`);
-
-}
-
-export type MeasurmentDataForSensor = {
-    
+export type MeasurementDataForSensor = {
         deviceId: number,
         deviceName: string,
         deviceType: string,
@@ -33,48 +83,68 @@ export type MeasurmentDataForSensor = {
         }
     
 };
+export type Result<T, E> = T | E;
+export type Option<T> = T | undefined;
+
+export async function getDevice(id: Device["id"]): Promise<Result<Option<Device>, HttpError>> {
+    const token = getToken();
+    return await fetchSafe<Device>(`${BACKEND_URI}/api/v1/device/sensor/${id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+}
+
+/**
+ * Function for getting an array of devices with no sensor data.
+ * May be extended with optional parameters for filtering.
+ */
+export async function getDevices(): Promise<Result<Option<Device[]>, HttpError>> {
+    const token = getToken();
+    return await fetchSafe<Device[]>(`${BACKEND_URI}/api/v1/device/`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+}
+
+
 /**
  * Fetch API implementation that never throws and suggests to check if the data is null.
-
  */
 export async function getMeasurements(
     sensor: Sensor["id"],
     page: number = 0,
     from?: EpochTimeStamp,
     to?: EpochTimeStamp
-): Promise<Result<Option<MeasurmentDataForSensor>>> {
-
+): Promise<Result<Option<MeasurementDataForSensor>, HttpError>> {
+  const token = getToken();
     if (from === undefined) {
         from = Math.floor((Date.now() / 1000) - (60 * 60 * 24 * 7)); // default to last 7 days
     }
     if (to === undefined) {
         to = Math.floor(Date.now() / 1000); // default to now
     }
-    return await fetchSafe<MeasurmentDataForSensor>(
-        `${BACKEND_URI}/api/v1/device/measurement/${sensor}?from=${from}&to=${to}&numPage=${page}`
+    return await fetchSafe<MeasurementDataForSensor>(
+        `${BACKEND_URI}/api/v1/device/measurement/${sensor}?from=${from}&to=${to}&numPage=${page}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        }
     );
-   
 }
-
-
-
-export type Result<T> = T | Error;
-export type Option<T> = T | undefined;
 
 /**
  * Fetch API implementation that never throws and suggests to check if the data is null.
-
  */
-export async function fetchSafe<T>(uri: string, headers?: RequestInit): Promise<Result<Option<T>>> {
+export async function fetchSafe<T>(uri: string, headers?: RequestInit): Promise<Result<Option<T>, HttpError>> {
     try {
         const res = await fetch(uri, headers);
-        if (!res.ok) {
-            throw new Error(`Invalid response - status ${res.status}.`);
-        }
+        if (!res.ok) throw HttpError.from_response(res);
+      
         const data: T = await res.json();
         return data;
     } catch (err) {
-        return err as Error;
+        return err as HttpError;
     }
 }
-

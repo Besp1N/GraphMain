@@ -11,6 +11,12 @@ export default function MainNav() {
         <li>
           <NavItem href={"/devices"}>Devices</NavItem>
         </li>
+        <li>
+          <NavItem href={"/login"}>Login</NavItem>
+        </li>
+        <li>
+          <NavItem href={"/logout"}>Logout</NavItem>
+        </li>
       </ul>
     </nav>
   );
