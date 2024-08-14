@@ -51,6 +51,7 @@ const MeasurementsTablePage = function () {
       <MeasurementTable
         measurements={measurements}
         title="All recent measurements"
+        unit={data.sensor.unit}
       />
       <Box display="flex" justifyContent="center" mt={4}>
         <Pagination

@@ -28,6 +28,7 @@ export type MeasurmentDataForSensor = {
             id: number,
             sensorName: string,
             sensorType: string,
+            unit: string,
             measurementList: Measurement[]
         }
     

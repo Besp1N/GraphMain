@@ -11,62 +11,66 @@ import {
 } from "@mui/material";
 import { FC, PropsWithChildren } from "react";
 import { Measurement } from "../../entities";
+import MeasurementRow from "./measurmentRow";
 
 interface IMeasurementTableProps extends PropsWithChildren {
   title: string;
+  unit: string;
   measurements: Measurement[];
 }
 
-const MeasurementTable: FC<IMeasurementTableProps> = function (
-    {
-        title,
-        measurements = [],
-    }) {
+const MeasurementTable: FC<IMeasurementTableProps> = function ({
+  title,
+  unit,
+  measurements = [],
+}) {
+  let previousMeasurmentValue = 0.0;
   return (
-      <Container maxWidth="md" style={{ marginTop: "20px" }}>
-        <Typography variant="h5" component="div" gutterBottom>
-          {title}
-        </Typography>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
+    <Container maxWidth="md" style={{ marginTop: "20px" }}>
+      <Typography variant="h5" component="div" gutterBottom>
+        {title}
+      </Typography>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <strong>Timestamp</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Delta from previous</strong>
+              </TableCell>
+              <TableCell align="right">
+                <strong>Measurement ({unit})</strong>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {measurements.length > 0 ? (
+              measurements.map((measurement) => {
+                const delta = previousMeasurmentValue - measurement.value;
+                previousMeasurmentValue = measurement.value;
+                return (
+                  <MeasurementRow
+                    key={measurement.id}
+                    measurement={measurement}
+                    delta={delta}
+                  />
+                );
+              })
+            ) : (
               <TableRow>
-                <TableCell>
-                  <strong>Timestamp</strong>
-                </TableCell>
-                <TableCell align="right">
-                  <strong>Measurement (Unit)</strong>
+                <TableCell colSpan={2} align="center">
+                  <Typography variant="body2" color="textSecondary">
+                    No measurements available.
+                  </Typography>
                 </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {measurements.length > 0 ? (
-                  measurements.map((measurement) => (
-                      <TableRow key={measurement.id}>
-                        <TableCell>
-                          {new Date(measurement.timestamp).toLocaleString("pl-PL", {
-                            dateStyle: "short",
-                            timeStyle: "medium",
-                          })}
-                        </TableCell>
-                        <TableCell align="right">
-                          {measurement.value} {measurement.unit}
-                        </TableCell>
-                      </TableRow>
-                  ))
-              ) : (
-                  <TableRow>
-                    <TableCell colSpan={2} align="center">
-                      <Typography variant="body2" color="textSecondary">
-                        No measurements available.
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Container>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Container>
   );
 };
 

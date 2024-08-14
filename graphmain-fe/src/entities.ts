@@ -18,6 +18,7 @@ export type Sensor = {
     id: number,
     sensorType: string,
     sensorName: string,
+    unit: string,
     device: Device["id"],
     measurments: Measurement[] | undefined
 }
@@ -26,7 +27,6 @@ export type Sensor = {
  */
 export type Measurement = {
     id: number,
-    unit: string,
     value: number,
     timestamp: Date,
     sensor: Sensor["id"] | undefined
