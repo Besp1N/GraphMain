@@ -99,4 +99,14 @@ public class DeviceController
     public Device getDeviceById(@PathVariable Integer deviceId) {
         return deviceService.getDeviceById(deviceId);
     }
+
+    @GetMapping("/user/test")
+    public String userTest() {
+        return "dziala user";
+    }
+
+    @GetMapping("/admin/test")
+    public String adminTest() {
+        return "dziala admin";
+    }
 }
