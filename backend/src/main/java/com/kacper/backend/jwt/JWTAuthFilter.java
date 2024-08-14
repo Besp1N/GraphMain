@@ -1,6 +1,7 @@
 package com.kacper.backend.jwt;
 
 import com.kacper.backend.user.CustomUserDetailsService;
+import com.kacper.backend.utlils.Debug;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
