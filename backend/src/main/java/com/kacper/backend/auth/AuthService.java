@@ -8,6 +8,7 @@ import com.kacper.backend.user.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -55,12 +56,12 @@ public class AuthService
 
     public AuthLoginResponse login(AuthLoginRequest authLoginRequest) {
         User user = userRepository.findByEmail(authLoginRequest.email())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid Credentials"));
 
         try {
             authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(authLoginRequest.email(), authLoginRequest.password()));
-        } catch (Exception e) {
+        } catch (BadCredentialsException ex) {
             throw new InvalidCredentialsException("Invalid credentials");
         }
 
