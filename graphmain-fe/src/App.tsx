@@ -9,11 +9,14 @@ import MeasurementsTablePage from "./components/pages/measurementsTablePage.tsx"
 import { AuthProvider } from "./store/authStore.tsx";
 import LoginPage from "./components/pages/loginPage.tsx";
 import LogoutPage from "./components/pages/logoutPage.tsx";
+import { FlashProvider } from "./store/flashStore.tsx";
+import ErrorPage from "./components/pages/errorPage.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "/login",
@@ -44,7 +47,9 @@ const App: FC = function () {
   return (
     <AuthProvider>
       <ThemeProvider theme={theme}>
-        <RouterProvider router={router} />
+        <FlashProvider>
+          <RouterProvider router={router} />
+        </FlashProvider>
       </ThemeProvider>
     </AuthProvider>
   );

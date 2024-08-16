@@ -15,7 +15,6 @@ import { Link } from "react-router-dom";
  * TODO: SPLIT IT INTO SMALLER COMPONENTS
  */
 export default function DeviceDetails({ device }: { device: Device }) {
-  console.log(device);
   return (
     <Container maxWidth="md" style={{ marginTop: "20px" }}>
       <Card>

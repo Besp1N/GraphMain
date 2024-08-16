@@ -1,6 +1,6 @@
 import { redirect, useParams } from "react-router-dom";
 import { getMeasurements } from "../../http/fetch";
-import { useFetchSafe } from "../../http/hooks";
+import { useFetchSafe, useProtectedResource } from "../../http/hooks";
 import MeasurementTable from "../measurement/measurementTable";
 import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
@@ -9,6 +9,8 @@ import Pagination from "@mui/material/Pagination";
 import { Box } from "@mui/material"; // Import Pagination component from MUI
 
 const MeasurementsTablePage = function () {
+  useProtectedResource();
+
   const { sensorId } = useParams();
   const id = parseInt(sensorId!);
 

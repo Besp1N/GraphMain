@@ -1,12 +1,17 @@
 import { FC } from "react";
-import { getDevices } from "../../http/fetch";
-import { useFetchSafe } from "../../http/hooks";
+import { getDevices, HttpError } from "../../http/fetch";
+import { useFetchSafe, useProtectedResource } from "../../http/hooks";
 import DeviceInfoTable from "../device/deviceInfoTable";
 import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
 import { Device } from "../../entities";
 const AllDevicesPage: FC = function () {
-  const { loading, error, data: devices } = useFetchSafe<Device[]>(getDevices);
+  useProtectedResource();
+  const {
+    loading,
+    error,
+    data: devices,
+  } = useFetchSafe<Device[], HttpError>(getDevices);
   if (loading) {
     return <Spinner />;
   }

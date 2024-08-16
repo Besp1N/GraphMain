@@ -87,12 +87,7 @@ export type Result<T, E> = T | E;
 export type Option<T> = T | undefined;
 
 export async function getDevice(id: Device["id"]): Promise<Result<Option<Device>, HttpError>> {
-    const token = getToken();
-    return await fetchSafe<Device>(`${BACKEND_URI}/api/v1/device/sensor/${id}`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+    return await fetchSafe<Device>(`${BACKEND_URI}/api/v1/device/sensor/${id}`, addCredentials({}));
 }
 
 /**
@@ -100,17 +95,13 @@ export async function getDevice(id: Device["id"]): Promise<Result<Option<Device>
  * May be extended with optional parameters for filtering.
  */
 export async function getDevices(): Promise<Result<Option<Device[]>, HttpError>> {
-    const token = getToken();
-    return await fetchSafe<Device[]>(`${BACKEND_URI}/api/v1/device/`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+
+    return await fetchSafe<Device[]>(`${BACKEND_URI}/api/v1/device/`, addCredentials({}));
 }
 
 
 /**
- * Fetch API implementation that never throws and suggests to check if the data is null.
+ * Function for fetching all Measurments in a given span in seconds
  */
 export async function getMeasurements(
     sensor: Sensor["id"],
@@ -118,7 +109,6 @@ export async function getMeasurements(
     from?: EpochTimeStamp,
     to?: EpochTimeStamp
 ): Promise<Result<Option<MeasurementDataForSensor>, HttpError>> {
-  const token = getToken();
     if (from === undefined) {
         from = Math.floor((Date.now() / 1000) - (60 * 60 * 24 * 7)); // default to last 7 days
     }
@@ -126,14 +116,26 @@ export async function getMeasurements(
         to = Math.floor(Date.now() / 1000); // default to now
     }
     return await fetchSafe<MeasurementDataForSensor>(
-        `${BACKEND_URI}/api/v1/device/measurement/${sensor}?from=${from}&to=${to}&numPage=${page}`, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        }
+        `${BACKEND_URI}/api/v1/device/measurement/${sensor}?from=${from}&to=${to}&numPage=${page}`, addCredentials({})
     );
 }
+/**
+ * Function attaching proper credentials to a request using authUtils.
+ * Mutates requestOptions
+ * @param requestOptions Request options like in "fetch" 2nd parameter
+ */
+export function addCredentials(requestOptions: RequestInit) {
+  const token = getToken();
+  if (requestOptions.headers == undefined) {
+    requestOptions.headers = {} as HeadersInit;
+  }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-expect-error
+ requestOptions.headers["Authorization"] =  `Bearer ${token}`;
+ return requestOptions;
+  
+}
 /**
  * Fetch API implementation that never throws and suggests to check if the data is null.
  */

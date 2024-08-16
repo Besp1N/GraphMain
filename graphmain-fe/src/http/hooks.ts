@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Result, Option } from './fetch';
 import { getAuthData, ROLE } from './authUtils';
 import { useNavigate } from 'react-router-dom';
+import { useFlash } from '../store/flashStore';
 /**
  *  Hook that manages loading and errors while fetching data.
  * Important: if the function depends on data from a component, it
@@ -38,12 +39,15 @@ export function useFetchSafe<T, E extends Error>(fn: () =>  Promise<Result<Optio
     return { loading, error, data: data as Option<T>  };
 }
 
-export function useProtectedResource(role: ROLE) {
+export function useProtectedResource(role?: ROLE) {
     const navigate = useNavigate();
+    const {addFlash} = useFlash();
     useEffect(() => {
         const authData = getAuthData();
-        if (authData?.role == role) return;
-        navigate("/login");
-
-    }, [role, navigate])
+        if (!authData || !authData?.role || (role && (authData?.role !== role))) {
+            addFlash("error", "You have to be logged in to access this resource.")
+            navigate("/login");
+        }
+    }, [role, navigate, addFlash])
 }
+

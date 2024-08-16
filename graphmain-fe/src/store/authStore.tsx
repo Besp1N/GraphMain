@@ -11,6 +11,7 @@ import { HttpError, Result } from "../http/fetch";
 
 // Defining the shape of the Auth context state
 type AuthContextType = {
+  loggedIn: boolean;
   role: ROLE | undefined;
   email: string | undefined;
   getToken(): string | undefined;
@@ -23,6 +24,7 @@ type AuthContextType = {
 
 // Creating the context with default values
 export const AuthContext = createContext<AuthContextType>({
+  loggedIn: false,
   role: undefined,
   email: undefined,
   getToken: () => undefined,
@@ -34,13 +36,14 @@ export const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [role, setRole] = useState<ROLE>();
   const [email, setEmail] = useState<string>();
-
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
   useEffect(() => {
     const storedAuthData = getAuthData();
 
     if (storedAuthData && isAuthDataValid(storedAuthData)) {
       setRole(storedAuthData.role);
       setEmail(storedAuthData.email);
+      setLoggedIn(true);
     }
   }, []);
 
@@ -55,6 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (authData && isAuthDataValid(authData)) {
       setRole(authData.role);
       setEmail(authData.email);
+      setLoggedIn(true);
       setAuthData(authData);
     }
     return true;
@@ -63,6 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setRole(undefined);
     setEmail(undefined);
+    setLoggedIn(true);
     clearAuthData();
   };
   const getToken = () => {
@@ -70,7 +75,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ role, email, login, logout, getToken }}>
+    <AuthContext.Provider
+      value={{ loggedIn, role, email, login, logout, getToken }}
+    >
       {children}
     </AuthContext.Provider>
   );

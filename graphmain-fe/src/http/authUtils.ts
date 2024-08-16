@@ -6,7 +6,7 @@ export const LOCALSTORAGE_AUTHDATA_NAME = "auth_data";
 export type AuthData = {
     role: ROLE,
     email: string,
-    token: string
+    token: string,
 }
 export enum ROLE {
     ADMIN = "ADMIN",
