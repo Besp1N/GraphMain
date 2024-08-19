@@ -11,6 +11,7 @@ import LoginPage from "./components/pages/loginPage.tsx";
 import LogoutPage from "./components/pages/logoutPage.tsx";
 import { FlashProvider } from "./store/flashStore.tsx";
 import ErrorPage from "./components/pages/errorPage.tsx";
+import DashboardPage from "./components/pages/dasboardPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
     element: <Root />,
     errorElement: <ErrorPage />,
     children: [
+      {
+        path: "/",
+        element: <DashboardPage />,
+      },
       {
         path: "/login",
         element: <LoginPage />,

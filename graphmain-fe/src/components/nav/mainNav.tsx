@@ -8,7 +8,9 @@ export default function MainNav() {
     <nav className={classes["main-nav"]}>
       <ul>
         <li>
-          <NavItem href={"/"}>Home</NavItem>
+          <NavItem href={"/"}>
+            {loggedIn ? "Dashboard" : "Login to continue"}
+          </NavItem>
         </li>
         <li className="divider" />
 
@@ -23,9 +25,7 @@ export default function MainNav() {
             </li>
           </>
         ) : (
-          <li>
-            <NavItem href={"/login"}>Login</NavItem>
-          </li>
+          ""
         )}
       </ul>
     </nav>

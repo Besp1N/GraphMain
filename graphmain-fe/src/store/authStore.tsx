@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setRole(undefined);
     setEmail(undefined);
-    setLoggedIn(true);
+    setLoggedIn(false);
     clearAuthData();
   };
   const getToken = () => {
