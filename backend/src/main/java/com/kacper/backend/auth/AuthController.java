@@ -1,6 +1,8 @@
 package com.kacper.backend.auth;
 
 import com.kacper.backend.user.User;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +21,10 @@ public class AuthController
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody AuthRegistrationRequest authRegistrationRequest) {
-        return authService.register(authRegistrationRequest);
+    public ResponseEntity<AuthRegistrationResponse> register(
+            @Valid @RequestBody AuthRegistrationRequest authRegistrationRequest
+    ) {
+        return new ResponseEntity<>(authService.register(authRegistrationRequest), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")

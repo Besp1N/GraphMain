@@ -110,14 +110,19 @@ export async function getMeasurements(
     to?: EpochTimeStamp
 ): Promise<Result<Option<MeasurementDataForSensor>, HttpError>> {
     if (from === undefined) {
-        from = Math.floor((Date.now() / 1000) - (60 * 60 * 24 * 7)); // default to last 7 days
+        from = Math.floor((Date.now() / 1000) - (60 * 60 * 24 * 7 * 4 * 10 * 10)); // default to last 7 days
     }
     if (to === undefined) {
         to = Math.floor(Date.now() / 1000); // default to now
     }
-    return await fetchSafe<MeasurementDataForSensor>(
+    const res = await fetchSafe<MeasurementDataForSensor>(
         `${BACKEND_URI}/api/v1/device/measurement/${sensor}?from=${from}&to=${to}&numPage=${page}`, addCredentials({})
     );
+    console.log(res);
+    return res;
+    // return await fetchSafe<MeasurementDataForSensor>(
+    //     `${BACKEND_URI}/api/v1/device/measurement/${sensor}?from=${from}&to=${to}&numPage=${page}`, addCredentials({})
+    // );
 }
 /**
  * Function attaching proper credentials to a request using authUtils.

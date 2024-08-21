@@ -36,7 +36,7 @@ public class AuthService
         this.authenticationManager = authenticationManager;
     }
 
-    public ResponseEntity<User> register(AuthRegistrationRequest authRegistrationRequest) {
+    public AuthRegistrationResponse register(AuthRegistrationRequest authRegistrationRequest) {
         User user = User.builder()
                 .email(authRegistrationRequest.email())
                 .password(passwordEncoder.encode(authRegistrationRequest.password()))
@@ -48,9 +48,14 @@ public class AuthService
 
         try {
             User savedUser = userRepository.save(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+            return AuthRegistrationResponse.builder()
+                    .name(savedUser.getName())
+                    .lastName(savedUser.getLastName())
+                    .email(savedUser.getEmail())
+                    .role(savedUser.getRole())
+                    .build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new RuntimeException("Error while saving user");
         }
     }
 

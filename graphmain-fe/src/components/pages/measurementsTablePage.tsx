@@ -47,7 +47,6 @@ const MeasurementsTablePage = function () {
 
   const measurements = data.sensor.measurementList ?? [];
   const totalPages = data.totalPages ?? 0;
-
   return (
     <>
       <MeasurementTable
