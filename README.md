@@ -1,5 +1,5 @@
 
-# GraphMain111
+# GraphMain
 
 A IoT Predictime Maintenace Project. Created during Internship in GlobalLogic Poland company.
 
