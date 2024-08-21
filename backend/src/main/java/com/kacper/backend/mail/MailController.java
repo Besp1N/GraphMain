@@ -21,5 +21,4 @@ public class MailController
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
 }

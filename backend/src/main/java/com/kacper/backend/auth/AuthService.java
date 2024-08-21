@@ -1,8 +1,10 @@
 package com.kacper.backend.auth;
 
 import com.kacper.backend.exception.InvalidCredentialsException;
+import com.kacper.backend.exception.ResourceAlreadyExistException;
 import com.kacper.backend.exception.ResourceNotFoundException;
 import com.kacper.backend.jwt.JWTService;
+import com.kacper.backend.mail.MailService;
 import com.kacper.backend.user.User;
 import com.kacper.backend.user.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -23,17 +25,20 @@ public class AuthService
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final MailService mailService;
 
     public AuthService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             JWTService jwtService,
-            AuthenticationManager authenticationManager
+            AuthenticationManager authenticationManager,
+            MailService mailService
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.mailService = mailService;
     }
 
     public AuthRegistrationResponse register(AuthRegistrationRequest authRegistrationRequest) {
@@ -48,6 +53,7 @@ public class AuthService
 
         try {
             User savedUser = userRepository.save(user);
+            mailService.sendMail(savedUser.getEmail());
             return AuthRegistrationResponse.builder()
                     .name(savedUser.getName())
                     .lastName(savedUser.getLastName())
@@ -55,7 +61,7 @@ public class AuthService
                     .role(savedUser.getRole())
                     .build();
         } catch (Exception e) {
-            throw new RuntimeException("Error while saving user");
+            throw new ResourceAlreadyExistException("User with email: " + user.getEmail() + " already exists");
         }
     }
 

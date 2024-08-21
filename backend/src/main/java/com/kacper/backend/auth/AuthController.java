@@ -21,10 +21,10 @@ public class AuthController
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthRegistrationResponse> register(
+    public AuthRegistrationResponse register(
             @Valid @RequestBody AuthRegistrationRequest authRegistrationRequest
     ) {
-        return new ResponseEntity<>(authService.register(authRegistrationRequest), HttpStatus.CREATED);
+        return authService.register(authRegistrationRequest);
     }
 
     @PostMapping("/login")
