@@ -76,3 +76,10 @@ button:focus-visible {
 ul, ol {
   list-style: none;
 }
+
+.divider {
+  /* width: 1px; */
+  height: 1.1em;
+  border-left: none;
+  border: solid 1px var(--color-primary);
+}

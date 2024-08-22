@@ -4,12 +4,11 @@ import psycopg2.extras
 import aws_config
 import config  
 
-def insert_sensor_data(sensor, cursor):
+def insert_sensor_data(sensor, cursor, timestamp):
     """Function to insert data for a specific sensor."""
     sensor_id = sensor['sensor_id']
     read_sensor = sensor['reader']
 
-    timestamp = time.time()
     value = read_sensor()
     print(f"Sensor {sensor_id}: Read value {value}")
 
@@ -36,9 +35,10 @@ def main():
         cursor = conn.cursor(cursor_factory=psycopg2.extras.NamedTupleCursor)
         
         while True:
+            timestamp = time.time()
             for sensor in config.CONFIG['sensors']:
                 try:
-                    insert_sensor_data(sensor, cursor)
+                    insert_sensor_data(sensor, cursor, timestamp)
                     conn.commit()
                 except Exception as e:
                     print(f"Error processing sensor {sensor['sensor_id']}: {e}")

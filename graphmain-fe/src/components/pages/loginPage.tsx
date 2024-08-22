@@ -26,7 +26,7 @@ const LoginPage = () => {
     if (retVal instanceof Error) {
       if (retVal instanceof UnauthorizedError)
         setError("Invalid email or password. Please try again.");
-      else setError("Something went wrong. Wait a moment or try to refresh.");
+      else setError(retVal.message);
       return;
     }
     if (retVal) {
