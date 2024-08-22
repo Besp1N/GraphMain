@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class AuthService
@@ -45,9 +46,9 @@ public class AuthService
         User user = User.builder()
                 .email(authRegistrationRequest.email())
                 .password(passwordEncoder.encode(authRegistrationRequest.password()))
-                .name(authRegistrationRequest.name())
-                .lastName(authRegistrationRequest.lastName())
-                .role(authRegistrationRequest.role())
+                .name(capitalizeFirstLetter(authRegistrationRequest.name()))
+                .lastName(capitalizeFirstLetter(authRegistrationRequest.lastName()))
+                .role(authRegistrationRequest.role().toUpperCase())
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -82,5 +83,9 @@ public class AuthService
                 .role(user.getRole())
                 .token(token)
                 .build();
+    }
+
+    private String capitalizeFirstLetter(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }
