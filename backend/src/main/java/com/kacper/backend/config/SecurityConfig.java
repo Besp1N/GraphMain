@@ -53,7 +53,7 @@ public class SecurityConfig
                         .requestMatchers(
                                 "/api/v1/device/",
                                 "/api/v1/device/sensor/",
-                                "/api/v1/device/measurement/"
+                                "/api/v1/device/measurement/**"
                         ).hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
