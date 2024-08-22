@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 import { getDevice } from "../../http/fetch";
 import { useFetchSafe, useProtectedResource } from "../../http/hooks";
@@ -14,7 +14,9 @@ export default function DeviceDetailsPage() {
   //@ts-expect-error safeFetch will handle the NaN for now
   const cb = useCallback(() => getDevice(+id), [id]);
 
-  const { loading, error, data: device } = useFetchSafe(cb);
+  const { loading, error, data: device, fetch } = useFetchSafe(cb);
+  useEffect(() => fetch(), [fetch]);
+
   if (loading) {
     return <Spinner />;
   }

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { getDevices, HttpError } from "../../http/fetch";
 import { useFetchSafe, useProtectedResource } from "../../http/hooks";
 import DeviceInfoTable from "../device/deviceInfoTable";
@@ -11,7 +11,9 @@ const AllDevicesPage: FC = function () {
     loading,
     error,
     data: devices,
+    fetch,
   } = useFetchSafe<Device[], HttpError>(getDevices);
+  useEffect(() => fetch(), [fetch]);
   if (loading) {
     return <Spinner />;
   }

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   TextField,
@@ -9,31 +9,31 @@ import {
   Alert,
 } from "@mui/material";
 import { AuthContext } from "../../store//authStore";
-import { UnauthorizedError } from "../../http/fetch";
+import { useFetchSafe } from "../../http/hooks";
+import Spinner from "../ui/spinner";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
 
+  const loginCb = useCallback(
+    () => login(email, password),
+    [email, password, login]
+  );
+  const { error, loading, data: res, fetch } = useFetchSafe(loginCb);
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setError(null);
 
-    const retVal = await login(email, password);
-    if (retVal instanceof Error) {
-      if (retVal instanceof UnauthorizedError)
-        setError("Invalid email or password. Please try again.");
-      else setError(retVal.message);
-      return;
-    }
-    if (retVal) {
+    await fetch();
+  };
+  useEffect(() => {
+    if (res) {
       navigate("/");
     }
-  };
-
+  }, [res, navigate]);
+  if (loading) return <Spinner />;
   return (
     <Container maxWidth="xs">
       <Box
@@ -48,7 +48,13 @@ const LoginPage = () => {
           Sign In
         </Typography>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-          {error && <Alert severity="error">{error}</Alert>}
+          {error && (
+            <Alert severity="error">
+              {error?.statusCode === 401
+                ? "Incorrect password or email. Please try again."
+                : error.message}
+            </Alert>
+          )}
           <TextField
             margin="normal"
             required

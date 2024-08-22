@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Result, Option } from './fetch';
 import { getAuthData, ROLE } from './authUtils';
 import { useNavigate } from 'react-router-dom';
@@ -11,14 +11,15 @@ import { useFlash } from '../store/flashStore';
 export function useFetchSafe<T, E extends Error>(fn: () =>  Promise<Result<Option<T>, E>>): {
     loading: boolean,
     error: Option<E>,
-    data: Option<T>
+    data: Option<T>,
+    fetch: () => void
 } {
 
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<Option<E>>();
     const [data, setData] = useState<Option<T>>();
 
-    useEffect(() => {
+    const fetch = useCallback(() => {
         const fetchData = async () => {
             setLoading(true);
             const result = await fn();
@@ -36,7 +37,7 @@ export function useFetchSafe<T, E extends Error>(fn: () =>  Promise<Result<Optio
         fetchData();
     }, [fn]);
 
-    return { loading, error, data: data as Option<T>  };
+    return { loading, error, data: data as Option<T>, fetch  };
 }
 
 export function useProtectedResource(role?: ROLE) {

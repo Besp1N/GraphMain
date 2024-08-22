@@ -15,60 +15,40 @@ export class HttpError extends Error {
     }
 
     /**
-     * Creates an appropriate HttpError subclass based on the HTTP response status.
+     * Creates an appropriate HttpError subclass based on the HTTP response status providing a generic message.
      * @param res The response object from a fetch request.
      * @returns An instance of a specific HttpError subclass.
      */
     static async from_response(res: Response): Promise<HttpError> {
         const message = await res.text(); // Retrieve the error message from the response body
+        let text = message;
+        if (!text) {
 
-        switch (res.status) {
-            case 400:
-                return new BadRequestError(message);
-            case 401:
-                return new UnauthorizedError(message);
-            case 403:
-                return new ForbiddenError(message);
-            case 404:
-                return new NotFoundError(message);
-            case 500:
-                return new InternalServerError(message);
-            default:
-                return new HttpError(message || `Unexpected error with status ${res.status}`, res.status);
-        }
+          switch (res.status) {
+              case 400:
+                  text = "A bad request has been sent to the server."
+                  break;
+              case 401:
+                  text = "You have to be logged in to access this resource."
+                  break;
+              case 403:
+                  text = "You don't have permission to this resource."
+                  break;
+              case 404:
+                  text = "The resource you're looking for doesn't exist."
+                  break;
+              case 500:
+                  text = "Internal server error. Please try again later or concat IT admin."
+                  break;
+              default:
+                  text = "Unexpected server error"
+                  break;
+                }
+        } 
+        return new HttpError(text, res.status);
     }
 }
-  export class BadRequestError extends HttpError {
-    constructor(message = "Bad Request") {
-      super(message, 400);
-      this.name = "BadRequestError";
-    }
-  }
   
-  export class UnauthorizedError extends HttpError {
-    constructor(message = "Unauthorized") {
-      super(message, 401);
-    }
-  }
-  
-  export class ForbiddenError extends HttpError {
-    constructor(message = "Forbidden") {
-      super(message, 403);
-    }
-  }
-  
-  export class NotFoundError extends HttpError {
-    constructor(message = "Not Found") {
-      super(message, 404);
-    }
-  }
-  
-  export class InternalServerError extends HttpError {
-    constructor(message = "Internal Server Error") {
-      super(message, 500);
-    }
-  }
-
 export type MeasurementDataForSensor = {
         deviceId: number,
         deviceName: string,

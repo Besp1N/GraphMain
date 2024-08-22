@@ -4,7 +4,7 @@ import { useFetchSafe, useProtectedResource } from "../../http/hooks";
 import MeasurementTable from "../measurement/measurementTable";
 import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Pagination from "@mui/material/Pagination";
 import { Box } from "@mui/material"; // Import Pagination component from MUI
 
@@ -24,7 +24,8 @@ const MeasurementsTablePage = function () {
     [id, page]
   );
 
-  const { loading, error, data } = useFetchSafe(fetchMeasurements);
+  const { loading, error, data, fetch } = useFetchSafe(fetchMeasurements);
+  useEffect(() => fetch(), [fetch]);
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,

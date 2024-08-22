@@ -3,7 +3,7 @@ import classes from "./mainNav.module.css";
 import NavItem from "./navItem";
 import { AuthContext } from "../../store/authStore";
 export default function MainNav() {
-  const { loggedIn } = useContext(AuthContext);
+  const { loggedIn, email } = useContext(AuthContext);
   return (
     <nav className={classes["main-nav"]}>
       <ul>
@@ -12,15 +12,18 @@ export default function MainNav() {
             {loggedIn ? "Dashboard" : "Login to continue"}
           </NavItem>
         </li>
-        <li className="divider" />
 
         {loggedIn ? (
           <>
+            <li className="divider" />
+
             <li>
               <NavItem href={"/devices"}>Devices</NavItem>
             </li>
 
-            <li>
+            <li className={classes["user-group"]}>
+              <span>{email}</span>
+              <div className="divider"></div>
               <NavItem href={"/logout"}>Logout</NavItem>
             </li>
           </>

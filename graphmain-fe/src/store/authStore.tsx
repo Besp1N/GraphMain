@@ -34,9 +34,10 @@ export const AuthContext = createContext<AuthContextType>({
 
 // Provider component that wraps your app and makes auth data available to any child component
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [role, setRole] = useState<ROLE>();
-  const [email, setEmail] = useState<string>();
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const prevAuthData = getAuthData();
+  const [role, setRole] = useState<ROLE | undefined>(prevAuthData?.role);
+  const [email, setEmail] = useState<string>(prevAuthData?.email ?? "");
+  const [loggedIn, setLoggedIn] = useState<boolean>(!!prevAuthData?.role);
   useEffect(() => {
     const storedAuthData = getAuthData();
 
@@ -66,7 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     setRole(undefined);
-    setEmail(undefined);
+    setEmail("");
     setLoggedIn(false);
     clearAuthData();
   };

@@ -39,3 +39,6 @@
 .active {
   color: var(--color-primary);
 }
+.user-group {
+  margin-inline: auto 0;
+}

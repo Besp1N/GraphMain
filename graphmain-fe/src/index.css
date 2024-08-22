@@ -78,8 +78,10 @@ ul, ol {
 }
 
 .divider {
-  /* width: 1px; */
+  display: inline;
+  width: 1px;
   height: 1.1em;
   border-left: none;
-  border: solid 1px var(--color-primary);
+  border-right: solid 1px var(--color-primary);
+  margin-inline: 1em;
 }
