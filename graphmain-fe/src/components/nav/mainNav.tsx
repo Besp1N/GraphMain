@@ -2,10 +2,11 @@ import { useContext } from "react";
 import classes from "./mainNav.module.css";
 import NavItem from "./navItem";
 import { AuthContext } from "../../store/authStore";
+import { Paper } from "@mui/material";
 export default function MainNav() {
   const { loggedIn, email } = useContext(AuthContext);
   return (
-    <nav className={classes["main-nav"]}>
+    <Paper elevation={1} className={classes["main-nav"]}>
       <ul>
         <li>
           <NavItem href={"/"}>
@@ -15,8 +16,6 @@ export default function MainNav() {
 
         {loggedIn ? (
           <>
-            <li className="divider" />
-
             <li>
               <NavItem href={"/devices"}>Devices</NavItem>
             </li>
@@ -31,6 +30,6 @@ export default function MainNav() {
           ""
         )}
       </ul>
-    </nav>
+    </Paper>
   );
 }

@@ -1,9 +1,8 @@
-import { FC, PropsWithChildren } from "react";
+import { FC } from "react";
 import { Outlet } from "react-router-dom";
 import MainNav from "../nav/mainNav";
 import FlashMessages from "../ui/flashMessages";
-
-const Root: FC<PropsWithChildren> = function () {
+const Root: FC = function () {
   return (
     <>
       <FlashMessages />

@@ -8,7 +8,7 @@ import { useFlash } from '../store/flashStore';
  * Important: if the function depends on data from a component, it
  * needs to be wrapped in useCallback to prevent runaway loop 
  */
-export function useFetchSafe<T, E extends Error>(fn: () =>  Promise<Result<Option<T>, E>>): {
+export function useFetchSafe<T, E extends Error>(fn: () =>  Promise<Result<Option<T>, E>>, deps?: unknown[]): {
     loading: boolean,
     error: Option<E>,
     data: Option<T>,
@@ -35,7 +35,8 @@ export function useFetchSafe<T, E extends Error>(fn: () =>  Promise<Result<Optio
         };
 
         fetchData();
-    }, [fn]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, deps ? [fn, ...deps ] : [fn]);
 
     return { loading, error, data: data as Option<T>, fetch  };
 }

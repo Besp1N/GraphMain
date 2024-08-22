@@ -16,17 +16,23 @@ import MeasurementRow from "./measurmentRow";
 interface IMeasurementTableProps extends PropsWithChildren {
   title: string;
   unit: string;
-  measurements: Measurement[];
+  measurements?: Measurement[];
 }
 
 const MeasurementTable: FC<IMeasurementTableProps> = function ({
   title,
   unit,
   measurements = [],
+  children,
+  ...props
 }) {
   let previousMeasurmentValue = 0.0;
   return (
-    <Container maxWidth="md" style={{ marginTop: "20px" }}>
+    <Container
+      maxWidth="md"
+      style={{ marginTop: "20px", maxHeight: "80vh", overflow: "auto" }}
+      {...props}
+    >
       <Typography variant="h5" component="div" gutterBottom>
         {title}
       </Typography>
@@ -46,27 +52,19 @@ const MeasurementTable: FC<IMeasurementTableProps> = function ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {measurements.length > 0 ? (
-              measurements.map((measurement) => {
-                const delta = previousMeasurmentValue - measurement.value;
-                previousMeasurmentValue = measurement.value;
-                return (
-                  <MeasurementRow
-                    key={measurement.id}
-                    measurement={measurement}
-                    delta={delta}
-                  />
-                );
-              })
-            ) : (
-              <TableRow>
-                <TableCell colSpan={2} align="center">
-                  <Typography variant="body2" color="textSecondary">
-                    No measurements available.
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            )}
+            {measurements.length > 0
+              ? measurements.map((measurement, i) => {
+                  const delta = previousMeasurmentValue - measurement.value;
+                  previousMeasurmentValue = measurement.value;
+                  return (
+                    <MeasurementRow
+                      key={measurement.id}
+                      measurement={measurement}
+                      delta={i !== 0 ? delta : 0}
+                    />
+                  );
+                })
+              : children}
           </TableBody>
         </Table>
       </TableContainer>

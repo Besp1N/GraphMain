@@ -1,12 +1,17 @@
-import { redirect, useParams } from "react-router-dom";
-import { getMeasurements } from "../../http/fetch";
+import { useParams } from "react-router-dom";
+import { getMeasurements, HttpError } from "../../http/fetch";
 import { useFetchSafe, useProtectedResource } from "../../http/hooks";
-import MeasurementTable from "../measurement/measurementTable";
 import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
-import { useState, useCallback, useEffect } from "react";
-import Pagination from "@mui/material/Pagination";
-import { Box } from "@mui/material"; // Import Pagination component from MUI
+import { useState, useEffect } from "react";
+import { Box, Container, Paper, TableCell, TableRow } from "@mui/material"; // Import Pagination component from MUI
+import Breadcrumbs from "../ui/breadcrumbs";
+import MeasurmentsFilter, {
+  MeasurementsFilters,
+} from "../measurement/measurmentsFilter";
+import InfiniteScroll from "react-infinite-scroll-component";
+import MeasurementRow from "../measurement/measurmentRow";
+import { Measurement } from "../../entities";
 
 const MeasurementsTablePage = function () {
   useProtectedResource();
@@ -15,54 +20,113 @@ const MeasurementsTablePage = function () {
   const id = parseInt(sensorId!);
 
   if (Number.isNaN(id)) {
-    redirect("home"); // Should redirect to 404
+    throw new HttpError(
+      "The page for sensor " + sensorId + " doesn't exist.",
+      404
+    );
   }
-  const [page, setPage] = useState(0);
 
-  const fetchMeasurements = useCallback(
-    () => getMeasurements(id, page),
-    [id, page]
-  );
+  const [filters, setFilters] = useState<MeasurementsFilters>({
+    to: undefined,
+    from: undefined,
+  });
 
-  const { loading, error, data, fetch } = useFetchSafe(fetchMeasurements);
-  useEffect(() => fetch(), [fetch]);
+  const [page, setPage] = useState(0); // Add page state
+  const [hasMore, setHasMore] = useState(true); // Track if more data is available
+  const [measurements, setMeasurements] = useState<Measurement[]>([]); // Store all loaded measurements
 
-  const handlePageChange = (
-    _event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    setPage(value - 1); // Pagination in MUI is 1-based, but we use 0-based indexing for pages
+  const { loading, error, data, fetch } = useFetchSafe(async () => {
+    const response = await getMeasurements(id, page, filters.from, filters.to);
+    if (response instanceof HttpError) return undefined;
+    if (response!.sensor.measurementList.length === 0) {
+      setHasMore(false); // If no more measurements, stop further fetching
+    } else {
+      setMeasurements((prev) => [...prev, ...response!.sensor.measurementList]); // Append new measurements
+    }
+
+    return response;
+  }, [filters, id, page]);
+  //First fetch
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(fetch, [filters, id, page, hasMore]);
+
+  const loadMore = () => {
+    if (!loading && hasMore) {
+      setPage((prevPage) => prevPage + 1); // Increment page number
+    }
   };
 
-  if (loading) {
-    return <Spinner />;
+  if (measurements == null || data == null) {
+    return (
+      <Container>
+        <Spinner />
+      </Container>
+    );
   }
-
-  if (error) {
-    return <ErrorInfo error={error} />;
-  }
-
-  if (data == null) {
-    return <p>Should be 404</p>;
-  }
-
-  const measurements = data.sensor.measurementList ?? [];
-  const totalPages = data.totalPages ?? 0;
+  let prevV = measurements[0].value;
   return (
     <>
-      <MeasurementTable
-        measurements={measurements}
-        title="All recent measurements"
-        unit={data.sensor.unit}
+      <Breadcrumbs
+        breadcrumbs={[
+          ["All Devices", `/devices`],
+          [
+            `Device ${data.deviceId} : ${data.deviceName}`,
+            `/devices/${data.deviceId}`,
+          ],
+          [`Sensor ${id} : ${data.sensor.sensorName}`, ""],
+        ]}
       />
-      <Box display="flex" justifyContent="center" mt={4}>
-        <Pagination
-          count={totalPages}
-          page={page + 1}
-          onChange={handlePageChange}
-          color="primary"
-        />
-      </Box>
+      <MeasurmentsFilter
+        initialValues={filters}
+        onFiltersChange={(newFilters) => {
+          setPage(0); // Reset page when filters change
+          setMeasurements([]); // Clear previous measurements
+          setHasMore(true); // Reset hasMore to true
+          setFilters((prevFilters) =>
+            prevFilters.from !== newFilters.from ||
+            prevFilters.to !== newFilters.to
+              ? newFilters
+              : prevFilters
+          );
+        }}
+      />
+
+      {error ? <ErrorInfo error={error} /> : ""}
+      {loading && page === 0 ? (
+        <Spinner />
+      ) : (
+        <Box
+          display="flex"
+          justifyContent="space-around"
+          mt={4}
+          overflow="auto"
+        >
+          <Paper style={{ overflow: "auto", maxHeight: "60vh" }} id="sc-trgt">
+            <InfiniteScroll
+              dataLength={measurements.length}
+              next={loadMore}
+              hasMore={hasMore}
+              loader={<Spinner />}
+              style={{ overflow: "hidden" }}
+              scrollableTarget="sc-trgt"
+              endMessage={
+                <TableRow>
+                  <TableCell>End results</TableCell>
+                </TableRow>
+              }
+            >
+              {measurements.map((m) => {
+                const delta = m.value - prevV;
+                prevV = m.value;
+                return (
+                  <MeasurementRow key={m.id} measurement={m} delta={delta} />
+                );
+              })}
+            </InfiniteScroll>
+          </Paper>
+          <Paper>GRAPH HERE</Paper>
+        </Box>
+      )}
     </>
   );
 };

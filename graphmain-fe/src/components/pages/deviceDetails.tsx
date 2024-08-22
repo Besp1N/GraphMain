@@ -6,6 +6,7 @@ import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
 import DeviceDetails from "../device/deviceDetails";
 import { useParams } from "react-router-dom";
+import Breadcrumbs from "../ui/breadcrumbs";
 
 export default function DeviceDetailsPage() {
   useProtectedResource();
@@ -29,6 +30,12 @@ export default function DeviceDetailsPage() {
   }
   return (
     <div className="center">
+      <Breadcrumbs
+        breadcrumbs={[
+          ["Devices", `/devices`],
+          [`Device ${id} : ${device.deviceName}`, ""],
+        ]}
+      />
       <DeviceDetails device={device} />
     </div>
   );
