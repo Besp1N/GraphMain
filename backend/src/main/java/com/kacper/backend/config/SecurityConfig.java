@@ -5,6 +5,7 @@ import com.kacper.backend.user.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,7 +36,7 @@ public class SecurityConfig
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         request -> request.requestMatchers(
-                                "/auth/**",
+                                "/auth/login",
                                 "/v2/api-docs",
                                 "/v3/api-docs",
                                 "/v3/v3/api-docs/**",
@@ -45,19 +46,37 @@ public class SecurityConfig
                                 "/configuration/security",
                                 "/swagger-ui/**",
                                 "/webjars/**",
-                                "/swagger-ui.html",
-                                "/public/**"
+                                "/swagger-ui.html"
                         ).permitAll()
-                        .requestMatchers("/api/v1/device/user/test").hasAnyAuthority("ROLE_USER")
-                        .requestMatchers("/api/v1/device/admin/test").hasAnyAuthority("ROLE_ADMIN")
-                        .requestMatchers(
+                        .requestMatchers(HttpMethod.POST,
+                                "/public/send/",
+                                "/auth/register",
+                                "/api/v1/sensor/{sensorId}",
+                                "/api/v1/measurement/{sensorId}",
+                                "/api/v1/device/"
+                        ).hasAnyAuthority("ROLE_ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/api/v1/sensor/{sensorId}",
+                                "/api/v1/measurement/{measurementId}",
+                                "/api/v1/device/{deviceId}",
+                                "/api/v1/user/{id}"
+                        ).hasAnyAuthority("ROLE_ADMIN")
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/sensor/{deviceId}",
                                 "/api/v1/device/",
-                                "/api/v1/device/sensor/",
-                                "/api/v1/device/measurement/**"
-                        ).hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                                "/api/v1/device/{deviceId}",
+                                "/api/v1/device/user/",
+                                "/api/v1/device/admin/test",
+                                "/api/v1/device/sensor/{deviceId}",
+                                "/api/v1/device/measurement/{sensorId}"
+                        ).hasAnyAuthority( "ROLE_USER", "ROLE_ADMIN")
+
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider()).addFilterBefore(
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(
                         jwtAuthFilter, UsernamePasswordAuthenticationFilter.class
                 );
         return httpSecurity.build();
