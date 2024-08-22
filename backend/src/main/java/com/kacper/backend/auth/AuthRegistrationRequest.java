@@ -18,7 +18,7 @@ public record AuthRegistrationRequest(
         String password,
 
         @NotBlank(message = "Role cannot be empty")
-        @Pattern(regexp = "ADMIN|USER", message = "Role must be either ADMIN or USER")
+        @Pattern(regexp = "ADMIN|USER|user|admin", message = "Role must be either ADMIN or USER")
         String role,
 
         @NotBlank(message = "Name cannot be empty")
