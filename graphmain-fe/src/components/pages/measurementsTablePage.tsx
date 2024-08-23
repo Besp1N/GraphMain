@@ -1,10 +1,14 @@
 import { useParams } from "react-router-dom";
-import { getMeasurements, HttpError } from "../../http/fetch";
+import {
+  getMeasurements,
+  HttpError,
+  MeasurementDataForSensor,
+} from "../../http/fetch";
 import { useFetchSafe, useProtectedResource } from "../../http/hooks";
 import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
 import { useState, useEffect } from "react";
-import { Box, Container, Paper, TableCell, TableRow } from "@mui/material"; // Import Pagination component from MUI
+import { Box, Paper } from "@mui/material"; // Import Pagination component from MUI
 import Breadcrumbs from "../ui/breadcrumbs";
 import MeasurmentsFilter, {
   MeasurementsFilters,
@@ -12,6 +16,7 @@ import MeasurmentsFilter, {
 import InfiniteScroll from "react-infinite-scroll-component";
 import MeasurementRow from "../measurement/measurmentRow";
 import { Measurement } from "../../entities";
+import MeasurementHead from "../measurement/measurementHead";
 
 const MeasurementsTablePage = function () {
   useProtectedResource();
@@ -35,37 +40,39 @@ const MeasurementsTablePage = function () {
   const [hasMore, setHasMore] = useState(true); // Track if more data is available
   const [measurements, setMeasurements] = useState<Measurement[]>([]); // Store all loaded measurements
 
-  const { loading, error, data, fetch } = useFetchSafe(async () => {
-    const response = await getMeasurements(id, page, filters.from, filters.to);
-    if (response instanceof HttpError) return undefined;
-    if (response!.sensor.measurementList.length === 0) {
-      setHasMore(false); // If no more measurements, stop further fetching
-    } else {
-      setMeasurements((prev) => [...prev, ...response!.sensor.measurementList]); // Append new measurements
+  const { loading, error, data, fetch } = useFetchSafe<
+    MeasurementDataForSensor,
+    HttpError
+  >(async () => {
+    const data = await getMeasurements(id, page, filters.from, filters.to);
+    if (!data || data instanceof HttpError) {
+      setHasMore(false);
+      return data;
     }
+    setPage((page) => page + 1);
+    if (!data.sensor.measurementList?.length) setHasMore(false);
+    setMeasurements((m) => [...m, ...(data.sensor?.measurementList ?? [])]);
+    return data;
+  }, [filters, page, hasMore, measurements]);
 
-    return response;
-  }, [filters, id, page]);
-  //First fetch
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(fetch, [filters, id, page, hasMore]);
+  // Always fetch first results to kickstart the stupid scrolls
 
-  const loadMore = () => {
-    if (!loading && hasMore) {
-      setPage((prevPage) => prevPage + 1); // Increment page number
-    }
-  };
+  useEffect(() => {
+    fetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
 
-  if (measurements == null || data == null) {
+  // Render spinner before first data loads
+  if (data == null) {
     return (
-      <Container>
+      <Box mt={4}>
         <Spinner />
-      </Container>
+      </Box>
     );
   }
-  let prevV = measurements[0].value;
+  let prevV = measurements?.length ? measurements[0].value : 0;
   return (
-    <>
+    <Box mt={10}>
       <Breadcrumbs
         breadcrumbs={[
           ["All Devices", `/devices`],
@@ -82,12 +89,7 @@ const MeasurementsTablePage = function () {
           setPage(0); // Reset page when filters change
           setMeasurements([]); // Clear previous measurements
           setHasMore(true); // Reset hasMore to true
-          setFilters((prevFilters) =>
-            prevFilters.from !== newFilters.from ||
-            prevFilters.to !== newFilters.to
-              ? newFilters
-              : prevFilters
-          );
+          setFilters(newFilters);
         }}
       />
 
@@ -98,28 +100,43 @@ const MeasurementsTablePage = function () {
         <Box
           display="flex"
           justifyContent="space-around"
+          flexWrap={"wrap"}
           mt={4}
+          mb={4}
           overflow="auto"
         >
-          <Paper style={{ overflow: "auto", maxHeight: "60vh" }} id="sc-trgt">
+          <Paper
+            style={{
+              overflow: "auto",
+              maxHeight: "60vh",
+              overflowY: "visible",
+              position: "relative",
+            }}
+            id="sc-trgt"
+          >
+            <MeasurementHead
+              sensor={data.sensor}
+              style={{ position: "sticky", top: 0 }}
+            />
             <InfiniteScroll
               dataLength={measurements.length}
-              next={loadMore}
+              next={fetch}
               hasMore={hasMore}
               loader={<Spinner />}
+              scrollThreshold={"20%"}
               style={{ overflow: "hidden" }}
               scrollableTarget="sc-trgt"
-              endMessage={
-                <TableRow>
-                  <TableCell>End results</TableCell>
-                </TableRow>
-              }
+              endMessage={<Box>End results</Box>}
             >
               {measurements.map((m) => {
                 const delta = m.value - prevV;
                 prevV = m.value;
                 return (
-                  <MeasurementRow key={m.id} measurement={m} delta={delta} />
+                  <MeasurementRow
+                    key={`${m.id}:${Math.random()}`}
+                    measurement={m}
+                    delta={delta}
+                  />
                 );
               })}
             </InfiniteScroll>
@@ -127,7 +144,7 @@ const MeasurementsTablePage = function () {
           <Paper>GRAPH HERE</Paper>
         </Box>
       )}
-    </>
+    </Box>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Device, Measurement, Sensor, } from "../entities"
+import { Device, Sensor, } from "../entities"
 import { getToken } from "./authUtils";
 
 export const BACKEND_URI = "http://127.0.0.1:8080";
@@ -54,13 +54,7 @@ export type MeasurementDataForSensor = {
         deviceName: string,
         deviceType: string,
         totalPages: number,
-        sensor: {
-            id: number,
-            sensorName: string,
-            sensorType: string,
-            unit: string,
-            measurementList: Measurement[]
-        }
+        sensor: Sensor
     
 };
 export type Result<T, E> = T | E;
@@ -95,14 +89,9 @@ export async function getMeasurements(
     if (to === undefined) {
         to = Math.floor(Date.now() / 1000); // default to now
     }
-    const res = await fetchSafe<MeasurementDataForSensor>(
+    return await fetchSafe<MeasurementDataForSensor>(
         `${BACKEND_URI}/api/v1/device/measurement/${sensor}?from=${from}&to=${to}&numPage=${page}`, addCredentials({})
     );
-    console.log(res);
-    return res;
-    // return await fetchSafe<MeasurementDataForSensor>(
-    //     `${BACKEND_URI}/api/v1/device/measurement/${sensor}?from=${from}&to=${to}&numPage=${page}`, addCredentials({})
-    // );
 }
 /**
  * Function attaching proper credentials to a request using authUtils.

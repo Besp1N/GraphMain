@@ -20,7 +20,7 @@ export type Sensor = {
     sensorName: string,
     unit: string,
     device: Device["id"],
-    measurments: Measurement[] | undefined
+    measurementList: Measurement[] | undefined
 }
 /**
  * Type representing Measurment entity in Spring-Boot backend.
@@ -28,6 +28,6 @@ export type Sensor = {
 export type Measurement = {
     id: number,
     value: number,
-    timestamp: Date,
+    timestamp: string,
     sensor: Sensor["id"] | undefined
 }
