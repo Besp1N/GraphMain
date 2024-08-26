@@ -2,7 +2,6 @@ package com.kacper.backend.notification;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.kacper.backend.user_notification.UserNotification;
 import org.postgresql.PGConnection;
 import org.postgresql.PGNotification;
 import org.springframework.beans.factory.DisposableBean;
@@ -17,14 +16,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 @Component
-public class NotificationTestListener extends Thread implements DisposableBean {
+public class NotificationListener extends Thread implements DisposableBean {
     private Connection connection;
     private BufferedWriter writer;
     private final Object lock = new Object();
     private final NotificationService notificationService;
     private final ObjectMapper objectMapper;
 
-    public NotificationTestListener(
+    public NotificationListener(
             DataSource dataSource,
             NotificationService notificationService
     ) throws IOException {
