@@ -1,0 +1,30 @@
+
+Received notification: {"id":49,"message":"This is a test message"}
+
+
+Received notification: {"id":1,"created_at":"2024-08-26T10:07:45.140431","message":"This is a test notification","type":"Test Type","measurement_id":1}
+
+
+Cos sie stanelo: com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field "created_at" (class com.kacper.backend.notification.Notification), not marked as ignorable (6 known properties: "message", "type", "id", "measurement", "userNotifications", "createdAt"])
+ at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 23] (through reference chain: com.kacper.backend.notification.Notification["created_at"])
+
+Cos sie stanelo: com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field "created_at" (class com.kacper.backend.notification.Notification), not marked as ignorable (6 known properties: "message", "type", "id", "measurement", "userNotifications", "createdAt"])
+ at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 23] (through reference chain: com.kacper.backend.notification.Notification["created_at"])
+
+Cos sie stanelo: com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.LocalDateTime` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling
+ at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 22] (through reference chain: com.kacper.backend.notification.Notification["created_at"])
+
+Cos sie stanelo: com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.LocalDateTime` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling
+ at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 22] (through reference chain: com.kacper.backend.notification.Notification["created_at"])
+
+Cos sie stanelo: com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.LocalDateTime` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling
+ at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 22] (through reference chain: com.kacper.backend.notification.Notification["created_at"])
+
+Cos sie stanelo: com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field "measurement_id" (class com.kacper.backend.notification.Notification), not marked as ignorable (6 known properties: "message", "type", "id", "measurement", "userNotifications", "created_at"])
+ at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 121] (through reference chain: com.kacper.backend.notification.Notification["measurement_id"])
+
+Cos sie stanelo: com.fasterxml.jackson.databind.exc.MismatchedInputException: Cannot construct instance of `com.kacper.backend.measurement.Measurement` (although at least one Creator exists): no int/Int-argument constructor/factory method to deserialize from Number value (8)
+ at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 121] (through reference chain: com.kacper.backend.notification.Notification["measurement_id"])
+
+Received notification: {"id":13,"created_at":"2024-08-23T11:00:00","message":"This is a test notification","type":"Test Type","measurement_id":9}
+

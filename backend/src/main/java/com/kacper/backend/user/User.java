@@ -1,5 +1,6 @@
 package com.kacper.backend.user;
 
+import com.kacper.backend.user_notification.UserNotification;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,6 +46,9 @@ public class User implements UserDetails
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserNotification> userNotifications;
 
 
     @Override
