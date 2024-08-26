@@ -26,19 +26,6 @@ public class NotificationService
     }
 
     public void addUserNotification(NotificationDTO notificationDTO) {
-        // Koniecznie kiedys napisac query bo to za duze kongo z tymi userami
-        List<User> users = userRepository.findAll();
-        for (User user : users) {
-            UserNotification userNotification = UserNotification.builder()
-                    .user(user)
-                    .notification(notificationRepository.findById(notificationDTO.id()).orElseThrow())
-                    .seen(false)
-                    .build();
-            userNotificationRepository.save(userNotification);
-        }
-    }
-
-    private void sendMailNotification() {
-        // TODO: Implement albo uzyc tej funkcji z mail package
+        userNotificationRepository.addUserNotifications(notificationDTO.id());
     }
 }

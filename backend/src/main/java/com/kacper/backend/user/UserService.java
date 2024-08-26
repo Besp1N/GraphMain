@@ -17,4 +17,8 @@ public class UserService
         userRepository.delete(user);
         return user;
     }
+
+    public User getUserById(Integer id) {
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
 }

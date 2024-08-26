@@ -1,5 +1,7 @@
 package com.kacper.backend.notification;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kacper.backend.measurement.Measurement;
 import com.kacper.backend.user_notification.UserNotification;
@@ -18,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Notification
 {
     @Id
@@ -49,5 +52,6 @@ public class Notification
     private Measurement measurement;
 
     @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<UserNotification> userNotifications;
 }
