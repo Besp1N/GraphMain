@@ -73,6 +73,8 @@ public class SecurityConfig
                                 "/api/v1/device/measurement/{sensorId}"
                         ).hasAnyAuthority( "ROLE_USER", "ROLE_ADMIN")
 
+                        .requestMatchers("/ws/**").permitAll()
+
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

@@ -1,6 +1,7 @@
 package com.kacper.backend.measurement;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.kacper.backend.notification.Notification;
 import com.kacper.backend.sensor.Sensor;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Represents the measurement entity in the database
@@ -41,6 +43,9 @@ public class Measurement
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sensor_id")
     private Sensor sensor;
+
+    @OneToMany(mappedBy = "measurement", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications;
 
 
 }
