@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 @Component
 public class JWTAuthFilter extends OncePerRequestFilter
@@ -42,6 +43,17 @@ public class JWTAuthFilter extends OncePerRequestFilter
         final String authHeader = request.getHeader("Authorization");
         final String jwtToken;
         final String userEmail;
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+        System.out.println("\n\n");
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            String headerValue = request.getHeader(headerName);
+            System.out.println(headerName + ": " + headerValue);
+        }
+        System.out.println("\n\n");
+
+
 
         if (authHeader == null || authHeader.isBlank()) {
             filterChain.doFilter(request, response);
