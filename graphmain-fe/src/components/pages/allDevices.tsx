@@ -11,7 +11,7 @@ const AllDevicesPage: FC = function () {
   const [, setBreadcrumbs] = useBreadcrumbs();
   useEffect(() => {
     setBreadcrumbs([]);
-  });
+  }, []);
   const {
     loading,
     error,

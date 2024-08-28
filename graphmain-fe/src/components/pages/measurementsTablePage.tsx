@@ -57,10 +57,22 @@ const MeasurementsTablePage = function () {
     return data;
   }, [filters, page, hasMore, measurements]);
 
+  useEffect(() => {
+    data &&
+      setBreadcrumbs([
+        ["All Devices", `/devices`],
+        [
+          `Device ${data.deviceId} : ${data.deviceName}`,
+          `/devices/${data.deviceId}`,
+        ],
+        [`Sensor ${id} : ${data.sensor.sensorName}`, ""],
+      ]);
+  }, [data]);
   // Always fetch first results to kickstart the stupid scrolls
 
   useEffect(() => {
     fetch();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
@@ -72,14 +84,7 @@ const MeasurementsTablePage = function () {
       </Box>
     );
   }
-  setBreadcrumbs([
-    ["All Devices", `/devices`],
-    [
-      `Device ${data.deviceId} : ${data.deviceName}`,
-      `/devices/${data.deviceId}`,
-    ],
-    [`Sensor ${id} : ${data.sensor.sensorName}`, ""],
-  ]);
+
   let prevV = measurements?.length ? measurements[0].value : 0;
   return (
     <Box mt={10} maxHeight="80vh">

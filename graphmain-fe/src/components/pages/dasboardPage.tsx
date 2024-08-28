@@ -8,7 +8,7 @@ export default function DashboardPage() {
   const [, setBreadcrumbs] = useBreadcrumbs();
   useEffect(() => {
     setBreadcrumbs([]);
-  });
+  }, []);
   const { loggedIn } = useContext(AuthContext);
   useEffect(() => {
     if (!loggedIn) navigate("/login");

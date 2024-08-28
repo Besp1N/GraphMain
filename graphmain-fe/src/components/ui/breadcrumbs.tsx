@@ -1,9 +1,9 @@
-import { FC } from "react";
+import { FC, memo } from "react";
 import { Breadcrumbs as MUIBreadcrumbs, Link, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom"; // If you're using react-router for navigation
 import { useBreadcrumbs } from "../../store/appStore";
 
-const Breadcrumbs: FC = function () {
+const Breadcrumbs: FC = memo(function () {
   const [breadcrumbs] = useBreadcrumbs();
 
   return (
@@ -27,6 +27,6 @@ const Breadcrumbs: FC = function () {
       })}
     </MUIBreadcrumbs>
   );
-};
+});
 
 export default Breadcrumbs;
