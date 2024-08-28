@@ -57,7 +57,7 @@ public class NotificationListener extends Thread implements DisposableBean
                     for (PGNotification notification : notifications) {
                         String payload = notification.getParameter();
 
-                        notificationService.sendNotification("dziala");
+                        notificationService.sendNotification(payload);
 
                         writer.write("\n");
                         writer.write("Received notification: " + payload + "\n");
