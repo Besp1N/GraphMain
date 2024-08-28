@@ -45,6 +45,7 @@ public class Measurement
     private Sensor sensor;
 
     @OneToMany(mappedBy = "measurement", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Notification> notifications;
 
 
