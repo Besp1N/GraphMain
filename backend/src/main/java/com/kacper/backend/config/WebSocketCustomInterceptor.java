@@ -2,21 +2,19 @@ package com.kacper.backend.config;
 
 import com.kacper.backend.jwt.JWTService;
 import com.kacper.backend.user.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import java.util.Map;
 
-public class InteceptorTest implements HandshakeInterceptor
+public class WebSocketCustomInterceptor implements HandshakeInterceptor
 {
     private final JWTService jwtService;
     private final CustomUserDetailsService customUserDetailsService;
 
-    public InteceptorTest(JWTService jwtService, CustomUserDetailsService customUserDetailsService) {
+    public WebSocketCustomInterceptor(JWTService jwtService, CustomUserDetailsService customUserDetailsService) {
         this.jwtService = jwtService;
         this.customUserDetailsService = customUserDetailsService;
     }

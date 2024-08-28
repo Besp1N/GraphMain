@@ -15,7 +15,10 @@ public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer
     private final JWTService jwtService;
     private final CustomUserDetailsService customUserDetailsService;
 
-    public WebSocketBrokerConfig(JWTService jwtService, CustomUserDetailsService customUserDetailsService) {
+    public WebSocketBrokerConfig(
+            JWTService jwtService,
+            CustomUserDetailsService customUserDetailsService
+    ) {
         this.jwtService = jwtService;
         this.customUserDetailsService = customUserDetailsService;
     }
@@ -30,7 +33,10 @@ public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOrigins("http://localhost:5173")
-                .addInterceptors(new InteceptorTest(jwtService, customUserDetailsService))
+                .addInterceptors(
+                        new WebSocketCustomInterceptor(
+                                jwtService,
+                                customUserDetailsService))
                 .withSockJS();
     }
 }
