@@ -21,6 +21,7 @@ const MeasurementRow = function ({ measurement, delta }: IMeasurmentRowProps) {
       justifyContent="space-between"
       alignItems="center"
       padding="8px 16px"
+      minHeight="25%"
       borderBottom="1px solid #ddd"
     >
       <Box flex="1" textAlign="left">

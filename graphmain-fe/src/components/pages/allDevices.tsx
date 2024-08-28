@@ -5,8 +5,13 @@ import DeviceInfoTable from "../device/deviceInfoTable";
 import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
 import { Device } from "../../entities";
+import { useBreadcrumbs } from "../../store/appStore";
 const AllDevicesPage: FC = function () {
   useProtectedResource();
+  const [, setBreadcrumbs] = useBreadcrumbs();
+  useEffect(() => {
+    setBreadcrumbs([]);
+  });
   const {
     loading,
     error,

@@ -6,7 +6,7 @@ import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
 import DeviceDetails from "../device/deviceDetails";
 import { useParams } from "react-router-dom";
-import Breadcrumbs from "../ui/breadcrumbs";
+import { useBreadcrumbs } from "../../store/appStore";
 
 export default function DeviceDetailsPage() {
   useProtectedResource();
@@ -14,6 +14,8 @@ export default function DeviceDetailsPage() {
   const { deviceId: id } = useParams();
   //@ts-expect-error safeFetch will handle the NaN for now
   const cb = useCallback(() => getDevice(+id), [id]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setBreadcrumbs] = useBreadcrumbs();
 
   const { loading, error, data: device, fetch } = useFetchSafe(cb);
   useEffect(() => fetch(), [fetch]);
@@ -28,14 +30,12 @@ export default function DeviceDetailsPage() {
   if (device == null) {
     return <p>Should be 404</p>;
   }
+  setBreadcrumbs([
+    ["Devices", `/devices`],
+    [`Device ${id} : ${device.deviceName}`, ""],
+  ]);
   return (
     <div className="center">
-      <Breadcrumbs
-        breadcrumbs={[
-          ["Devices", `/devices`],
-          [`Device ${id} : ${device.deviceName}`, ""],
-        ]}
-      />
       <DeviceDetails device={device} />
     </div>
   );

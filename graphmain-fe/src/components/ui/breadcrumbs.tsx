@@ -1,12 +1,11 @@
 import { FC } from "react";
 import { Breadcrumbs as MUIBreadcrumbs, Link, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom"; // If you're using react-router for navigation
+import { useBreadcrumbs } from "../../store/appStore";
 
-interface IBreadCrumbsProps {
-  breadcrumbs: [string, string][];
-}
+const Breadcrumbs: FC = function () {
+  const [breadcrumbs] = useBreadcrumbs();
 
-const Breadcrumbs: FC<IBreadCrumbsProps> = function ({ breadcrumbs }) {
   return (
     <MUIBreadcrumbs aria-label="breadcrumb">
       {breadcrumbs.map((breadcrumb, index) => {

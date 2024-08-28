@@ -12,6 +12,7 @@ import LogoutPage from "./components/pages/logoutPage.tsx";
 import { FlashProvider } from "./store/flashStore.tsx";
 import ErrorPage from "./components/pages/errorPage.tsx";
 import DashboardPage from "./components/pages/dasboardPage.tsx";
+import { AppContextProvider } from "./store/appStore.tsx";
 
 const router = createBrowserRouter([
   {
@@ -50,13 +51,15 @@ const router = createBrowserRouter([
 const App: FC = function () {
   const theme = createTheme();
   return (
-    <AuthProvider>
-      <ThemeProvider theme={theme}>
-        <FlashProvider>
-          <RouterProvider router={router} />
-        </FlashProvider>
-      </ThemeProvider>
-    </AuthProvider>
+    <AppContextProvider>
+      <AuthProvider>
+        <ThemeProvider theme={theme}>
+          <FlashProvider>
+            <RouterProvider router={router} />
+          </FlashProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </AppContextProvider>
   );
 };
 

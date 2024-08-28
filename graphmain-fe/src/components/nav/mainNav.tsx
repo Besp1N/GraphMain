@@ -3,6 +3,7 @@ import classes from "./mainNav.module.css";
 import NavItem from "./navItem";
 import { AuthContext } from "../../store/authStore";
 import { Paper } from "@mui/material";
+import Breadcrumbs from "../ui/breadcrumbs";
 export default function MainNav() {
   const { loggedIn, email } = useContext(AuthContext);
   return (
@@ -30,6 +31,7 @@ export default function MainNav() {
           ""
         )}
       </ul>
+      <Breadcrumbs />
     </Paper>
   );
 }

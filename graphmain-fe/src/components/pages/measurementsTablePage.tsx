@@ -9,7 +9,6 @@ import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
 import { useState, useEffect } from "react";
 import { Box, Paper } from "@mui/material"; // Import Pagination component from MUI
-import Breadcrumbs from "../ui/breadcrumbs";
 import MeasurmentsFilter, {
   MeasurementsFilters,
 } from "../measurement/measurmentsFilter";
@@ -17,9 +16,12 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import MeasurementRow from "../measurement/measurmentRow";
 import { Measurement } from "../../entities";
 import MeasurementHead from "../measurement/measurementHead";
+import { useBreadcrumbs } from "../../store/appStore";
 
 const MeasurementsTablePage = function () {
   useProtectedResource();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setBreadcrumbs] = useBreadcrumbs();
 
   const { sensorId } = useParams();
   const id = parseInt(sensorId!);
@@ -70,19 +72,17 @@ const MeasurementsTablePage = function () {
       </Box>
     );
   }
+  setBreadcrumbs([
+    ["All Devices", `/devices`],
+    [
+      `Device ${data.deviceId} : ${data.deviceName}`,
+      `/devices/${data.deviceId}`,
+    ],
+    [`Sensor ${id} : ${data.sensor.sensorName}`, ""],
+  ]);
   let prevV = measurements?.length ? measurements[0].value : 0;
   return (
-    <Box mt={10}>
-      <Breadcrumbs
-        breadcrumbs={[
-          ["All Devices", `/devices`],
-          [
-            `Device ${data.deviceId} : ${data.deviceName}`,
-            `/devices/${data.deviceId}`,
-          ],
-          [`Sensor ${id} : ${data.sensor.sensorName}`, ""],
-        ]}
-      />
+    <Box mt={10} maxHeight="80vh">
       <MeasurmentsFilter
         initialValues={filters}
         onFiltersChange={(newFilters) => {
@@ -107,10 +107,12 @@ const MeasurementsTablePage = function () {
         >
           <Paper
             style={{
-              overflow: "auto",
-              maxHeight: "60vh",
-              overflowY: "visible",
+              overflowY: "scroll", // Always ensure Y overflow
+              maxHeight: "60vh", // Max height
+              minHeight: "200px", // Set a minimum height to ensure scrollability
               position: "relative",
+
+              scrollbarWidth: "thin",
             }}
             id="sc-trgt"
           >
