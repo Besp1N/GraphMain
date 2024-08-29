@@ -3,21 +3,30 @@ package com.kacper.backend.notification;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kacper.backend.measurement.Measurement;
 import com.kacper.backend.measurement.MeasurementRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final MeasurementRepository measurementRepository;
+    private final NotificationRepository notificationRepository;
 
     public NotificationService(
             SimpMessagingTemplate messagingTemplate,
-            MeasurementRepository measurementRepository
+            MeasurementRepository measurementRepository,
+            NotificationRepository notificationRepository
     ) {
         this.messagingTemplate = messagingTemplate;
         this.measurementRepository = measurementRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     public void sendNotification(String payload) {
@@ -32,7 +41,7 @@ public class NotificationService {
                     .id(notificationMapper.id())
                     .message(notificationMapper.message())
                     .type(notificationMapper.type())
-                    .createdAt(notificationMapper.created_at())
+                    .created_at(notificationMapper.created_at())
                     .measurement(measurement)
                     .build();
 
@@ -41,5 +50,23 @@ public class NotificationService {
             e.printStackTrace();
 
         }
+    }
+
+    public List<NotificationResponse> getNotifications(Integer numPage) {
+        int pageSize = 2;
+
+        PageRequest pageable = PageRequest.of(numPage, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Notification> notificationsPage = notificationRepository.findAll(pageable);
+        List<Notification> notifications = notificationsPage.getContent();
+
+        return notifications.stream()
+                .map(notification -> NotificationResponse.builder()
+                        .created_at(notification.getCreatedAt())
+                        .id(notification.getId())
+                        .type(notification.getType())
+                        .message(notification.getMessage())
+                        .measurement(notification.getMeasurement())
+                        .build()
+                ).collect(Collectors.toList());
     }
 }
