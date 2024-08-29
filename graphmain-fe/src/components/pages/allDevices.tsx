@@ -8,6 +8,7 @@ import { Device } from "../../entities";
 import { useBreadcrumbs } from "../../store/appStore";
 const AllDevicesPage: FC = function () {
   useProtectedResource();
+
   const [, setBreadcrumbs] = useBreadcrumbs();
   useEffect(() => {
     setBreadcrumbs([]);

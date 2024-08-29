@@ -23,7 +23,15 @@ const MeasurementsTablePage = function () {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setBreadcrumbs] = useBreadcrumbs();
 
-  const { sensorId } = useParams();
+  const { deviceId, sensorId } = useParams();
+  // Set breadcrumbs once
+  useEffect(() => {
+    setBreadcrumbs([
+      ["All Devices", `/devices`],
+      [`Device ${deviceId}`, `/devices/${deviceId}`],
+      [`Sensor ${id}`, ""],
+    ]);
+  }, []);
   const id = parseInt(sensorId!);
 
   if (Number.isNaN(id)) {
@@ -57,17 +65,6 @@ const MeasurementsTablePage = function () {
     return data;
   }, [filters, page, hasMore, measurements]);
 
-  useEffect(() => {
-    data &&
-      setBreadcrumbs([
-        ["All Devices", `/devices`],
-        [
-          `Device ${data.deviceId} : ${data.deviceName}`,
-          `/devices/${data.deviceId}`,
-        ],
-        [`Sensor ${id} : ${data.sensor.sensorName}`, ""],
-      ]);
-  }, [data]);
   // Always fetch first results to kickstart the stupid scrolls
 
   useEffect(() => {

@@ -46,7 +46,7 @@ export default function DeviceDetails({ device }: { device: Device }) {
                     primary={sensor.sensorName}
                     secondary={`Type: ${sensor.sensorType}`}
                   />
-                  <Link to={`/devices/measurements/${sensor.id}`}>
+                  <Link to={`/devices/${device.id}/measurements/${sensor.id}`}>
                     <Button variant="contained" color="primary" size="small">
                       View Measurements
                     </Button>

@@ -21,6 +21,9 @@ export default function MainNav() {
             <li>
               <NavItem href={"/devices"}>Devices</NavItem>
             </li>
+            <li>
+              <NavItem href={"/notifications"}>Notifications</NavItem>
+            </li>
 
             <li className={classes["user-group"]}>
               <span>{email}</span>

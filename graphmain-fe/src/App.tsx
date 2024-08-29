@@ -13,6 +13,7 @@ import { FlashProvider } from "./store/flashStore.tsx";
 import ErrorPage from "./components/pages/errorPage.tsx";
 import DashboardPage from "./components/pages/dasboardPage.tsx";
 import { AppContextProvider } from "./store/appStore.tsx";
+import NotificationsPage from "./components/pages/notificationsPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -37,11 +38,15 @@ const router = createBrowserRouter([
         element: <AllDevicesPage />,
       },
       {
+        path: "/notifications",
+        element: <NotificationsPage />,
+      },
+      {
         path: "/devices/:deviceId",
         element: <DeviceDetailsPage />,
       },
       {
-        path: "/devices/measurements/:sensorId",
+        path: "/devices/:deviceId/measurements/:sensorId",
         element: <MeasurementsTablePage />,
       },
     ],
@@ -49,7 +54,8 @@ const router = createBrowserRouter([
 ]);
 
 const App: FC = function () {
-  const theme = createTheme();
+  const theme = createTheme({ palette: { mode: "light" } });
+
   return (
     <AppContextProvider>
       <AuthProvider>
