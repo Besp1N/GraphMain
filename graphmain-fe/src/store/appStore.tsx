@@ -7,6 +7,8 @@ import React, {
 } from "react";
 import { Client, Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import { NotificationEntityQueryReturnType } from "../http/fetch";
+import type { Option } from "../http/fetch";
 const WEBSOCKET_URL = "http://localhost:8080/ws";
 const QUEUE_CAPACITY = 10; // Fixed capacity for the message queue
 
@@ -14,9 +16,10 @@ const QUEUE_CAPACITY = 10; // Fixed capacity for the message queue
 interface AppContextType {
   breadcrumbs: [string, string][];
   setBreadcrumbs: (breadcrumbs: [string, string][]) => void;
-  messageQueue: string[];
+  messageQueue: NotificationEntityQueryReturnType[];
   connectWebSocket: (token: string) => void;
   disconnectWebSocket: () => void;
+  stompClient: Option<Client>;
 }
 
 // Create the context with a default value
@@ -27,19 +30,39 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [breadcrumbs, setBreadcrumbs] = useState<[string, string][]>([]);
-  const [messageQueue, setMessageQueue] = useState<string[]>([]);
-  const [stompClient, setStompClient] = useState<Client | null>(null);
+  const [messageQueue, setMessageQueue] = useState<
+    NotificationEntityQueryReturnType[]
+  >([]);
+  const [stompClient, setStompClient] = useState<Option<Client>>();
 
   // Function to handle incoming messages
   const onMessageReceived = (message: unknown) => {
-    console.log(message);
-    console.log(typeof message);
-    if (message && message?.body) {
-      const newMessageQueue = [...messageQueue, message.body];
-      if (newMessageQueue.length > QUEUE_CAPACITY) {
-        newMessageQueue.shift(); // Remove the oldest message if capacity exceeded
+    if (
+      typeof message === "object" &&
+      message != null &&
+      // typescript sucks
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-expect-error
+      typeof message?.body === "string"
+    ) {
+      let body: NotificationEntityQueryReturnType;
+      try {
+        // stupid typescript, already checked for it
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-expect-error
+        body = JSON.parse(message.body);
+      } catch {
+        console.error("Cannot deserialize the WebsocketMessage.");
+        return;
       }
-      setMessageQueue(newMessageQueue);
+
+      setMessageQueue((mq) => {
+        const newMessageQueue = [...mq, body];
+        if (newMessageQueue.length > QUEUE_CAPACITY) {
+          newMessageQueue.shift(); // Remove the oldest message if capacity exceeded
+        }
+        return newMessageQueue;
+      });
     }
   };
 
@@ -53,9 +76,15 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({
     };
 
     client.onStompError = (error) => {
+      setStompClient(undefined);
       console.error("WebSocket Error:", error);
     };
-
+    client.onDisconnect = () => {
+      setStompClient(undefined);
+    };
+    client.onWebSocketClose = () => {
+      setStompClient(undefined);
+    };
     client.activate();
     setStompClient(client);
   };
@@ -64,7 +93,7 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({
   const disconnectWebSocket = () => {
     if (stompClient) {
       stompClient.deactivate();
-      setStompClient(null);
+      setStompClient(undefined);
       console.log("Disconnected from WebSocket");
     }
   };
@@ -82,6 +111,7 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({
         breadcrumbs,
         setBreadcrumbs,
         messageQueue,
+        stompClient,
         connectWebSocket,
         disconnectWebSocket,
       }}

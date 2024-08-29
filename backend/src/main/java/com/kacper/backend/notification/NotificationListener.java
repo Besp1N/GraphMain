@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
 @Component
 public class NotificationListener extends Thread implements DisposableBean
@@ -20,6 +21,8 @@ public class NotificationListener extends Thread implements DisposableBean
     private BufferedWriter writer;
     private final Object lock = new Object();
     private final NotificationService notificationService;
+
+    Logger logger = Logger.getLogger(NotificationListener.class.getName());
 
     public NotificationListener(
             DataSource dataSource,
@@ -56,6 +59,8 @@ public class NotificationListener extends Thread implements DisposableBean
                 if (notifications != null) {
                     for (PGNotification notification : notifications) {
                         String payload = notification.getParameter();
+
+                        logger.info("Received notification: " + payload);
 
                         notificationService.sendNotification(payload);
 

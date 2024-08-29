@@ -1,12 +1,23 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom"; // Import to track the current route
 import classes from "./mainNav.module.css";
 import NavItem from "./navItem";
 import { AuthContext } from "../../store/authStore";
 import { Paper } from "@mui/material";
 import Breadcrumbs from "../ui/breadcrumbs";
+import { AppContext } from "../../store/appStore";
 
 export default function MainNav() {
   const { loggedIn, email } = useContext(AuthContext);
+  const { messageQueue } = useContext(AppContext)!;
+  const location = useLocation(); // Get the current route
+  const [hasNewMessage, setHasNewMessage] = useState(false);
+
+  useEffect(() => {
+    if (location.pathname !== "/notifications" && messageQueue.length > 0) {
+      setHasNewMessage(true);
+    }
+  }, [messageQueue, location.pathname]);
 
   return (
     <Paper elevation={1} className={classes["main-nav"]}>
@@ -25,7 +36,10 @@ export default function MainNav() {
             <li>
               <NavItem
                 href={"/notifications"}
-                className={classes["notification-indicator"]}
+                className={
+                  hasNewMessage ? classes["notification-indicator"] : ""
+                }
+                onClick={() => setHasNewMessage(false)} // Reset on click
               >
                 Notifications
               </NavItem>
