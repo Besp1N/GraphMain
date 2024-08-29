@@ -11,6 +11,8 @@ public record NotificationResponse(
         String message,
         String type,
         LocalDateTime created_at,
+        Integer device_id,
+        Integer sensor_id,
         Measurement measurement
 ) {
 }

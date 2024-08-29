@@ -70,6 +70,8 @@ public class NotificationService {
                         .id(notification.getId())
                         .type(notification.getType())
                         .message(notification.getMessage())
+                        .device_id(notification.getMeasurement().getSensor().getDevice().getId())
+                        .sensor_id(notification.getMeasurement().getSensor().getId())
                         .measurement(notification.getMeasurement())
                         .build()
                 ).collect(Collectors.toList());
