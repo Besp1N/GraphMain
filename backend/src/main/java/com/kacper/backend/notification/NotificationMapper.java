@@ -9,7 +9,7 @@ public record NotificationMapper(
         Integer id,
         String message,
         String type,
-        LocalDateTime created_at,
+        String created_at,
         Integer measurement_id
 ) {
 }

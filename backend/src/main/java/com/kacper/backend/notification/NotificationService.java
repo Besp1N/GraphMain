@@ -9,6 +9,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,11 +39,14 @@ public class NotificationService {
                     notificationMapper.measurement_id()
             ).orElseThrow();
 
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+            LocalDateTime createdAt = LocalDateTime.parse(notificationMapper.created_at(), formatter);
+
             NotificationResponse notification = NotificationResponse.builder()
                     .id(notificationMapper.id())
                     .message(notificationMapper.message())
                     .type(notificationMapper.type())
-                    .created_at(notificationMapper.created_at())
+                    .created_at(createdAt)
                     .measurement(measurement)
                     .build();
 
