@@ -119,24 +119,21 @@ export function addCredentials(requestOptions: RequestInit) {
 }
 
 /**
+ * Type representing what backend returns when getting notifications.
+ */
+export interface NotificationEntityQueryReturnType extends NotificationEntity {
+  device_id: Device["id"];
+  sensor_id: Sensor["id"];
+}
+/**
  * Function for getting the latest notifications. Shouldn't return 404 but empty array.
  */
+
 export async function getLatestNotifications(
-  page: number = 1
-): Promise<Result<Option<NotificationEntity[]>, HttpError>> {
-  return new Promise((r) =>
-    r([
-      {
-        id: 1,
-        message: "TEST",
-        type: "warning",
-        created_at: Date.now().toString(),
-        measurement_id: 3,
-      },
-    ])
-  );
-  return await fetchSafe<Notification[]>(
-    `${BACKEND_URI}/api/v1/notifications?page=${page}`,
+  page: number = 0
+): Promise<Result<Option<NotificationEntityQueryReturnType[]>, HttpError>> {
+  return await fetchSafe<NotificationEntityQueryReturnType[]>(
+    `${BACKEND_URI}/api/v1/notifications/${page}`,
     addCredentials({})
   );
 }
@@ -153,6 +150,7 @@ export async function fetchSafe<T>(
     if (!res.ok) throw HttpError.from_response(res);
 
     const data: T = await res.json();
+    console.log(data);
     return data;
   } catch (err) {
     return err as HttpError;

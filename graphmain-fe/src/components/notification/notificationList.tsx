@@ -1,13 +1,12 @@
 import React from "react";
 import { List } from "@mui/material";
 
-import { NotificationEntity } from "../../entities";
 import ErrorInfo from "../ui/errorInfo";
-import { HttpError } from "../../http/fetch";
+import { HttpError, NotificationEntityQueryReturnType } from "../../http/fetch";
 import NotificationFullListItem from "./notificationFullListItem";
 
 type NotificationListProps = {
-  notifications: NotificationEntity[];
+  notifications: NotificationEntityQueryReturnType[];
 };
 
 const NotificationList: React.FC<NotificationListProps> = ({
@@ -24,7 +23,10 @@ const NotificationList: React.FC<NotificationListProps> = ({
   return (
     <List>
       {notifications.map((notification) => (
-        <NotificationFullListItem notification={notification} />
+        <NotificationFullListItem
+          notification={notification}
+          key={notification.id}
+        />
       ))}
     </List>
   );

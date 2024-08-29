@@ -32,11 +32,11 @@ export type Measurement = {
   sensor: Sensor["id"] | undefined;
 };
 
-export type NotificationEntityType = "warning" | "info" | "critical";
+export type NotificationEntityType = "warning" | "info" | "error";
 export type NotificationEntity = {
   id: number;
   message: string;
   type: NotificationEntityType;
   created_at: string;
-  measurement_id: Measurement["id"];
+  measurement: Measurement;
 };

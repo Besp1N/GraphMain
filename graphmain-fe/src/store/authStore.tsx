@@ -1,4 +1,10 @@
-import { createContext, useState, useEffect, ReactNode } from "react";
+import {
+  createContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useContext,
+} from "react";
 import {
   ROLE,
   isAuthDataValid,
@@ -8,6 +14,7 @@ import {
   requestLogin,
 } from "../http/authUtils";
 import { HttpError, Result } from "../http/fetch";
+import { AppContext } from "./appStore";
 
 // Defining the shape of the Auth context state
 type AuthContextType = {
@@ -47,7 +54,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoggedIn(true);
     }
   }, []);
-
+  const { connectWebSocket, disconnectWebSocket } = useContext(AppContext)!;
   const login = async (
     email: string,
     password: string
@@ -61,6 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setEmail(authData.email);
       setLoggedIn(true);
       setAuthData(authData);
+      connectWebSocket(authData.token);
     }
     return true;
   };
@@ -70,6 +78,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setEmail("");
     setLoggedIn(false);
     clearAuthData();
+    disconnectWebSocket();
   };
   const getToken = () => {
     return getAuthData()?.token;

@@ -44,8 +44,8 @@ export function useFetchSafe<T, E extends Error>(
       };
 
       fetchData();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     deps ? [fn, navigate, ...deps] : [fn, navigate]
   );
 

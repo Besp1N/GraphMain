@@ -7,6 +7,7 @@ import Breadcrumbs from "../ui/breadcrumbs";
 
 export default function MainNav() {
   const { loggedIn, email } = useContext(AuthContext);
+
   return (
     <Paper elevation={1} className={classes["main-nav"]}>
       <ul>
@@ -22,7 +23,12 @@ export default function MainNav() {
               <NavItem href={"/devices"}>Devices</NavItem>
             </li>
             <li>
-              <NavItem href={"/notifications"}>Notifications</NavItem>
+              <NavItem
+                href={"/notifications"}
+                className={classes["notification-indicator"]}
+              >
+                Notifications
+              </NavItem>
             </li>
 
             <li className={classes["user-group"]}>

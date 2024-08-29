@@ -1,10 +1,13 @@
 import { FC, useCallback, useEffect, useState } from "react";
-import { getLatestNotifications, HttpError } from "../../http/fetch";
+import {
+  getLatestNotifications,
+  HttpError,
+  NotificationEntityQueryReturnType,
+} from "../../http/fetch";
 import { useFetchSafe, useProtectedResource } from "../../http/hooks";
 import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
 import { useBreadcrumbs } from "../../store/appStore";
-import { NotificationEntity } from "../../entities";
 import NotificationList from "../notification/notificationList";
 import { Pagination, Paper } from "@mui/material";
 
@@ -27,11 +30,11 @@ const NotificationsPage: FC = function () {
     error,
     data: notifications,
     fetch,
-  } = useFetchSafe<NotificationEntity[], HttpError>(fetcher);
+  } = useFetchSafe<NotificationEntityQueryReturnType[], HttpError>(fetcher);
 
   useEffect(() => {
     fetch();
-    if (notifications && page === totalPages) {
+    if (notifications?.length && page === totalPages) {
       setTotalPages((p) => p + 1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

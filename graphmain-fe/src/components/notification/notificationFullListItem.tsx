@@ -5,10 +5,12 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { NotificationEntity, NotificationEntityType } from "../../entities";
+import { NotificationEntityType } from "../../entities";
 import WarningIcon from "@mui/icons-material/Warning";
 import InfoIcon from "@mui/icons-material/Info";
 import ErrorIcon from "@mui/icons-material/Error";
+import { Link } from "react-router-dom";
+import { NotificationEntityQueryReturnType } from "../../http/fetch";
 /**
  * A helper function to get consistent icons for Notifications
  * @param type Type of notification
@@ -20,7 +22,7 @@ const getIcon = (type: NotificationEntityType) => {
       return <WarningIcon color="warning" />;
     case "info":
       return <InfoIcon color="primary" />;
-    case "critical":
+    case "error":
       return <ErrorIcon color="error" />;
     default:
       return <InfoIcon />;
@@ -30,7 +32,7 @@ const getIcon = (type: NotificationEntityType) => {
 export default function NotificationFullListItem({
   notification,
 }: {
-  notification: NotificationEntity;
+  notification: NotificationEntityQueryReturnType;
 }) {
   return (
     <ListItem key={notification.id} alignItems="flex-start">
@@ -44,7 +46,12 @@ export default function NotificationFullListItem({
             <Typography component="span" variant="body2" color="text.primary">
               {new Date(notification.created_at).toLocaleString()}
             </Typography>
-            {" — Measurement ID: " + notification.measurement_id}
+            <Link
+              to={`/devices/${notification.device_id}/measurements/${notification.sensor_id}`}
+            >
+              {" — Measurement ID: " + notification.measurement.id + "\n"}
+              {"Value: " + notification.measurement.value}
+            </Link>
           </>
         }
       />
