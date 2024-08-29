@@ -70,7 +70,8 @@ public class SecurityConfig
                                 "/api/v1/device/user/",
                                 "/api/v1/device/admin/test",
                                 "/api/v1/device/sensor/{deviceId}",
-                                "/api/v1/device/measurement/{sensorId}"
+                                "/api/v1/device/measurement/{sensorId}",
+                                "/api/v1/notifications/{numPage}"
                         ).hasAnyAuthority( "ROLE_USER", "ROLE_ADMIN")
 
                         .requestMatchers("/ws/**").permitAll()
