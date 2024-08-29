@@ -62,3 +62,15 @@ Received notification: {"id":16,"message":"NotificationMessageExample","type":"N
 Received notification: {"id":17,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-29T14:23:00"}
 
 
+
+Received notification: {"id":28,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-29T14:23:00"}
+
+
+
+Received notification: {"id":29,"message":"NotificationMessageExample","type":"test","measurement_id":30,"created_at":"2024-08-29T14:23:00"}
+
+
+
+Received notification: {"id":30,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-29T14:23:00"}
+
+
