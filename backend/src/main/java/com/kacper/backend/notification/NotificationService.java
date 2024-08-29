@@ -24,7 +24,9 @@ public class NotificationService {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             NotificationMapper notificationMapper = objectMapper.readValue(payload, NotificationMapper.class);
-            Measurement measurement = measurementRepository.findById(notificationMapper.measurement_id()).orElseThrow();
+            Measurement measurement = measurementRepository.findById(
+                    notificationMapper.measurement_id()
+            ).orElseThrow();
 
             NotificationResponse notification = NotificationResponse.builder()
                     .id(notificationMapper.id())
