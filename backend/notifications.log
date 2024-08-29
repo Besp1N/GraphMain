@@ -6,3 +6,7 @@ Received notification: {"id":25,"message":"NotificationMessageExample","type":"N
 Received notification: {"id":26,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-29T14:23:00"}
 
 
+
+Received notification: {"id":27,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-29T14:23:00"}
+
+

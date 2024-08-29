@@ -32,7 +32,7 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({
 
   // Function to handle incoming messages
   const onMessageReceived = (message: unknown) => {
-    console.log(message);
+    console.log(JSON.parse(message.body));
     console.log(typeof message);
     if (message && message?.body) {
       const newMessageQueue = [...messageQueue, message.body];
