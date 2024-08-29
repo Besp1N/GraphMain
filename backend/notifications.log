@@ -1,64 +1,8 @@
 
-Received notification: {"id":2,"message":"This is a test message","type":"Test Type","measurement_id":30,"created_at":"2024-08-23T11:00:00"}
+Received notification: {"id":25,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-29T14:23:00"}
 
 
 
-Received notification: {"id":3,"message":"This is a test message","type":"Test Type","measurement_id":30,"created_at":"2024-08-23T11:00:00"}
-
-
-
-Received notification: {"id":4,"message":"This is a test message","type":"Test Type","measurement_id":30,"created_at":"2024-08-23T11:00:00"}
-
-
-
-Received notification: {"id":5,"message":"This is a test message","type":"Test Type","measurement_id":30,"created_at":"2024-08-23T11:00:00"}
-
-
-
-Received notification: {"id":6,"message":"This is a test message","type":"Test Type","measurement_id":30,"created_at":"2024-08-23T11:00:00"}
-
-
-
-Received notification: {"id":7,"message":"This is a test message","type":"Test Type","measurement_id":30,"created_at":"2024-08-23T11:00:00"}
-
-
-
-Received notification: {"id":8,"message":"chuj","type":"dupa","measurement_id":10,"created_at":"2024-08-10T10:10:10"}
-
-
-
-Received notification: {"id":9,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-28T12:00:00"}
-
-
-
-Received notification: {"id":10,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-28T12:00:00"}
-
-
-
-Received notification: {"id":11,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-28T12:00:00"}
-
-
-
-Received notification: {"id":12,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-28T12:00:00"}
-
-
-
-Received notification: {"id":13,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-28T12:00:00"}
-
-
-
-Received notification: {"id":14,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-28T12:00:00"}
-
-
-
-Received notification: {"id":15,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-28T12:00:00"}
-
-
-
-Received notification: {"id":16,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-29T14:23:00"}
-
-
-
-Received notification: {"id":17,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-29T14:23:00"}
+Received notification: {"id":26,"message":"NotificationMessageExample","type":"NotificationTypeExample","measurement_id":30,"created_at":"2024-08-29T14:23:00"}
 
 
