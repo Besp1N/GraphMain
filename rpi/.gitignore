@@ -1,2 +1,3 @@
 sensors.db
 __pycache__
+aws_config.py

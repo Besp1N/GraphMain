@@ -5,6 +5,7 @@ import sys
 
 DB_NAME = "../sensors.db"
 PASSWORD = sys.argv[1]
+CERT_PASS = sys.argv[2]
 # Create a regular TCP/IP socket
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind(('localhost', 12345))
@@ -12,7 +13,7 @@ server_socket.listen(5)
 
 # Wrap the socket with SSL
 context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-context.load_cert_chain(certfile="server.crt", keyfile="server.key")
+context.load_cert_chain(certfile="server.crt", keyfile="server.key", password=CERT_PASS)
 
 ssl_socket = context.wrap_socket(server_socket, server_side=True)
 print("Server listening on port 12345...")

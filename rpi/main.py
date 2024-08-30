@@ -1,14 +1,14 @@
 import time
 import sqlite3
-import config  # Assuming config contains DB_PARAMS and CONFIG
+from config import CONFIG as CONFIG  
 
 def init_db():
     conn = sqlite3.connect('sensors.db')
     cursor = conn.cursor()
 
     # Create a table based on the config
-    table_name = config.CONFIG["table_name"]
-    columns = ', '.join([f"{sensor['name']} REAL" for sensor in config.CONFIG["sensors"]])
+    table_name = CONFIG["table_name"]
+    columns = ', '.join([f"{sensor['name']} REAL" for sensor in CONFIG["sensors"]])
 
     # SQL command to create the table
     create_table_query = f"""
@@ -30,7 +30,7 @@ def insert_sensor_data(cursor):
 
     # Collect sensor readings
     sensor_readings = {}
-    for sensor in config.CONFIG["sensors"]:
+    for sensor in CONFIG["sensors"]:
         sensor_name = sensor["name"] # Get the function name (assuming it's unique per sensor)
         sensor_readings[sensor_name] = sensor["reader"]()  # Read the sensor value
 
@@ -41,7 +41,7 @@ def insert_sensor_data(cursor):
     placeholders = ', '.join('?' for _ in sensor_readings)
     values = tuple(sensor_readings.values())
 
-    sql = f'INSERT INTO {config.CONFIG["table_name"]} (timestamp, {columns}) VALUES (?, {placeholders})'
+    sql = f'INSERT INTO {CONFIG["table_name"]} (timestamp, {columns}) VALUES (?, {placeholders})'
 
     try:
         cursor.execute(sql, (timestamp, *values))
@@ -55,7 +55,7 @@ def insert_sensor_data(cursor):
 
 def start_read_loop():
     init_db()
-    interval = config.CONFIG['interval']  # Shared interval for all sensors
+    interval = CONFIG['interval']  # Shared interval for all sensors
     conn = None
     try:
         # Connect to SQLite database (local file-based)

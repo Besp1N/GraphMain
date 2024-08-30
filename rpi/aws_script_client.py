@@ -2,7 +2,7 @@ import time
 import psycopg2
 import psycopg2.extras
 import aws_config
-import config  
+from config import CONFIG_MOCK as CONFIG  
 
 def insert_sensor_data(sensor, cursor, timestamp):
     """Function to insert data for a specific sensor."""
@@ -27,8 +27,9 @@ def insert_sensor_data(sensor, cursor, timestamp):
 
 
 def main():
-    interval = config.CONFIG['interval']  # Shared interval for all sensors
+    interval = CONFIG['interval']  # Shared interval for all sensors
     conn = None
+    cursor = None
     try:
         conn = psycopg2.connect(**aws_config.DB_PARAMS)
         
@@ -36,7 +37,7 @@ def main():
         
         while True:
             timestamp = time.time()
-            for sensor in config.CONFIG['sensors']:
+            for sensor in CONFIG['sensors']:
                 try:
                     insert_sensor_data(sensor, cursor, timestamp)
                     conn.commit()
