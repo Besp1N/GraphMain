@@ -1,10 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 import classes from "./mainNav.module.css";
-import React, { FC } from "react";
+import  { FC, ReactNode } from "react";
 interface INavItemProps {
   href: string;
   className?: string;
-  children: JSX.Element | string;
+  children:  string | ReactNode | JSX.Element;
   onClick?: () => void;
 }
 

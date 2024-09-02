@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback,  useEffect, useState } from "react";
 import {
   getLatestNotifications,
   HttpError,
@@ -7,7 +7,7 @@ import {
 import { useFetchSafe, useProtectedResource } from "../../http/hooks";
 import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
-import { useBreadcrumbs } from "../../store/appStore";
+import {  useBreadcrumbs } from "../../store/appStore";
 import NotificationList from "../notification/notificationList";
 import { Pagination, Paper } from "@mui/material";
 
@@ -19,9 +19,9 @@ const NotificationsPage: FC = function () {
     setBreadcrumbs([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   const [page, setPage] = useState(1); // Start with page 1
   const [totalPages, setTotalPages] = useState(2);
+
 
   // "page - 1" because MUI indexes from 1 because no one indexes from 0 apparently
   const fetcher = useCallback(() => getLatestNotifications(page - 1), [page]);

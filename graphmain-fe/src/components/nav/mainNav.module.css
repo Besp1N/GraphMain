@@ -40,13 +40,12 @@
   margin-inline: auto 0;
 }
 
-.notification-indicator::after {
-  content: "";
-  border-radius: 100%;
-  background-color: red;
-  width: 1em;
-  height: 1em;
-  position: absolute;
-  transform: translate(0.5rem, 0.5rem);
-  z-index: -1;
+.notification-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.notification-icon {
+  margin-right: 0.5rem; /* Adjust spacing between the icon and text */
 }

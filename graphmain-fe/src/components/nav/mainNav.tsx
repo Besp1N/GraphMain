@@ -7,6 +7,8 @@ import { Paper } from "@mui/material";
 import Breadcrumbs from "../ui/breadcrumbs";
 import { AppContext } from "../../store/appStore";
 
+import {  NotificationsActive } from "@mui/icons-material"; // Import MUI icons
+
 export default function MainNav() {
   const { loggedIn, email } = useContext(AuthContext);
   const { messageQueue } = useContext(AppContext)!;
@@ -14,7 +16,11 @@ export default function MainNav() {
   const [hasNewMessage, setHasNewMessage] = useState(false);
 
   useEffect(() => {
-    if (location.pathname !== "/notifications" && messageQueue.length > 0) {
+    if (messageQueue.length > 0) {
+      console.log("new notif")
+      if (location.pathname === "/notifications") {
+        alert(`New notification arrived.\n${messageQueue[messageQueue.length - 1].message}\nPlease refresh the page to see more.`)
+      }
       setHasNewMessage(true);
     }
   }, [messageQueue, location.pathname]);
@@ -36,11 +42,18 @@ export default function MainNav() {
             <li>
               <NavItem
                 href={"/notifications"}
-                className={
-                  hasNewMessage ? classes["notification-indicator"] : ""
-                }
+                className={classes["notification-item"]}
                 onClick={() => setHasNewMessage(false)} // Reset on click
               >
+                {hasNewMessage ? (
+                  <NotificationsActive
+                    color="error"
+                    className={classes["notification-icon"]}
+                  />
+                ) : (
+                  ""
+                  // <Notifications className={classes["notification-icon"]} />
+                )}
                 Notifications
               </NavItem>
             </li>
