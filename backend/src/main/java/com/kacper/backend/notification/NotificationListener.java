@@ -6,9 +6,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,7 +15,6 @@ import java.util.logging.Logger;
 public class NotificationListener extends Thread implements DisposableBean
 {
     private Connection connection;
-    private BufferedWriter writer;
     private final Object lock = new Object();
     private final NotificationService notificationService;
 
@@ -35,16 +31,10 @@ public class NotificationListener extends Thread implements DisposableBean
             Statement statement = connection.createStatement();
             statement.execute("LISTEN notifications_channel;");
             statement.close();
-            writer = new BufferedWriter(new FileWriter("notifications.log", true));
             this.start();
             Runtime.getRuntime().addShutdownHook(new Thread(this::destroy));
-        } catch (SQLException | IOException e) {
-            try {
-                writer.write("cos sie zepsulo");
-                writer.flush();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+        } catch (SQLException e) {
+           throw new RuntimeException(e);
         }
     }
 
@@ -63,22 +53,11 @@ public class NotificationListener extends Thread implements DisposableBean
                         logger.info("Received notification: " + payload);
 
                         notificationService.sendNotification(payload);
-
-                        writer.write("\n");
-                        writer.write("Received notification: " + payload + "\n");
-                        writer.write("\n");
-                        writer.newLine();
-                        writer.flush();
                     }
                 }
             }
-        } catch (SQLException | IOException e) {
-            try {
-                writer.write("cos sie zepsulo");
-                writer.flush();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -90,17 +69,9 @@ public class NotificationListener extends Thread implements DisposableBean
             if (connection != null) {
                 connection.close();
             }
-            if (writer != null) {
-                writer.close();
-            }
             this.interrupt(); // Interrupt the thread
-        } catch (SQLException | IOException e) {
-            try {
-                writer.write("cos sie zepsulo");
-                writer.flush();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
