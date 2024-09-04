@@ -1,10 +1,10 @@
-import aws_config
+from config import aws_config
 import psycopg2
 import psycopg2.extras
 import csv
 
 
-def execute_query_and_save_to_csv(query, csv_filename):
+def save_hum_to_csv(query, csv_filename):
     conn = None
     cursor = None
     try:
@@ -40,18 +40,3 @@ def execute_query_and_save_to_csv(query, csv_filename):
             cursor.close()
         if conn is not None:
             conn.close()
-
-
-def main():
-    # Define the SQL query with date filter
-    query = "SELECT * FROM measurements WHERE sensor_id = 4 AND timestamp >= '2024-08-25T00:00:00' ORDER BY timestamp"
-
-    # Define the CSV filename where results will be saved
-    csv_filename = "query_results_hum.csv"
-
-    # Execute the query and save the results to a CSV file
-    execute_query_and_save_to_csv(query, csv_filename)
-
-
-if __name__ == "__main__":
-    main()
