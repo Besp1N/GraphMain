@@ -4,6 +4,7 @@ from data_download_hum import main as download_hum_data
 from data_preprocessing import preprocess_data
 from model_training import train_model, predict_anomalies
 
+
 def plot_temperature(data, anomalies):
     plt.figure(figsize=(10, 6))
     plt.plot(data['timestamp'], data['temperature'], label='Temperature')
@@ -15,6 +16,7 @@ def plot_temperature(data, anomalies):
     plt.savefig('temperature_plot.png')
     plt.show()
 
+
 def plot_humidity(data, anomalies):
     plt.figure(figsize=(10, 6))
     plt.plot(data['timestamp'], data['humidity'], label='Humidity')
@@ -25,6 +27,7 @@ def plot_humidity(data, anomalies):
     plt.legend()
     plt.savefig('humidity_plot.png')
     plt.show()
+
 
 def main():
     # Download data
@@ -47,6 +50,7 @@ def main():
     # Plot temperature and humidity with anomalies
     plot_temperature(data, anomalies)
     plot_humidity(data, anomalies)
+
 
 if __name__ == "__main__":
     main()

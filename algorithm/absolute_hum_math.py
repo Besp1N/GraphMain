@@ -1,8 +1,11 @@
+import math
+
 import pandas as pd
-import absolute_hum_math
+
 
 def calculate_absolute_humidity(RH, T):
     return (217 * RH * 6.112 * math.exp((17.67 * T) / (T + 243.5))) / (100 * (T + 273.15))
+
 
 rh_df = pd.read_csv('query_results_hum.csv')
 t_df = pd.read_csv('query_results_temp.csv')
