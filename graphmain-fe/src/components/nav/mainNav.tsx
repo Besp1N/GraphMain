@@ -8,9 +8,10 @@ import Breadcrumbs from "../ui/breadcrumbs";
 import { AppContext } from "../../store/appStore";
 
 import {  NotificationsActive } from "@mui/icons-material"; // Import MUI icons
+import { ROLE } from "../../http/authUtils";
 
 export default function MainNav() {
-  const { loggedIn, email } = useContext(AuthContext);
+  const { loggedIn, email, role } = useContext(AuthContext);
   const { messageQueue } = useContext(AppContext)!;
   const location = useLocation(); // Get the current route
   const [hasNewMessage, setHasNewMessage] = useState(false);
@@ -33,6 +34,9 @@ export default function MainNav() {
             {loggedIn ? "Dashboard" : "Login to continue"}
           </NavItem>
         </li>
+        <li>
+        {role == ROLE.ADMIN ? <NavItem href="/admin">Admin panel</NavItem>:""}
+        </li>
 
         {loggedIn ? (
           <>
@@ -52,7 +56,6 @@ export default function MainNav() {
                   />
                 ) : (
                   ""
-                  // <Notifications className={classes["notification-icon"]} />
                 )}
                 Notifications
               </NavItem>

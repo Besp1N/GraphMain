@@ -14,6 +14,9 @@ import ErrorPage from "./components/pages/errorPage.tsx";
 import DashboardPage from "./components/pages/dasboardPage.tsx";
 import { AppContextProvider } from "./store/appStore.tsx";
 import NotificationsPage from "./components/pages/notificationsPage.tsx";
+import AdminPanel from "./components/pages/admin/adminRoot.tsx";
+import RegisterUserPage from "./components/pages/admin/registerUserPage.tsx";
+import AllUsersPage from "./components/pages/admin/allUsersPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +52,20 @@ const router = createBrowserRouter([
         path: "/devices/:deviceId/measurements/:sensorId",
         element: <MeasurementsTablePage />,
       },
+      {
+        path: "/admin",
+        element: <AdminPanel />,
+        children: [
+            {
+              path: "register",
+              element: <RegisterUserPage />
+            },
+            {
+              path: "users",
+              element: <AllUsersPage />
+            }
+        ]
+      }
     ],
   },
 ]);

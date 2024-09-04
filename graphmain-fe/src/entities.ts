@@ -1,3 +1,5 @@
+import { ROLE } from "./http/authUtils";
+
 // This file contains all relevant Spring Boot entities mappings that may be serialized and sent via JSON.
 export type Entity = Device | Sensor | Measurement | Notification;
 
@@ -40,3 +42,12 @@ export type NotificationEntity = {
   created_at: string;
   measurement: Measurement;
 };
+
+export type User = {
+  id: number,
+  email: string,
+  name: string,
+  lastName: string,
+  role: ROLE,
+  createdAt: string
+}

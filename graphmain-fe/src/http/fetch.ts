@@ -1,4 +1,4 @@
-import { Device, NotificationEntity, Sensor } from "../entities";
+import { Device, Measurement, NotificationEntity, Sensor, User } from "../entities";
 import { getToken } from "./authUtils";
 
 export const BACKEND_URI = "http://127.0.0.1:8080";
@@ -49,13 +49,24 @@ export class HttpError extends Error {
   }
 }
 
-export type MeasurementDataForSensor = {
-  deviceId: number;
-  deviceName: string;
-  deviceType: string;
-  totalPages: number;
-  sensor: Sensor;
-};
+/**
+ * Function attaching proper credentials to a request using authUtils.
+ * Mutates requestOptions
+ * @param requestOptions Request options like in "fetch" 2nd parameter
+ */
+export function addCredentials(requestOptions: RequestInit) {
+  const token = getToken();
+  if (requestOptions.headers == undefined) {
+    requestOptions.headers = {} as HeadersInit;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-expect-error
+  requestOptions.headers["Authorization"] = `Bearer ${token}`;
+  return requestOptions;
+}
+
+
 export type Result<T, E> = T | E;
 export type Option<T> = T | undefined;
 
@@ -82,6 +93,17 @@ export async function getDevices(): Promise<
 }
 
 /**
+ * Return type of GET for Measurements HTTP request to backend.
+ * Returned from getMeasurements().
+ */
+export type MeasurementDataForSensor = {
+  deviceId: number;
+  deviceName: string;
+  deviceType: string;
+  totalPages: number;
+  sensor: Sensor;
+};
+/**
  * Function for fetching all Measurments in a given span in seconds
  */
 export async function getMeasurements(
@@ -91,7 +113,7 @@ export async function getMeasurements(
   to?: EpochTimeStamp
 ): Promise<Result<Option<MeasurementDataForSensor>, HttpError>> {
   if (from === undefined) {
-    from = Math.floor(Date.now() / 1000 - 60 * 60 * 24 * 7 * 4 * 10 * 10); // default to last 7 days
+    from = 0; 
   }
   if (to === undefined) {
     to = Math.floor(Date.now() / 1000); // default to now
@@ -100,22 +122,6 @@ export async function getMeasurements(
     `${BACKEND_URI}/api/v1/device/measurement/${sensor}?from=${from}&to=${to}&numPage=${page}`,
     addCredentials({})
   );
-}
-/**
- * Function attaching proper credentials to a request using authUtils.
- * Mutates requestOptions
- * @param requestOptions Request options like in "fetch" 2nd parameter
- */
-export function addCredentials(requestOptions: RequestInit) {
-  const token = getToken();
-  if (requestOptions.headers == undefined) {
-    requestOptions.headers = {} as HeadersInit;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-expect-error
-  requestOptions.headers["Authorization"] = `Bearer ${token}`;
-  return requestOptions;
 }
 
 /**
@@ -136,6 +142,27 @@ export async function getLatestNotifications(
     `${BACKEND_URI}/api/v1/notifications/${page}`,
     addCredentials({})
   );
+}
+/**
+ * Function for getting all the users. Requires admin privilege.
+ */
+export async function getUsers(): Promise<Result<Option<User[]>, HttpError>> {
+  return await fetchSafe<User[]>(`${BACKEND_URI}/api/v1/user/`, addCredentials({}));
+}
+
+
+/**
+ * Function for anomalous data from sensor.
+ */
+export async function getAnomalousData(sensorId: Sensor["id"], from?: number, to?: number): Promise<Result<Option<Measurement["id"][]>, HttpError>> {
+  if (from === undefined) {
+    from = 0 // default to all
+
+  }
+  if (to === undefined) {
+    to = Math.floor(Date.now() / 1000); // default to now
+  }
+  return await fetchSafe<Measurement["id"][]>(`${BACKEND_URI}/api/v1/anomaly/${sensorId}?from=${from}&to=${to}`, addCredentials({}));
 }
 
 /**
