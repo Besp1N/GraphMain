@@ -1,36 +1,29 @@
-from config import aws_config
 import psycopg2
 import psycopg2.extras
 import csv
+import os
+from config.aws_config import DB_PARAMS
 
 
 def save_hum_to_csv(query, csv_filename):
     conn = None
     cursor = None
     try:
-        # Connect to the PostgreSQL database
-        conn = psycopg2.connect(**aws_config.DB_PARAMS)
-
-        # Create a cursor with named tuple factory for more accessible results
+        conn = psycopg2.connect(**DB_PARAMS)
         cursor = conn.cursor(cursor_factory=psycopg2.extras.NamedTupleCursor)
 
-        # Execute the query
         cursor.execute(query)
-
-        # Fetch all rows from the executed query
         rows = cursor.fetchall()
-
-        # Get the column names from the cursor description
         column_names = [desc[0] for desc in cursor.description]
 
-        # Write the results to a CSV file
         with open(csv_filename, 'w', newline='') as csvfile:
             csvwriter = csv.writer(csvfile)
-            csvwriter.writerow(column_names)  # Write the column headers
+            csvwriter.writerow(column_names)
             for row in rows:
-                csvwriter.writerow(row)  # Write the data rows
+                csvwriter.writerow(row)
 
-        print(f"Query results saved to {csv_filename}")
+        if rows:
+            print(f"New records added to {csv_filename}")
 
     except Exception as error:
         print(f"Database operation error: {error}")
