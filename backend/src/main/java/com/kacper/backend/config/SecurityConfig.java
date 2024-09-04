@@ -48,6 +48,11 @@ public class SecurityConfig
                                 "/webjars/**",
                                 "/swagger-ui.html"
                         ).permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/user/"
+                        ).hasAnyAuthority("ROLE_ADMIN")
+
                         .requestMatchers(HttpMethod.POST,
                                 "/public/send/",
                                 "/auth/register",

@@ -1,9 +1,8 @@
 package com.kacper.backend.user;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -13,6 +12,11 @@ public class UserController
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/")
+    public List<UserResponse> getAllUsers() {
+        return userService.getAllUsers();
     }
 
     @DeleteMapping("/{id}")
