@@ -43,7 +43,7 @@ def execute_query_and_save_to_csv(query, csv_filename):
 
 def main():
     # Define the SQL query with date filter
-    query = "SELECT * FROM measurements WHERE sensor_id = 4 AND timestamp >= '2024-08-25T00:00:00'"
+    query = "SELECT * FROM measurements WHERE sensor_id = 4 AND timestamp >= '2024-08-25T00:00:00' ORDER BY timestamp"
 
     # Define the CSV filename where results will be saved
     csv_filename = "query_results_hum.csv"
