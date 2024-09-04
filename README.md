@@ -60,4 +60,23 @@ To run frontend app
     npm i 
     npm run dev
 ```
-    
+
+To run algorithm
+
+firstly set up conda environment with python 3.8 and install dependencies
+
+```bash
+    conda create -n graphmain python=3.8
+    conda activate graphmain
+    pip install -r requirements.txt
+```
+
+then run the algorithm
+
+```bash
+    cd algorithm
+    put AWS config in aws_config.py
+    python3 data_download_hum.py
+    python3 data_download_temp.py
+    python3 main.py
+```
