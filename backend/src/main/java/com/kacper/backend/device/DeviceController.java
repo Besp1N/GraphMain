@@ -93,9 +93,11 @@ public class DeviceController
     @GetMapping("/measurement/graph/{sensorId}")
     public DeviceMeasurementPresentation getDeviceSensorMeasurementPresentationInfoGraph(
             @PathVariable Integer sensorId,
+            @RequestParam Integer from,
+            @RequestParam Integer to,
             @RequestParam Integer max
     ) {
-        return deviceService.getDeviceSensorMeasurementPresentationInfoGraph(sensorId, max);
+        return deviceService.getDeviceSensorMeasurementPresentationInfoGraph(sensorId, max, from, to);
     }
 
     /**

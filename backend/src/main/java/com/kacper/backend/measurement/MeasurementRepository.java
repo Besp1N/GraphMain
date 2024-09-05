@@ -25,11 +25,11 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Intege
     @Query(value = "SELECT * FROM (" +
             "SELECT m.*, ROW_NUMBER() OVER (ORDER BY m.id) AS row_num " +
             "FROM measurements m " +
-            "WHERE m.sensor_id = :sensorId) subquery " +
+            "WHERE m.sensor_id = :sensorId AND m.timestamp BETWEEN :fromTime AND :toTime) subquery " +
             "WHERE MOD(subquery.row_num, :interval) = 0",
             nativeQuery = true
     )
-    List<Measurement> findMeasurementsBySensorIdWithInterval(@Param("sensorId") Integer sensorId, @Param("interval") Integer interval);
+    List<Measurement> findMeasurementsBySensorIdWithIntervalAndTimestampBetween(@Param("sensorId") Integer sensorId, @Param("interval") Integer interval, @Param("fromTime") LocalDateTime fromTime, @Param("toTime") LocalDateTime toTime);
 
-    long countBySensorId(Integer sensorId);
+    long countBySensorIdAndTimestampBetween(Integer sensorId, LocalDateTime fromTime, LocalDateTime toTime);
 }
