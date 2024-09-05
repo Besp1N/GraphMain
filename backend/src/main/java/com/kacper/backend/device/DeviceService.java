@@ -162,15 +162,19 @@ public class DeviceService
 
     public DeviceMeasurementPresentation getDeviceSensorMeasurementPresentationInfoGraph(
             Integer sensorId,
-            Integer max) {
+            Integer max,
+            Integer from,
+            Integer to) {
         Sensor sensor = getSensorById(sensorId);
         Device device = sensor.getDevice();
 
-        long totalMeasurements = measurementRepository.countBySensorId(sensorId);
+        LocalDateTime fromTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(from), ZoneId.systemDefault());
+        LocalDateTime toTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(to), ZoneId.systemDefault());
 
+        long totalMeasurements = measurementRepository.countBySensorIdAndTimestampBetween(sensorId, fromTime, toTime);
         int interval = (int) Math.ceil((double) totalMeasurements / max);
 
-        List<Measurement> filteredMeasurements = measurementRepository.findMeasurementsBySensorIdWithInterval(sensorId, interval);
+        List<Measurement> filteredMeasurements = measurementRepository.findMeasurementsBySensorIdWithIntervalAndTimestampBetween(sensorId, interval, fromTime, toTime);
 
         return new DeviceMeasurementPresentation(
                 device.getId(),
