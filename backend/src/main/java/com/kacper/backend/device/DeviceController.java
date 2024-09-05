@@ -90,6 +90,14 @@ public class DeviceController
         return deviceService.getDeviceSensorMeasurementPresentationInfo(sensorId, numPage, from, to);
     }
 
+    @GetMapping("/measurement/graph/{sensorId}")
+    public DeviceMeasurementPresentation getDeviceSensorMeasurementPresentationInfoGraph(
+            @PathVariable Integer sensorId,
+            @RequestParam Integer max
+    ) {
+        return deviceService.getDeviceSensorMeasurementPresentationInfoGraph(sensorId, max);
+    }
+
     /**
      * @param deviceId is a path variable
      * @return Device - whole object included ALL sensors and ALL measurements of ALL sensors,
