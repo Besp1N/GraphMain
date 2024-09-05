@@ -21,7 +21,7 @@ class SensorServiceTest {
     private static final Integer DEVICE_ID = 1;
     private static final Integer SENSOR_ID = 10;
     private static final String SENSOR_NAME = "Temp Test";
-    private static final String SENSOR_TYPE = "Temperature";
+    private static final String SENSOR_TYPE = "Temp";
     private static final String UNIT = "C";
 
     @Mock
@@ -44,7 +44,7 @@ class SensorServiceTest {
 
     @Test
     void addSensor() {
-        // sensor added to device successfully yipee
+        // sensor added to device successfully yipeeeeee
         when(deviceService.getDeviceById(DEVICE_ID)).thenReturn(device);
 
         Device result = sensorService.addSensorToDevice(DEVICE_ID, sensorRequest);
