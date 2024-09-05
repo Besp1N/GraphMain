@@ -1,4 +1,10 @@
-import { Device, Measurement, NotificationEntity, Sensor, User } from "../entities";
+import {
+  Device,
+  Measurement,
+  NotificationEntity,
+  Sensor,
+  User,
+} from "../entities";
 import { getToken } from "./authUtils";
 
 export const BACKEND_URI = "http://127.0.0.1:8080";
@@ -66,7 +72,6 @@ export function addCredentials(requestOptions: RequestInit) {
   return requestOptions;
 }
 
-
 export type Result<T, E> = T | E;
 export type Option<T> = T | undefined;
 
@@ -113,7 +118,7 @@ export async function getMeasurements(
   to?: EpochTimeStamp
 ): Promise<Result<Option<MeasurementDataForSensor>, HttpError>> {
   if (from === undefined) {
-    from = 0; 
+    from = 0;
   }
   if (to === undefined) {
     to = Math.floor(Date.now() / 1000); // default to now
@@ -147,31 +152,60 @@ export async function getLatestNotifications(
  * Function for getting all the users. Requires admin privilege.
  */
 export async function getUsers(): Promise<Result<Option<User[]>, HttpError>> {
-  return await fetchSafe<User[]>(`${BACKEND_URI}/api/v1/user/`, addCredentials({}));
+  return await fetchSafe<User[]>(
+    `${BACKEND_URI}/api/v1/user/`,
+    addCredentials({})
+  );
 }
 
-
 type AnomaliesFetchReturnType = {
-  measurement_ids: Measurement["id"][]
-} 
+  measurement_ids: Measurement["id"][];
+};
 /**
  * Function for anomalous data from sensor.
  */
-export async function getAnomalousData(sensorId: Sensor["id"], from?: number, to?: number): Promise<Result<Option<Measurement["id"][]>, HttpError>> {
+export async function getAnomalousData(
+  sensorId: Sensor["id"],
+  from?: number,
+  to?: number
+): Promise<Result<Option<Measurement["id"][]>, HttpError>> {
   if (from === undefined) {
-    from = 0 // default to all
-
+    from = 0; // default to all
   }
   if (to === undefined) {
     to = Math.floor(Date.now() / 1000); // default to now
   }
-  const data = await fetchSafe<AnomaliesFetchReturnType>(`${BACKEND_URI}/api/v1/anomaly/${sensorId}?from=${from}&to=${to}`, addCredentials({}));
+  const data = await fetchSafe<AnomaliesFetchReturnType>(
+    `${BACKEND_URI}/api/v1/anomaly/${sensorId}?from=${from}&to=${to}`,
+    addCredentials({})
+  );
   if (data && !(data instanceof HttpError)) {
-    return data.measurement_ids
+    return data.measurement_ids;
   }
   return data;
 }
+/**
+ *
+ *
+ */
+export async function getMeasurementsForGraph(
+  sensorId: Sensor["id"],
+  from?: number,
+  to?: number,
+  max: number = 300
+): Promise<Result<Option<MeasurementDataForSensor>, HttpError>> {
+  if (from === undefined) {
+    from = 0; // default to all
+  }
+  if (to === undefined) {
+    to = Math.floor(Date.now() / 1000); // default to now
+  }
 
+  return await fetchSafe<MeasurementDataForSensor>(
+    `${BACKEND_URI}/api/v1/device/measurement/graph/${sensorId}?from=${from}&to=${to}&max=${max}`,
+    addCredentials({})
+  );
+}
 /**
  * Fetch API implementation that never throws and suggests to check if the data is null.
  */
