@@ -7,7 +7,6 @@ import com.kacper.backend.sensor.Sensor;
 import com.kacper.backend.sensor.SensorMeasurementsPresentationResponse;
 import com.kacper.backend.sensor.SensorPresentationResponse;
 import com.kacper.backend.sensor.SensorRepository;
-import com.kacper.backend.utlils.Debug;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -159,5 +158,32 @@ public class DeviceService
     private Sensor getSensorById(Integer sensorId) {
         return sensorRepository.findById(sensorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Sensor " + sensorId.toString() + " Not found"));
+    }
+
+    public DeviceMeasurementPresentation getDeviceSensorMeasurementPresentationInfoGraph(
+            Integer sensorId,
+            Integer max) {
+        Sensor sensor = getSensorById(sensorId);
+        Device device = sensor.getDevice();
+
+        long totalMeasurements = measurementRepository.countBySensorId(sensorId);
+
+        int interval = (int) Math.ceil((double) totalMeasurements / max);
+
+        List<Measurement> filteredMeasurements = measurementRepository.findMeasurementsBySensorIdWithInterval(sensorId, interval);
+
+        return new DeviceMeasurementPresentation(
+                device.getId(),
+                device.getDeviceName(),
+                device.getDeviceType(),
+                1, // Since we are not paginating, we can set totalPages to 1
+                new SensorMeasurementsPresentationResponse(
+                        sensor.getId(),
+                        sensor.getSensorName(),
+                        sensor.getSensorType(),
+                        sensor.getUnit(),
+                        filteredMeasurements
+                )
+        );
     }
 }

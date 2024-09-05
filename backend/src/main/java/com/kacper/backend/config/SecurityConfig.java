@@ -77,7 +77,8 @@ public class SecurityConfig
                                 "/api/v1/device/sensor/{deviceId}",
                                 "/api/v1/device/measurement/{sensorId}",
                                 "/api/v1/notifications/{numPage}",
-                                "/api/v1/anomaly/{sensorId}"
+                                "/api/v1/anomaly/{sensorId}",
+                                "/api/v1/measurement/graph/{sensorId}"
                         ).hasAnyAuthority( "ROLE_USER", "ROLE_ADMIN")
 
                         .requestMatchers("/ws/**").permitAll()
