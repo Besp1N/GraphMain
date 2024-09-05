@@ -1,95 +1,119 @@
-//package com.kacper.backend.device;
-//
-//import static org.mockito.Mockito.*;
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//import com.kacper.backend.measurement.Measurement;
-//import com.kacper.backend.measurement.MeasurementRepository;
-//import com.kacper.backend.sensor.Sensor;
-//import com.kacper.backend.sensor.SensorRepository;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//import org.springframework.data.domain.Page;
-//import org.springframework.data.domain.PageImpl;
-//import org.springframework.data.domain.PageRequest;
-//
-//import java.time.Instant;
-//import java.time.LocalDateTime;
-//import java.time.ZoneId;
-//import java.util.Collections;
-//import java.util.List;
-//
-///**
-// * Tests for the DeviceService class
-// *
-// * @author Kacper Karabinowski
-// */
-//@ExtendWith(MockitoExtension.class)
-//public class DeviceServiceTest {
-//
-//    @Mock
-//    private DeviceRepository deviceRepository;
-//
-//    @Mock
-//    private DevicePresentationMapper devicePresentationMapper;
-//
-//    @Mock
-//    private SensorRepository sensorRepository;
-//
-//    @Mock
-//    private MeasurementRepository measurementRepository;
-//
-//    @InjectMocks
-//    private DeviceService deviceService;
-//
-//    private Sensor sensor;
-//    private Device device;
-//    private List<Measurement> measurements;
-//
-//    @BeforeEach
-//    void setUp() {
-//        device = new Device(1, "Device1", "Type1", Collections.emptyList());
-//        sensor = new Sensor(1, "Sensor1", "Type1", device, Collections.emptyList());
-//        measurements = Collections.singletonList(new Measurement(1, 20.0, "C", LocalDateTime.now(), sensor));
-//    }
-//
-//    @Test
-//    void testGetDeviceSensorMeasurementPresentationInfo() {
-//        // Given
-//        Integer sensorId = 1;
-//        int numPage = 0;
-//        int from = 1722992400;
-//        int to = 1723078800;
-//
-//        LocalDateTime fromTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(from), ZoneId.systemDefault());
-//        LocalDateTime toTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(to), ZoneId.systemDefault());
-//
-//
-//        PageRequest pageable = PageRequest.of(numPage, 5);
-//        Page<Measurement> measurementsPage = new PageImpl<>(measurements);
-//
-//        when(sensorRepository.findById(sensorId)).thenReturn(java.util.Optional.of(sensor));
-//        when(measurementRepository.findAllBySensorIdAndTimestampBetween(sensorId, fromTime, toTime, pageable)).thenReturn(measurementsPage);
-//
-//        // When
-//        DeviceMeasurementPresentation result = deviceService.getDeviceSensorMeasurementPresentationInfo(sensorId, numPage, from, to);
-//
-//        // Then
-//        assertNotNull(result);
-//        assertEquals(device.getId(), result.deviceId());
-//        assertEquals(device.getDeviceName(), result.deviceName());
-//        assertEquals(device.getDeviceType(), result.deviceType());
-//        assertEquals(sensor.getId(), result.sensor().id());
-//        assertEquals(sensor.getSensorName(), result.sensor().sensorName());
-//        assertEquals(sensor.getSensorType(), result.sensor().sensorType());
-//        assertEquals(measurements, result.sensor().measurementList());
-//
-//        verify(sensorRepository, times(1)).findById(sensorId);
-//        verify(measurementRepository, times(1)).findAllBySensorIdAndTimestampBetween(sensorId, fromTime, toTime, pageable);
-//    }
-//
-//}
+package com.kacper.backend.device;
+
+import com.kacper.backend.measurement.Measurement;
+import com.kacper.backend.measurement.MeasurementRepository;
+import com.kacper.backend.sensor.Sensor;
+import com.kacper.backend.sensor.SensorRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class DeviceServiceTest {
+
+    @Mock
+    private DeviceRepository deviceRepository;
+
+    @Mock
+    private DevicePresentationMapper devicePresentationMapper;
+
+    @InjectMocks
+    private DeviceService deviceService;
+    private Device device;
+    private Measurement measurement;
+    private DeviceRequest deviceRequest;
+
+    @BeforeEach
+    void setUp() {
+        device = Device.builder().id(1).deviceName("Device1").deviceType("Type1").build();
+        Sensor sensor = Sensor.builder().id(1).sensorName("Sensor1").sensorType("Temp").unit("C").device(device).build();
+        measurement = Measurement.builder().id(1).value(25.5).timestamp(LocalDateTime.now()).sensor(sensor).build();
+        deviceRequest = new DeviceRequest("Device1", "Type1");
+    }
+
+    @Test
+    void addDevice_correct() {
+        // device is saved
+        when(deviceRepository.save(any(Device.class))).thenReturn(device);
+        when(devicePresentationMapper.apply(any(Device.class))).thenReturn(new DevicePresentationResponse(1, "Device1", "Type1"));
+
+        DevicePresentationResponse response = deviceService.addDevice(deviceRequest);
+
+        assertThat(response).isNotNull();
+        assertThat(response.deviceName()).isEqualTo("Device1");
+
+        verify(deviceRepository).save(any(Device.class));
+    }
+
+    @Test
+    void allDevices() {
+        // returns list of mapped devices
+        List<Device> devices = Collections.singletonList(device);
+
+        when(deviceRepository.findAll()).thenReturn(devices);
+        when(devicePresentationMapper.apply(device)).thenReturn(new DevicePresentationResponse(1, "Device1", "Type1"));
+
+        List<DevicePresentationResponse> result = deviceService.getAllDevicesPresentationInfo();
+
+        assertThat(result).hasSize(1);
+
+        verify(deviceRepository).findAll();
+
+        verify(devicePresentationMapper).apply(device);
+    }
+
+    @Test
+    void returnsvalidDevice() {
+        // returns the correct device when exist
+        when(deviceRepository.findById(1)).thenReturn(Optional.of(device));
+
+        Device result = deviceService.getDeviceById(1);
+
+        assertThat(result).isEqualTo(device);
+
+        verify(deviceRepository).findById(1);
+    }
+
+    @Test
+    void valid_deleteDevice() {
+        // device is deleted when exists
+        when(deviceRepository.findById(1)).thenReturn(Optional.of(device));
+
+        Device result = deviceService.deleteDevice(1);
+
+        assertThat(result).isEqualTo(device);
+
+        verify(deviceRepository).delete(device);
+    }
+
+
+    @Test
+    void addDevice_requestNUllException() {
+        // NullPointerException if device request null
+        assertThatThrownBy(() -> deviceService.addDevice(null)).isInstanceOf(NullPointerException.class);
+    }
+
+
+    @Test
+    void emptyList_noDevices() {
+        // returns an empty list when no devices exist
+        when(deviceRepository.findAll()).thenReturn(List.of());
+
+        List<DevicePresentationResponse> result = deviceService.getAllDevicesPresentationInfo();
+
+        assertThat(result).isEmpty();
+    }
+
+}
