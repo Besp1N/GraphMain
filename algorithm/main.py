@@ -1,52 +1,52 @@
-import matplotlib.pyplot as plt
-from data_download_temp import main as download_temp_data
-from data_download_hum import main as download_hum_data
-from data_preprocessing import preprocess_data
-from model_training import train_model, predict_anomalies
+import pandas as pd
+import data_downloader.data_download_temp as data_temp_downloader
+import data_downloader.data_download_hum as data_hum_downloader
+from data_process.absolute_hum_math import calculate_and_save_absolute_humidity
+from data_process.data_preprocessing import preprocess_data
+from data_process.model_training import train_model, predict_anomalies
+import query.query as query
+import joblib
 
-def plot_temperature(data, anomalies):
-    plt.figure(figsize=(10, 6))
-    plt.plot(data['timestamp'], data['temperature'], label='Temperature')
-    plt.scatter(anomalies['timestamp'], anomalies['temperature'], color='red', label='Anomalies')
-    plt.xlabel('Timestamp')
-    plt.ylabel('Temperature')
-    plt.title('Temperature Over Time')
-    plt.legend()
-    plt.savefig('temperature_plot.png')
-    plt.show()
-
-def plot_humidity(data, anomalies):
-    plt.figure(figsize=(10, 6))
-    plt.plot(data['timestamp'], data['humidity'], label='Humidity')
-    plt.scatter(anomalies['timestamp'], anomalies['humidity'], color='red', label='Anomalies')
-    plt.xlabel('Timestamp')
-    plt.ylabel('Humidity')
-    plt.title('Humidity Over Time')
-    plt.legend()
-    plt.savefig('humidity_plot.png')
-    plt.show()
 
 def main():
-    # Download data
-    download_temp_data()
-    download_hum_data()
+    try:
+        data_temp_downloader.save_temp_to_csv(
+            query.queries["temp"],
+            "../../../PycharmProjects/ai_model_test/data/query_results_temp.csv",
+        )
 
-    # Preprocess data
-    data = preprocess_data('query_results_temp.csv', 'query_results_hum.csv')
+        data_hum_downloader.save_hum_to_csv(
+            query.queries["hum"],
+            "../../../PycharmProjects/ai_model_test/data/query_results_hum.csv",
+        )
 
-    # Train model
-    model = train_model(data)
+        data = preprocess_data(
+            'results/query_results_temp.csv',
+            'results/query_results_hum.csv'
+        )
 
-    # Predict anomalies
-    anomalies = predict_anomalies(model, data)
+        model = train_model(data)
 
-    # Save anomalies to CSV
-    anomalies.to_csv('anomalies.csv', index=False)
-    print("Anomalies saved to anomalies.csv")
+        # Export the trained model
+        joblib.dump(model, 'results/trained_model.pkl')
+        print("Model saved to results/trained_model.pkl")
 
-    # Plot temperature and humidity with anomalies
-    plot_temperature(data, anomalies)
-    plot_humidity(data, anomalies)
+        anomalies = predict_anomalies(model, data)
+        anomalies.to_csv('results/anomalies.csv', index=False)
+        print("Anomalies saved to anomalies.csv")
+
+        calculate_and_save_absolute_humidity(
+            'results/query_results_hum.csv',
+            'results/query_results_temp.csv',
+            'results/absolute_humidity.csv'
+        )
+
+        # plot_temperature(data, anomalies)
+        # plot_humidity(data, anomalies)
+
+    except KeyboardInterrupt:
+        print("Process interrupted by user. Exiting...")
+
 
 if __name__ == "__main__":
     main()

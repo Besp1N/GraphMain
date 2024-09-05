@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
+
 def preprocess_data(temp_csv, hum_csv):
     # Load data
     temp_data = pd.read_csv(temp_csv)
