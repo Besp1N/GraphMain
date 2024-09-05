@@ -151,6 +151,9 @@ export async function getUsers(): Promise<Result<Option<User[]>, HttpError>> {
 }
 
 
+type AnomaliesFetchReturnType = {
+  measurement_ids: Measurement["id"][]
+} 
 /**
  * Function for anomalous data from sensor.
  */
@@ -162,7 +165,11 @@ export async function getAnomalousData(sensorId: Sensor["id"], from?: number, to
   if (to === undefined) {
     to = Math.floor(Date.now() / 1000); // default to now
   }
-  return await fetchSafe<Measurement["id"][]>(`${BACKEND_URI}/api/v1/anomaly/${sensorId}?from=${from}&to=${to}`, addCredentials({}));
+  const data = await fetchSafe<AnomaliesFetchReturnType>(`${BACKEND_URI}/api/v1/anomaly/${sensorId}?from=${from}&to=${to}`, addCredentials({}));
+  if (data && !(data instanceof HttpError)) {
+    return data.measurement_ids
+  }
+  return data;
 }
 
 /**
@@ -177,7 +184,6 @@ export async function fetchSafe<T>(
     if (!res.ok) throw HttpError.from_response(res);
 
     const data: T = await res.json();
-    console.log(data);
     return data;
   } catch (err) {
     return err as HttpError;

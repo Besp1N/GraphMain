@@ -17,6 +17,7 @@ interface IMeasurementTableProps extends PropsWithChildren {
   title: string;
   unit: string;
   measurements?: Measurement[];
+  anomalies?: Measurement["id"][]
 }
 
 const MeasurementTable: FC<IMeasurementTableProps> = function ({

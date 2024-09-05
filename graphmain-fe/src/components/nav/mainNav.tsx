@@ -3,12 +3,12 @@ import { useLocation } from "react-router-dom"; // Import to track the current r
 import classes from "./mainNav.module.css";
 import NavItem from "./navItem";
 import { AuthContext } from "../../store/authStore";
-import { Paper } from "@mui/material";
+import { Button, Paper } from "@mui/material";
 import Breadcrumbs from "../ui/breadcrumbs";
 import { AppContext } from "../../store/appStore";
 
 import {  NotificationsActive } from "@mui/icons-material"; // Import MUI icons
-import { ROLE } from "../../http/authUtils";
+import { getToken, ROLE } from "../../http/authUtils";
 
 export default function MainNav() {
   const { loggedIn, email, role } = useContext(AuthContext);
@@ -25,6 +25,8 @@ export default function MainNav() {
       setHasNewMessage(true);
     }
   }, [messageQueue, location.pathname]);
+  const { connectWebSocket, stompClient } = useContext(AppContext)!;
+  const token = getToken();
 
   return (
     <Paper elevation={1} className={classes["main-nav"]}>
@@ -62,6 +64,11 @@ export default function MainNav() {
             </li>
 
             <li className={classes["user-group"]}>
+                {!stompClient ? 
+            <Button onClick={() => connectWebSocket(token ?? "")} color="warning">
+              Reconnect
+            </Button>
+          : ""}
               <span>{email}</span>
               <div className="divider"></div>
               <NavItem href={"/logout"}>Logout</NavItem>

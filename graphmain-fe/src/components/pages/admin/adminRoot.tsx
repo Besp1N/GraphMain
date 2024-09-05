@@ -2,11 +2,11 @@ import { AppBar, Toolbar, Typography, Tabs, Tab, Box } from '@mui/material';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useProtectedResource } from '../../../http/hooks';
 import { ROLE } from '../../../http/authUtils';
-
+const TABS = ["/admin/register", "/admin/users"];
 function AdminPanel() {
   useProtectedResource(ROLE.ADMIN);
   const location = useLocation();
-  const tabIndex = location.pathname === '/admin/register' ? 0 : 1;
+  const tabIndex = TABS.indexOf(location.pathname);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
