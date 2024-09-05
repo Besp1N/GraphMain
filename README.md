@@ -44,7 +44,7 @@ Open the application.properties file and put code bellow
 Replace change_me with your data and install dependencies
 
 ```bash
-    mvn clear install
+    mvn clean install
 ```
 
 Run the project
