@@ -1,8 +1,5 @@
 import { useParams } from "react-router-dom";
-import {
-  getAnomalousData,
-  HttpError,
-} from "../../http/fetch";
+import { getAnomalousData, HttpError } from "../../http/fetch";
 import { useProtectedResource } from "../../http/hooks";
 
 import { useState, useEffect, useRef } from "react";
@@ -11,7 +8,9 @@ import MeasurmentsFilter, {
   MeasurementsFilters,
 } from "../measurement/measurmentsFilter";
 import { useBreadcrumbs } from "../../store/appStore";
-import InfiniteScrollWrapper, { MeasurementsScrollImperativeHandle } from "../measurement/measurementInfiniteScroll";
+import InfiniteScrollWrapper, {
+  MeasurementsScrollImperativeHandle,
+} from "../measurement/measurementInfiniteScroll";
 import { Sensor } from "../../entities";
 import MeasurementGraph from "../measurement/measurementsGraph";
 
@@ -49,10 +48,8 @@ const MeasurementsTablePage = function () {
       const data = await getAnomalousData(id);
       if (data == undefined || data instanceof HttpError) console.error(data);
       else setAnomalies(data!);
-
     })();
-  }, [filters]);
-
+  }, [id, filters]);
 
   return (
     <>
@@ -66,12 +63,13 @@ const MeasurementsTablePage = function () {
       <Box
         display="flex"
         justifyContent="space-around"
-        flexDirection={{ xs: "column", md: "row" }}  // Column on small screens, row on medium and up
+        flexDirection={{ xs: "column", s: "column", md: "row" }} // Column on small screens, row on medium and up
         flexWrap="wrap"
         mt={4}
         mb={4}
         maxHeight="80vh"
         width="100%"
+        position={"relative"}
       >
         <Paper
           style={{
@@ -84,11 +82,25 @@ const MeasurementsTablePage = function () {
           }}
           id="sc-trgt"
         >
-          <InfiniteScrollWrapper id={id} filters={filters} ref={scrollRef} anomalies={anomalies} />
+          <InfiniteScrollWrapper
+            id={id}
+            filters={filters}
+            ref={scrollRef}
+            anomalies={anomalies}
+          />
         </Paper>
 
-        <Box width={{ xs: "100%", md: "800px" }} maxHeight="80vh" mt={{ xs: 2, md: 0 }}>
-          <MeasurementGraph sensorId={id} filters={filters} anomalies={anomalies} />
+        <Box
+          width={{ xs: "100%", s: "100%", md: "1000px" }}
+          maxHeight="80vh"
+          mt={{ xs: 2, s: 2, md: 0 }}
+          position={"relative"}
+        >
+          <MeasurementGraph
+            sensorId={id}
+            filters={filters}
+            anomalies={anomalies}
+          />
         </Box>
       </Box>
     </>

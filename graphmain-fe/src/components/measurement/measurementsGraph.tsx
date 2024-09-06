@@ -38,7 +38,7 @@ const MeasurementGraph: FC<MeasurementGraphProps> = function ({
   }
   const measurements = data?.sensor?.measurementList;
   if (!measurements?.length) {
-    return <></>;
+    return <>Empty data</>;
   }
   // Prepare data for the graph
   let min = measurements[0].value;
