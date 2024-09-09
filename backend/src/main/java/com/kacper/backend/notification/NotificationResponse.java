@@ -13,6 +13,7 @@ public record NotificationResponse(
         LocalDateTime created_at,
         Integer device_id,
         Integer sensor_id,
+        Integer totalPages,
         Measurement measurement
 ) {
 }

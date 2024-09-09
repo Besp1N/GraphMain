@@ -63,6 +63,7 @@ public class NotificationService {
         PageRequest pageable = PageRequest.of(numPage, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Notification> notificationsPage = notificationRepository.findAll(pageable);
         List<Notification> notifications = notificationsPage.getContent();
+        int totalPages = notificationsPage.getTotalPages();
 
         return notifications.stream()
                 .map(notification -> NotificationResponse.builder()
@@ -73,6 +74,7 @@ public class NotificationService {
                         .device_id(notification.getMeasurement().getSensor().getDevice().getId())
                         .sensor_id(notification.getMeasurement().getSensor().getId())
                         .measurement(notification.getMeasurement())
+                        .totalPages(totalPages)
                         .build()
                 ).collect(Collectors.toList());
     }

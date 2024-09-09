@@ -6,6 +6,17 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Request for user registration with validation
+ *
+ * @param email user email
+ * @param password user password
+ * @param role user role
+ * @param name user name
+ * @param lastName user last name
+ *
+ * @Author Kacper Karabinowski
+ */
 public record AuthRegistrationRequest(
         @Email(message = "Invalid email")
         @NotBlank(message = "Email cannot be empty")
