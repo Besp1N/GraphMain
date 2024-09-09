@@ -1,5 +1,6 @@
 package com.kacper.backend.device;
 
+import com.kacper.backend.exception.ResourceNotFoundException;
 import com.kacper.backend.measurement.Measurement;
 import com.kacper.backend.measurement.MeasurementRepository;
 import com.kacper.backend.sensor.Sensor;
@@ -10,6 +11,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +37,12 @@ class DeviceServiceTest {
 
     @Mock
     private DevicePresentationMapper devicePresentationMapper;
+
+    @Mock
+    private SensorRepository sensorRepository;
+
+    @Mock
+    private MeasurementRepository measurementRepository;
 
     @InjectMocks
     private DeviceService deviceService;
@@ -141,5 +151,71 @@ class DeviceServiceTest {
 
         assertThat(result).isEmpty();
     }
+
+    @Test
+    void deviceNotFoundException() {
+        // ResourceNotFoundException if no device exists with the given ID
+        when(deviceRepository.findById(1)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> deviceService.getDeviceById(1))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Device 1 Not found");
+
+        verify(deviceRepository).findById(1);
+    }
+
+    @Test
+    void deviceNotFoundException_deletingDevice() {
+        // ResourceNotFoundException when deleting nonexistent device
+        when(deviceRepository.findById(1)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> deviceService.deleteDevice(1))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Device 1 Not found");
+
+        verify(deviceRepository).findById(1);
+        verify(deviceRepository, never()).delete(any(Device.class)); //verifying that no deletion occurs
+    }
+
+    @Test
+    void getDeviceSensorsPresentationInfo_noSensors() {
+        // Device exist - no sensors
+        device.setSensors(List.of());
+        when(deviceRepository.findById(1)).thenReturn(Optional.of(device));
+
+        DeviceSensorsPresentationResponse response = deviceService.getDeviceSensorsPresentationInfo(1);
+
+        assertThat(response.sensors()).isEmpty(); // No sensors should be returned
+        verify(deviceRepository).findById(1);
+    }
+
+    @Test
+    void getDeviceSensorMeasurementPresentationInfo_sensorNotFoundException() {
+        // ResourceNotFoundException if no sensor exists with ID we gave
+        when(sensorRepository.findById(1)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> deviceService.getDeviceSensorMeasurementPresentationInfo(1, 0, 0, 100))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Sensor 1 Not found");
+
+        verify(sensorRepository).findById(1);
+    }
+
+    @Test
+    void getDeviceSensorMeasurementPresentationInfo_noMeasurements() {
+        // Sensor exists, but no measurements
+        Sensor sensor = measurement.getSensor();
+        when(sensorRepository.findById(1)).thenReturn(Optional.of(sensor));
+        when(measurementRepository.findAllBySensorIdAndTimestampBetween(anyInt(), any(LocalDateTime.class), any(LocalDateTime.class), any(PageRequest.class)))
+                .thenReturn(Page.empty());
+
+        DeviceMeasurementPresentation response = deviceService.getDeviceSensorMeasurementPresentationInfo(1, 0, 0, 100);
+
+        assertThat(response.sensor().measurementList()).isEmpty();
+        verify(sensorRepository).findById(1);
+        verify(measurementRepository).findAllBySensorIdAndTimestampBetween(anyInt(), any(LocalDateTime.class), any(LocalDateTime.class), any(PageRequest.class));
+    }
+
+
 
 }
