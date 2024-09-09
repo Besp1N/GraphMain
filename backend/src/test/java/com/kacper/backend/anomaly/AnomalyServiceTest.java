@@ -18,6 +18,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
+/**
+ * Tests for AnomalyService
+ *
+ * @Author Sabina Kubiyeva
+ */
 @ExtendWith(MockitoExtension.class)
 class AnomalyServiceTest {
 
@@ -30,6 +35,9 @@ class AnomalyServiceTest {
     private Notification notification1;
     private Notification notification2;
 
+    /**
+     * Set up before each test
+     */
     @BeforeEach
     void setUp() {
         Measurement measurement1 = Measurement.builder().id(1).build();
@@ -50,6 +58,9 @@ class AnomalyServiceTest {
                 .build();
     }
 
+    /**
+     * Test for getAnomalies method
+     */
     @Test
     void notifExists_anomaly() {
         // returns AnomalyResponse when notif found
@@ -65,6 +76,9 @@ class AnomalyServiceTest {
         verify(notificationRepository).findBySensorIdAndCreatedAtBetween(anyString(), any(LocalDateTime.class), any(LocalDateTime.class));
     }
 
+    /**
+     * Test for getAnomalies method when no notif found
+     */
     @Test
     void noNotif_emptyResponse() {
         // empty AnomalyResponse when no notif found
@@ -79,6 +93,9 @@ class AnomalyServiceTest {
         verify(notificationRepository).findBySensorIdAndCreatedAtBetween(anyString(), any(LocalDateTime.class), any(LocalDateTime.class));
     }
 
+    /**
+     * Test for getAnomalies method, filters out duplicate measurement ids
+     */
     @Test
     void uniqueMeasurement() {
         // filters out duplicate measurement ids from notifs

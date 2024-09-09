@@ -13,6 +13,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Tests for the MailService class
+ *
+ * @Author Sabina Kubiyeva
+ */
 class MailServiceTest {
 
     @Mock
@@ -21,6 +26,9 @@ class MailServiceTest {
     @InjectMocks
     private MailService mailService;
 
+    /**
+     * @throws Exception if the field is not found
+     */
     @BeforeEach
     void setUp() throws Exception {
         // Initialize mocks
@@ -38,6 +46,9 @@ class MailServiceTest {
         field.set(targetObject, "noreply@graphmain.com");
     }
 
+    /**
+     * Test for the sendMail method
+     */
     @Test
     void sendsMail() {
         // mail is sent when the email is valid
@@ -48,6 +59,9 @@ class MailServiceTest {
         verify(javaMailSender).send(any(SimpleMailMessage.class));
     }
 
+    /**
+     * Test for the sendMail method when the email is invalid
+     */
     @Test
     void invalid_emailException() {
         // dont send mail when the email is invalid
@@ -60,6 +74,9 @@ class MailServiceTest {
     }
 
 
+    /**
+     * Test for the sendMail method when the email is valid
+     */
     @Test
     void correctmailset() {
         // correct subject & message in email
@@ -75,6 +92,9 @@ class MailServiceTest {
     }
 
 
+    /**
+     * Test for the sendMail method when javaMailSender throws an exception
+     */
     @Test
     void javaMailSenderException() {
         // javaMailSender exception handled properly
