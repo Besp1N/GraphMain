@@ -11,6 +11,8 @@ import java.util.List;
 
 /**
  * Represents the device entity in the database
+ *
+ * @Author Kacper Karabinowski
  */
 @Entity
 @Data

@@ -2,13 +2,10 @@ package com.kacper.backend.auth;
 
 import com.kacper.backend.exception.InvalidCredentialsException;
 import com.kacper.backend.exception.ResourceAlreadyExistException;
-import com.kacper.backend.exception.ResourceNotFoundException;
 import com.kacper.backend.jwt.JWTService;
 import com.kacper.backend.mail.MailService;
 import com.kacper.backend.user.User;
 import com.kacper.backend.user.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,9 +13,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 
+/**
+ * Service for handling auth requests
+ *
+ * @Author Kacper Karabinowski
+ */
 @Service
 public class AuthService
 {
@@ -28,6 +28,13 @@ public class AuthService
     private final AuthenticationManager authenticationManager;
     private final MailService mailService;
 
+    /**
+     * @param userRepository repository for handling user data
+     * @param passwordEncoder encoder for encoding passwords
+     * @param jwtService service for handling jwt tokens
+     * @param authenticationManager manager for handling authentication
+     * @param mailService service for handling mail requests
+     */
     public AuthService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
