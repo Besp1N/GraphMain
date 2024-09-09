@@ -12,11 +12,11 @@ type NotificationListProps = {
 const NotificationList: React.FC<NotificationListProps> = ({
   notifications,
 }) => {
-  if (!notifications) {
+  if (!notifications || !notifications.length) {
     return (
       <ErrorInfo
         title="No notifications found"
-        error={new HttpError("No notifications", 404)}
+        error={new HttpError("We couldn't find any new notifications.", 404)}
       />
     );
   }

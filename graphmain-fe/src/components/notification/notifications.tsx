@@ -1,4 +1,4 @@
-import { FC, useCallback,  useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import {
   getLatestNotifications,
   HttpError,
@@ -7,11 +7,13 @@ import {
 import { useFetchSafe, useProtectedResource } from "../../http/hooks";
 import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
-import {  useBreadcrumbs } from "../../store/appStore";
+import { useBreadcrumbs } from "../../store/appStore";
 import NotificationList from "../notification/notificationList";
 import { Pagination, Paper } from "@mui/material";
-
-const NotificationsPage: FC = function () {
+/**
+ * Component managing fetching and displaying notifications
+ */
+const Notifications: FC = function () {
   useProtectedResource();
 
   const [, setBreadcrumbs] = useBreadcrumbs();
@@ -20,8 +22,6 @@ const NotificationsPage: FC = function () {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [page, setPage] = useState(1); // Start with page 1
-  const [totalPages, setTotalPages] = useState(2);
-
 
   // "page - 1" because MUI indexes from 1 because no one indexes from 0 apparently
   const fetcher = useCallback(() => getLatestNotifications(page - 1), [page]);
@@ -34,9 +34,7 @@ const NotificationsPage: FC = function () {
 
   useEffect(() => {
     fetch();
-    if (notifications?.length && page === totalPages) {
-      setTotalPages((p) => p + 1);
-    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetch]);
   const handlePageChange = (
@@ -58,7 +56,7 @@ const NotificationsPage: FC = function () {
     <Paper>
       <NotificationList notifications={notifications ?? []} />
       <Pagination
-        count={totalPages}
+        count={notifications?.at(0)?.totalPages ?? 0}
         page={page}
         onChange={handlePageChange}
         color="primary"
@@ -68,4 +66,4 @@ const NotificationsPage: FC = function () {
   );
 };
 
-export default NotificationsPage;
+export default Notifications;

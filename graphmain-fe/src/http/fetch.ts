@@ -135,6 +135,7 @@ export async function getMeasurements(
 export interface NotificationEntityQueryReturnType extends NotificationEntity {
   device_id: Device["id"];
   sensor_id: Sensor["id"];
+  totalPages: number;
 }
 /**
  * Function for getting the latest notifications. Shouldn't return 404 but empty array.
@@ -143,10 +144,12 @@ export interface NotificationEntityQueryReturnType extends NotificationEntity {
 export async function getLatestNotifications(
   page: number = 0
 ): Promise<Result<Option<NotificationEntityQueryReturnType[]>, HttpError>> {
-  return await fetchSafe<NotificationEntityQueryReturnType[]>(
+  const data = await fetchSafe<NotificationEntityQueryReturnType[]>(
     `${BACKEND_URI}/api/v1/notifications/${page}`,
     addCredentials({})
   );
+  console.log(data);
+  return data;
 }
 /**
  * Function for getting all the users. Requires admin privilege.

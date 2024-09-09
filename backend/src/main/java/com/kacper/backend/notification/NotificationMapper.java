@@ -2,7 +2,6 @@ package com.kacper.backend.notification;
 
 import lombok.Builder;
 
-import java.time.LocalDateTime;
 
 @Builder
 public record NotificationMapper(

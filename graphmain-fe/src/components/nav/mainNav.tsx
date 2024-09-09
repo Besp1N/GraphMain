@@ -7,7 +7,7 @@ import { Button, Paper } from "@mui/material";
 import Breadcrumbs from "../ui/breadcrumbs";
 import { AppContext } from "../../store/appStore";
 
-import {  NotificationsActive } from "@mui/icons-material"; // Import MUI icons
+import { NotificationsActive } from "@mui/icons-material"; // Import MUI icons
 import { getToken, ROLE } from "../../http/authUtils";
 
 export default function MainNav() {
@@ -18,9 +18,13 @@ export default function MainNav() {
 
   useEffect(() => {
     if (messageQueue.length > 0) {
-      console.log("new notif")
-      if (location.pathname === "/notifications") {
-        alert(`New notification arrived.\n${messageQueue[messageQueue.length - 1].message}\nPlease refresh the page to see more.`)
+      console.log("new notif");
+      if (location.pathname !== "/") {
+        alert(
+          `New notification arrived.\n${
+            messageQueue[messageQueue.length - 1].message
+          }\nPlease refresh the page to see more.`
+        );
       }
       setHasNewMessage(true);
     }
@@ -35,9 +39,21 @@ export default function MainNav() {
           <NavItem href={"/"}>
             {loggedIn ? "Dashboard" : "Login to continue"}
           </NavItem>
+          {hasNewMessage ? (
+            <NotificationsActive
+              color="error"
+              className={classes["notification-icon"]}
+            />
+          ) : (
+            ""
+          )}
         </li>
         <li>
-        {role == ROLE.ADMIN ? <NavItem href="/admin">Admin panel</NavItem>:""}
+          {role == ROLE.ADMIN ? (
+            <NavItem href="/admin">Admin panel</NavItem>
+          ) : (
+            ""
+          )}
         </li>
 
         {loggedIn ? (
@@ -45,30 +61,19 @@ export default function MainNav() {
             <li>
               <NavItem href={"/devices"}>Devices</NavItem>
             </li>
-            <li>
-              <NavItem
-                href={"/notifications"}
-                className={classes["notification-item"]}
-                onClick={() => setHasNewMessage(false)} // Reset on click
-              >
-                {hasNewMessage ? (
-                  <NotificationsActive
-                    color="error"
-                    className={classes["notification-icon"]}
-                  />
-                ) : (
-                  ""
-                )}
-                Notifications
-              </NavItem>
-            </li>
+            <li></li>
 
             <li className={classes["user-group"]}>
-                {!stompClient ? 
-            <Button onClick={() => connectWebSocket(token ?? "")} color="warning">
-              Reconnect
-            </Button>
-          : ""}
+              {!stompClient ? (
+                <Button
+                  onClick={() => connectWebSocket(token ?? "")}
+                  color="warning"
+                >
+                  Reconnect
+                </Button>
+              ) : (
+                ""
+              )}
               <span>{email}</span>
               <div className="divider"></div>
               <NavItem href={"/logout"}>Logout</NavItem>
