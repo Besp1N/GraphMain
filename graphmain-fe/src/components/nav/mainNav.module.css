@@ -22,7 +22,7 @@
     justify-content: space-between;
   }
 }
-.main-nav ul li::after {
+.main-nav ul li a::after {
   transition: width 0.3s;
   content: "";
   display: block;
@@ -31,7 +31,7 @@
   height: 2px;
   background-color: var(--color-primary);
 }
-.main-nav ul li:hover::after {
+.main-nav ul li a:hover::after {
   width: 100%;
 }
 .active {
