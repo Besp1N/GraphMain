@@ -2,19 +2,34 @@ import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom"; // Import to track the current route
 import classes from "./mainNav.module.css";
 import NavItem from "./navItem";
+
 import { AuthContext } from "../../store/authStore";
-import { Button, Paper } from "@mui/material";
+import {
+  Button,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  Paper,
+  Theme,
+  useMediaQuery,
+} from "@mui/material";
 import Breadcrumbs from "../ui/breadcrumbs";
 import { AppContext } from "../../store/appStore";
 
-import { NotificationsActive } from "@mui/icons-material"; // Import MUI icons
+import { Menu, NotificationsActive } from "@mui/icons-material"; // Import MUI icons
 import { getToken, ROLE } from "../../http/authUtils";
 
 export default function MainNav() {
   const { loggedIn, email, role } = useContext(AuthContext);
-  const { messageQueue } = useContext(AppContext)!;
-  const location = useLocation(); // Get the current route
+  const { messageQueue, connectWebSocket, stompClient } =
+    useContext(AppContext)!;
+  const location = useLocation();
   const [hasNewMessage, setHasNewMessage] = useState(false);
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const isSmallScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("md")
+  );
 
   useEffect(() => {
     if (messageQueue.length > 0) {
@@ -29,60 +44,68 @@ export default function MainNav() {
       setHasNewMessage(true);
     }
   }, [messageQueue, location.pathname]);
-  const { connectWebSocket, stompClient } = useContext(AppContext)!;
+
   const token = getToken();
+
+  const renderNavItems = () => (
+    <>
+      <ListItem>
+        <NavItem href={"/"}>
+          {loggedIn ? "Dashboard" : "Login to continue"}
+        </NavItem>
+        {hasNewMessage && (
+          <NotificationsActive
+            color="error"
+            className={classes["notification-icon"]}
+          />
+        )}
+      </ListItem>
+      {role === ROLE.ADMIN && (
+        <ListItem>
+          <NavItem href="/admin">Admin panel</NavItem>
+        </ListItem>
+      )}
+      {loggedIn && (
+        <>
+          <ListItem>
+            <NavItem href={"/devices"}>Devices</NavItem>
+          </ListItem>
+          <ListItem className={classes["user-group"]}>
+            {!stompClient && (
+              <Button
+                onClick={() => connectWebSocket(token ?? "")}
+                color="warning"
+              >
+                Reconnect
+              </Button>
+            )}
+            <span>{email}</span>
+            <div className="divider"></div>
+            <NavItem href={"/logout"}>Logout</NavItem>
+          </ListItem>
+        </>
+      )}
+    </>
+  );
 
   return (
     <Paper elevation={1} className={classes["main-nav"]}>
-      <ul>
-        <li>
-          <NavItem href={"/"}>
-            {loggedIn ? "Dashboard" : "Login to continue"}
-          </NavItem>
-          {hasNewMessage ? (
-            <NotificationsActive
-              color="error"
-              className={classes["notification-icon"]}
-            />
-          ) : (
-            ""
-          )}
-        </li>
-        <li>
-          {role == ROLE.ADMIN ? (
-            <NavItem href="/admin">Admin panel</NavItem>
-          ) : (
-            ""
-          )}
-        </li>
-
-        {loggedIn ? (
-          <>
-            <li>
-              <NavItem href={"/devices"}>Devices</NavItem>
-            </li>
-            <li></li>
-
-            <li className={classes["user-group"]}>
-              {!stompClient ? (
-                <Button
-                  onClick={() => connectWebSocket(token ?? "")}
-                  color="warning"
-                >
-                  Reconnect
-                </Button>
-              ) : (
-                ""
-              )}
-              <span>{email}</span>
-              <div className="divider"></div>
-              <NavItem href={"/logout"}>Logout</NavItem>
-            </li>
-          </>
-        ) : (
-          ""
-        )}
-      </ul>
+      {isSmallScreen ? (
+        <>
+          <IconButton onClick={() => setDrawerOpen(!isDrawerOpen)}>
+            <Menu />
+          </IconButton>
+          <Drawer
+            anchor="left"
+            open={isDrawerOpen}
+            onClose={() => setDrawerOpen(false)}
+          >
+            <List>{renderNavItems()}</List>
+          </Drawer>
+        </>
+      ) : (
+        <ul>{renderNavItems()}</ul>
+      )}
       <Breadcrumbs />
     </Paper>
   );

@@ -64,19 +64,18 @@ const MeasurementsTablePage = function () {
         display="flex"
         justifyContent="space-around"
         flexDirection={{ xs: "column", s: "column", md: "row" }} // Column on small screens, row on medium and up
-        flexWrap="wrap"
+        flexWrap="nowrap"
         mt={4}
         mb={4}
         maxHeight="80vh"
         width="100%"
-        position={"relative"}
+        position="relative"
       >
         <Paper
           style={{
             overflowY: "scroll",
             maxHeight: "80vh",
             minHeight: "200px",
-
             position: "relative",
             scrollbarWidth: "thin",
           }}
@@ -91,10 +90,15 @@ const MeasurementsTablePage = function () {
         </Paper>
 
         <Box
-          width={{ xs: "100%", s: "100%", md: "1000px" }}
+          width={{ xs: "100%", s: "100%", md: "calc(100% - 20px)" }} // Full width on mobile
+          height={{ xs: "70vh", s: "70vh" }}
+          maxWidth="1000px"
           maxHeight="80vh"
           mt={{ xs: 2, s: 2, md: 0 }}
-          position={"relative"}
+          position="relative"
+          overflow="hidden" // Prevents content from overflowing
+          padding={{ xs: "0", md: "16px" }} // No padding on mobile
+          margin={{ xs: "0", md: "auto" }} // Removes margin on mobile to prevent shifting
         >
           <MeasurementGraph
             sensorId={id}
