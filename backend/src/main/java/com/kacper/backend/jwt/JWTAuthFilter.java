@@ -19,12 +19,21 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Enumeration;
 
+/**
+ * JWT Auth Filter class
+ *
+ * @Author Kacper Karabinowski
+ */
 @Component
 public class JWTAuthFilter extends OncePerRequestFilter
 {
     private final JWTService jwtService;
     private final CustomUserDetailsService customUserDetailsService;
 
+    /**
+     * @param jwtService service for jwt tokens
+     * @param customUserDetailsService service for custom user details
+     */
     public JWTAuthFilter(
             JWTService jwtService,
             CustomUserDetailsService customUserDetailsService
@@ -34,6 +43,13 @@ public class JWTAuthFilter extends OncePerRequestFilter
     }
 
 
+    /**
+     * @param request request
+     * @param response response
+     * @param filterChain filter chain
+     * @throws ServletException is thrown when an exception occurs
+     * @throws IOException is thrown when an exception occurs
+     */
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,

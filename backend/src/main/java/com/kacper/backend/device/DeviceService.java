@@ -160,6 +160,13 @@ public class DeviceService
                 .orElseThrow(() -> new ResourceNotFoundException("Sensor " + sensorId.toString() + " Not found"));
     }
 
+    /**
+     * @param sensorId is the id of the sensor
+     * @param max is the maximum number of measurements
+     * @param from is the start time
+     * @param to is the end time
+     * @return the device with the given sensor and its measurements mapped to response
+     */
     public DeviceMeasurementPresentation getDeviceSensorMeasurementPresentationInfoGraph(
             Integer sensorId,
             Integer max,
@@ -180,7 +187,7 @@ public class DeviceService
                 device.getId(),
                 device.getDeviceName(),
                 device.getDeviceType(),
-                1, // Since we are not paginating, we can set totalPages to 1
+                1, // Kacper Karabinowski - Since we are not paginating, we can set totalPages to 1
                 new SensorMeasurementsPresentationResponse(
                         sensor.getId(),
                         sensor.getSensorName(),
