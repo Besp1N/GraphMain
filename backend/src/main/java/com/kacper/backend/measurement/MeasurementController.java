@@ -45,4 +45,5 @@ public class MeasurementController
     public Measurement deleteMeasurement(@PathVariable Integer measurementId) {
         return measurementService.deleteMeasurement(measurementId);
     }
+
 }

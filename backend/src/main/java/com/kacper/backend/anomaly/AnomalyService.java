@@ -1,5 +1,6 @@
 package com.kacper.backend.anomaly;
 
+import com.kacper.backend.measurement.Measurement;
 import com.kacper.backend.notification.Notification;
 import com.kacper.backend.notification.NotificationRepository;
 import org.springframework.stereotype.Service;
@@ -35,20 +36,24 @@ public class AnomalyService
      * @param to end of the time range
      * @return AnomalyResponse -  ids array of anomalies
      */
-    public AnomalyResponse getAnomalies(String sensorId, Integer from, Integer to) {
+    public AnomalyResponse getAnomalies(
+            String sensorId,
+            Integer from,
+            Integer to
+    ) {
         LocalDateTime fromDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(from), ZoneId.systemDefault());
         LocalDateTime toDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(to), ZoneId.systemDefault());
 
         List<Notification> notifications = notificationRepository.findBySensorIdAndCreatedAtBetween(sensorId, fromDateTime, toDateTime);
 
         Set<Integer> uniqueMeasurementIds = new HashSet<>();
-        List<Integer> measurementIds = notifications.stream()
-                .map(notification -> notification.getMeasurement().getId())
-                .filter(uniqueMeasurementIds::add)
+        List<Measurement> measurements = notifications.stream()
+                .map(Notification::getMeasurement)
+                .filter(measurement -> uniqueMeasurementIds.add(measurement.getId()))
                 .collect(Collectors.toList());
 
         return AnomalyResponse.builder()
-                .measurement_ids(measurementIds)
+                .measurements(measurements)
                 .build();
     }
 }
