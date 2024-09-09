@@ -4,6 +4,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Notification controller class
+ *
+ * @Author Kacper Karabinowski
+ */
 @RestController
 @RequestMapping("/api/v1/notifications")
 public class NotificationController

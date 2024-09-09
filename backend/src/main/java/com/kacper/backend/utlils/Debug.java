@@ -1,5 +1,12 @@
 package com.kacper.backend.utlils;
 
+/**
+ * Goofy debug class
+ * Better don't use it in production
+ *
+ *
+ * @Author Kacper Karabinowski
+ */
 public class Debug
 {
     // Don't touch that func - Kacper

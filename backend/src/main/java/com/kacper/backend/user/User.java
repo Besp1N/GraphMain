@@ -13,6 +13,12 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Represents the user entity in the database
+ * implements UserDetails to provide user details
+ *
+ * @Author Kacper Karabinowski
+ */
 @Data
 @Builder
 @Entity

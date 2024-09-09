@@ -19,6 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Tests for AuthService
+ *
+ * @Author Kacper Karabinowski
+ */
 class AuthServiceTest {
 
     @Mock
@@ -33,11 +38,17 @@ class AuthServiceTest {
     @InjectMocks
     private AuthService authService;
 
+    /**
+     * Set up before each test
+     */
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Test for login method
+     */
     @Test
     void login_Success() {
         // Arrange
@@ -62,6 +73,9 @@ class AuthServiceTest {
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
     }
 
+    /**
+     * Test for login method with invalid credentials
+     */
     @Test
     void login_InvalidCredentials() {
         // Arrange
@@ -73,6 +87,9 @@ class AuthServiceTest {
         assertThrows(InvalidCredentialsException.class, () -> authService.login(authLoginRequest));
     }
 
+    /**
+     * Test for login method with bad credentials
+     */
     @Test
     void login_BadCredentials() {
         // Arrange

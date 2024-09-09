@@ -20,6 +20,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Tests for the DeviceService class
+ *
+ * @Author Sabina Kubiyeva
+ */
 @ExtendWith(MockitoExtension.class)
 class DeviceServiceTest {
 
@@ -35,6 +40,9 @@ class DeviceServiceTest {
     private Measurement measurement;
     private DeviceRequest deviceRequest;
 
+    /**
+     * Set up the test environment
+     */
     @BeforeEach
     void setUp() {
         device = Device.builder().id(1).deviceName("Device1").deviceType("Type1").build();
@@ -43,6 +51,9 @@ class DeviceServiceTest {
         deviceRequest = new DeviceRequest("Device1", "Type1");
     }
 
+    /**
+     * Test for the addDevice method
+     */
     @Test
     void addDevice_correct() {
         // device is saved
@@ -57,6 +68,9 @@ class DeviceServiceTest {
         verify(deviceRepository).save(any(Device.class));
     }
 
+    /**
+     * Test for the addDevice method
+     */
     @Test
     void allDevices() {
         // returns list of mapped devices
@@ -74,6 +88,9 @@ class DeviceServiceTest {
         verify(devicePresentationMapper).apply(device);
     }
 
+    /**
+     * Test for the getDeviceById method
+     */
     @Test
     void returnsvalidDevice() {
         // returns the correct device when exist
@@ -86,6 +103,9 @@ class DeviceServiceTest {
         verify(deviceRepository).findById(1);
     }
 
+    /**
+     * Test for the deleteDevice method
+     */
     @Test
     void valid_deleteDevice() {
         // device is deleted when exists
@@ -99,6 +119,9 @@ class DeviceServiceTest {
     }
 
 
+    /**
+     * Test for the getDeviceById method when null is returned
+     */
     @Test
     void addDevice_requestNUllException() {
         // NullPointerException if device request null
@@ -106,6 +129,9 @@ class DeviceServiceTest {
     }
 
 
+    /**
+     * Test for the getDeviceById method when device does not exist
+     */
     @Test
     void emptyList_noDevices() {
         // returns an empty list when no devices exist

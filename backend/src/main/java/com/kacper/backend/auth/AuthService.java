@@ -49,6 +49,13 @@ public class AuthService
         this.mailService = mailService;
     }
 
+    /**
+     * Register a new user function
+     *
+     * @param authRegistrationRequest request for registration
+     * @return AuthRegistrationResponse with user info
+     * @throws ResourceAlreadyExistException if user with email already exists
+     */
     public AuthRegistrationResponse register(AuthRegistrationRequest authRegistrationRequest) {
         User user = User.builder()
                 .email(authRegistrationRequest.email())
@@ -73,6 +80,13 @@ public class AuthService
         }
     }
 
+    /**
+     * Authenticate user function
+     *
+     * @param authLoginRequest request for login
+     * @return AuthLoginResponse with jwt token
+     * @throws InvalidCredentialsException if credentials are invalid
+     */
     public AuthLoginResponse login(AuthLoginRequest authLoginRequest) {
         User user = userRepository.findByEmail(authLoginRequest.email())
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid Credentials"));

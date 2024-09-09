@@ -20,6 +20,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configuration for security
+ *
+ * @Author Kacper Karabinowski
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -28,6 +33,13 @@ public class SecurityConfig
     private final CustomUserDetailsService customUserDetailsService;
     private final JWTAuthFilter jwtAuthFilter;
 
+    /**
+     * Security configuration for USER and ADMIN roles with METHOD permissions
+     *
+     * @param httpSecurity security configuration
+     * @return SecurityFilterChain with security configuration
+     * @throws Exception if something goes wrong
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity httpSecurity
@@ -92,6 +104,9 @@ public class SecurityConfig
         return httpSecurity.build();
     }
 
+    /**
+     * @return authentication provider with custom user details service
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
@@ -100,11 +115,19 @@ public class SecurityConfig
         return daoAuthenticationProvider;
     }
 
+    /**
+     * @return password encoder to encode passwords
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * @param authenticationConfiguration configuration for authentication
+     * @return authentication manager
+     * @throws Exception if something goes wrong
+     */
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration

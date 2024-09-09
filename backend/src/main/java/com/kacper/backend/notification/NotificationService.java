@@ -14,6 +14,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Notification service
+ *
+ * @Author Kacper Karabinowski
+ */
 @Service
 public class NotificationService {
 
@@ -21,6 +26,11 @@ public class NotificationService {
     private final MeasurementRepository measurementRepository;
     private final NotificationRepository notificationRepository;
 
+    /**
+     * @param messagingTemplate is template for sending messages
+     * @param measurementRepository is repository for measurements
+     * @param notificationRepository is repository for notifications
+     */
     public NotificationService(
             SimpMessagingTemplate messagingTemplate,
             MeasurementRepository measurementRepository,
@@ -31,6 +41,11 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
+    /**
+     * Sends notification on mail
+     *
+     * @param payload is the payload of the notification
+     */
     public void sendNotification(String payload) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -57,6 +72,10 @@ public class NotificationService {
         }
     }
 
+    /**
+     * @param numPage is the number of the page
+     * @return List of notifications
+     */
     public List<NotificationResponse> getNotifications(Integer numPage) {
         int pageSize = 2;
 

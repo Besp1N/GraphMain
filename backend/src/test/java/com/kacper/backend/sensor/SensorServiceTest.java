@@ -15,6 +15,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Tests for the SensorService class
+ *
+ * @Author Sabina Kubiyeva
+ */
 @ExtendWith(MockitoExtension.class)
 class SensorServiceTest {
 
@@ -36,12 +41,18 @@ class SensorServiceTest {
     private SensorRequest sensorRequest;
     private Device device;
 
+    /**
+     * Set up before each test
+     */
     @BeforeEach
     void setUp() {
         sensorRequest = new SensorRequest(SENSOR_NAME, SENSOR_TYPE, UNIT);
         device = Device.builder().id(DEVICE_ID).deviceName("Device 1").build();
     }
 
+    /**
+     * Test for the addSensor method
+     */
     @Test
     void addSensor() {
         // sensor added to device successfully yipeeeeee
@@ -55,7 +66,9 @@ class SensorServiceTest {
     }
 
 
-
+    /**
+     * Test for the addSensor method when device not found
+     */
     @Test
     void addSensor_deviceNotFound() {
         // exception wif device not found
@@ -68,6 +81,9 @@ class SensorServiceTest {
         verify(sensorRepository, never()).save(any(Sensor.class));
     }
 
+    /**
+     * Test for the getSensor method
+     */
     @Test
     void getSensor() {
         // sensor get success yay
@@ -81,7 +97,9 @@ class SensorServiceTest {
     }
 
 
-
+    /**
+     * Test for the getSensor method when sensor not found
+     */
     @Test
     void getSensor_notFound() {
         // exception if sensor not found
@@ -92,6 +110,9 @@ class SensorServiceTest {
                 .hasMessageContaining("Sensor " + SENSOR_ID + " Not found");
     }
 
+    /**
+     * Test for the deleteSensor method
+     */
     @Test
     void deleteSensor() {
         // makes sure sensor deleted works
@@ -106,6 +127,9 @@ class SensorServiceTest {
         assertThat(deletedSensor).isEqualTo(sensor);
     }
 
+    /**
+     * Test for the addSensor method
+     */
     @Test
     void addSensor_correct() {
         // sensor saved with correct properties
@@ -123,6 +147,9 @@ class SensorServiceTest {
     }
 
 
+    /**
+     * Test for the deleteSensor method when sensor not found
+     */
     @Test
     void deleteSensor_alreadyDeleted() {
         // exception if trying to delete deleted sensor

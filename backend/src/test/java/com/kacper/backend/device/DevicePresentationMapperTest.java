@@ -13,6 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class DevicePresentationMapperTest {
 
+    /**
+     * Test for the apply method
+     */
     @Test
     void shouldReturnDevicePresentationResponse() {
         // given

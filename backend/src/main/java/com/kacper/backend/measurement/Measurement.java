@@ -14,6 +14,8 @@ import java.util.List;
 
 /**
  * Represents the measurement entity in the database
+ *
+ * @Author Kacper Karabinowski
  */
 @Entity
 @Data

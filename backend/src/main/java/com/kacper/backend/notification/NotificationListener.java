@@ -11,6 +11,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
+/**
+ * Notification listener class
+ * extends Thread to run the listener in a separate thread
+ * implements DisposableBean to clean up resources when the application is shut down
+ *
+ * @Author Kacper Karabinowski
+ */
 @Component
 public class NotificationListener extends Thread implements DisposableBean
 {
@@ -20,6 +27,10 @@ public class NotificationListener extends Thread implements DisposableBean
 
     Logger logger = Logger.getLogger(NotificationListener.class.getName());
 
+    /**
+     * @param dataSource data source
+     * @param notificationService notification service
+     */
     public NotificationListener(
             DataSource dataSource,
             NotificationService notificationService
@@ -38,6 +49,10 @@ public class NotificationListener extends Thread implements DisposableBean
         }
     }
 
+    /**
+     * Run method to listen for notifications
+     * @throws RuntimeException if an SQL exception occurs
+     */
     @Override
     public void run() {
         try {
@@ -63,6 +78,9 @@ public class NotificationListener extends Thread implements DisposableBean
         }
     }
 
+    /**
+     * Destroy method to close the connection and interrupt the thread
+     */
     @Override
     public void destroy() {
         try {

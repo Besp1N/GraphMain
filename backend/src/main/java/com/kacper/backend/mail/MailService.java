@@ -7,6 +7,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.regex.Pattern;
 
+/**
+ * Mail service class
+ *
+ * @Author Kacper Karabinowski
+ */
 @Service
 public class MailService
 {
@@ -20,10 +25,17 @@ public class MailService
             Pattern.CASE_INSENSITIVE
     );
 
+    /**
+     * @param javaMailSender java mail sender
+     */
     public MailService(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
 
+    /**
+     * @param to email address
+     * @throws IllegalArgumentException if email is invalid
+     */
     public void sendMail(String to) {
         if (!isValidEmail(to)) {
             throw new IllegalArgumentException("Invalid email address: " + to);
