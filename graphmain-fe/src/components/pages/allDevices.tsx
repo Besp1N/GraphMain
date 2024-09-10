@@ -6,6 +6,7 @@ import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
 import { Device } from "../../entities";
 import { useBreadcrumbs } from "../../store/appStore";
+import { Box } from "@mui/material";
 const AllDevicesPage: FC = function () {
   useProtectedResource();
 
@@ -29,9 +30,9 @@ const AllDevicesPage: FC = function () {
   }
 
   return (
-    <section className="center">
+    <Box overflow={"hidden"}>
       <DeviceInfoTable devices={devices ?? []} />
-    </section>
+    </Box>
   );
 };
 

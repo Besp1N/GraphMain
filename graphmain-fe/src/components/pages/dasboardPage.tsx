@@ -17,7 +17,7 @@ export default function DashboardPage() {
   }, [loggedIn, navigate]);
   return (
     <div className="center">
-      <h2>DASHBOARD</h2>
+      <h2>Recent notifications</h2>
       <Box>
         <Notifications />
       </Box>

@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import { Device } from "../../entities";
 import DeviceInfoTableRow from "./deviceInfoTableRow";
+
 /**
  * React Component responsible for displaying a list of devices in a from of a table.
  */

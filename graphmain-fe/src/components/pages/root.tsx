@@ -18,10 +18,9 @@ const Root: FC = function () {
   }, []);
   return (
     <>
-     
       <FlashMessages />
       <MainNav />
-      <h1>GraphMain Development App (Temporary Name)</h1>
+      <h1>GraphMain</h1>
       <Outlet />
     </>
   );
