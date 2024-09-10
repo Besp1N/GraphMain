@@ -111,7 +111,8 @@ class JWTServiceTest {
         String tamperedToken = token + "abc";
 
         // make sure token is invalid
-        assertThat(jwtService.isTokenValid(tamperedToken, userDetails)).isFalse();
+        assertThatThrownBy(() -> jwtService.isTokenValid(tamperedToken, userDetails))
+                .isInstanceOf(io.jsonwebtoken.security.SignatureException.class);
     }
 
     @Test
@@ -178,7 +179,8 @@ class JWTServiceTest {
 
         // extract username - expect exception
         assertThatThrownBy(() -> jwtService.extractUsername(token))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("JWT does not contain a subject");
     }
 
 
@@ -190,7 +192,8 @@ class JWTServiceTest {
         // extract username - expect exception
         assertThat(jwtService.isTokenValid(token, userDetails)).isFalse();
         assertThatThrownBy(() -> jwtService.extractUsername(token))
-                .isInstanceOf(io.jsonwebtoken.MalformedJwtException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("JWT string cannot be empty or null");
     }
 
 
