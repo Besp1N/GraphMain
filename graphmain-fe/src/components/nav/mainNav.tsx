@@ -5,6 +5,7 @@ import NavItem from "./navItem";
 
 import { AuthContext } from "../../store/authStore";
 import {
+  Box,
   Button,
   Drawer,
   IconButton,
@@ -91,8 +92,11 @@ export default function MainNav() {
   return (
     <Paper elevation={1} className={classes["main-nav"]}>
       {isSmallScreen ? (
-        <>
-          <IconButton onClick={() => setDrawerOpen(!isDrawerOpen)}>
+        <Box display={"flex"} alignItems={"center"}>
+          <IconButton
+            onClick={() => setDrawerOpen(!isDrawerOpen)}
+            style={{ float: "left" }}
+          >
             <Menu />
           </IconButton>
           <Drawer
@@ -102,7 +106,7 @@ export default function MainNav() {
           >
             <List>{renderNavItems()}</List>
           </Drawer>
-        </>
+        </Box>
       ) : (
         <ul>{renderNavItems()}</ul>
       )}

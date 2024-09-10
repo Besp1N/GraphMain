@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { User } from '../../entities';
+import { FC } from "react";
+import { User } from "../../entities";
 import {
   Table,
   TableHead,
@@ -7,12 +7,12 @@ import {
   TableRow,
   TableCell,
   IconButton,
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface UserListProps {
   users: User[];
-  onDelete: (id: number) => void; // Function to handle user deletion
+  onDelete: (user: User) => void; // Function to handle user deletion
 }
 
 const UserList: FC<UserListProps> = ({ users, onDelete }) => {
@@ -31,10 +31,7 @@ const UserList: FC<UserListProps> = ({ users, onDelete }) => {
             <TableCell>{user.id}</TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell align="right">
-              <IconButton
-                color="error"
-                onClick={() => onDelete(user.id)}
-              >
+              <IconButton color="error" onClick={() => onDelete(user)}>
                 <DeleteIcon />
               </IconButton>
             </TableCell>

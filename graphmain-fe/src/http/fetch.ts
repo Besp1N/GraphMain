@@ -161,6 +161,18 @@ export async function getUsers(): Promise<Result<Option<User[]>, HttpError>> {
   );
 }
 
+/**
+ * Function for getting all the users. Requires admin privilege.
+ */
+export async function deleteUser(
+  id: User["id"]
+): Promise<Result<Option<User[]>, HttpError>> {
+  return await fetchSafe<User[]>(
+    `${BACKEND_URI}/api/v1/user/${id}`,
+    addCredentials({ method: "DELETE" })
+  );
+}
+
 type AnomaliesFetchReturnType = {
   measurement_ids: Measurement["id"][];
 };
@@ -187,10 +199,7 @@ export async function getAnomalousData(
   }
   return data;
 }
-/**
- *
- *
- */
+
 export async function getMeasurementsForGraph(
   sensorId: Sensor["id"],
   from?: number,
