@@ -51,7 +51,7 @@ class UserServiceTest {
                 .createdAt(LocalDateTime.now())
                 .build();
     }
-
+    //user checked
     @Test
     void deleteUserbyid_valid() {
         when(userRepository.findById(1)).thenReturn(Optional.of(user1));
