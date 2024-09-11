@@ -5,7 +5,7 @@ import {
   Sensor,
   User,
 } from "../entities";
-import { getToken } from "./authUtils";
+import { getToken, ROLE } from "./authUtils";
 
 export const BACKEND_URI = "http://127.0.0.1:8080";
 /**
@@ -27,6 +27,7 @@ export class HttpError extends Error {
    */
   static async from_response(res: Response): Promise<HttpError> {
     const message = await res.text(); // Retrieve the error message from the response body
+
     let text = message;
     if (!text) {
       switch (res.status) {
@@ -170,6 +171,35 @@ export async function deleteUser(
   return await fetchSafe<User[]>(
     `${BACKEND_URI}/api/v1/user/${id}`,
     addCredentials({ method: "DELETE" })
+  );
+}
+/**
+ * Registration Request Body JSON format
+ */
+export type RegistrationRequest = {
+  email: string;
+  password: string;
+  role: ROLE;
+  name: string;
+  lastName: string;
+};
+export type RegistrationResponse = {
+  email: string;
+  role: ROLE;
+  name: string;
+  lastName: string;
+};
+
+export async function registerUser(
+  data: RegistrationRequest
+): Promise<Result<Option<RegistrationResponse>, HttpError>> {
+  return await fetchSafe<RegistrationResponse>(
+    `${BACKEND_URI}/auth/register`,
+    addCredentials({
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
   );
 }
 

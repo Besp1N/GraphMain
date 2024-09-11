@@ -1,7 +1,7 @@
-import { AppBar, Toolbar, Typography, Tabs, Tab, Box } from '@mui/material';
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import { useProtectedResource } from '../../../http/hooks';
-import { ROLE } from '../../../http/authUtils';
+import { AppBar, Toolbar, Typography, Tabs, Tab, Box } from "@mui/material";
+import { Outlet, Link, useLocation } from "react-router-dom";
+import { useProtectedResource } from "../../../http/hooks";
+import { ROLE } from "../../../http/authUtils";
 const TABS = ["/admin/register", "/admin/users"];
 function AdminPanel() {
   useProtectedResource(ROLE.ADMIN);
@@ -17,7 +17,8 @@ function AdminPanel() {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Tabs value={tabIndex} centered>
+      {/* I know MUI. Stop console.erroring all over the place if it works  */}
+      <Tabs value={tabIndex !== -1 ? tabIndex : undefined} centered>
         <Tab label="Register User" component={Link} to="register" />
         <Tab label="All Users" component={Link} to="users" />
       </Tabs>
