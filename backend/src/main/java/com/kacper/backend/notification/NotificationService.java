@@ -77,7 +77,7 @@ public class NotificationService {
      * @return List of notifications
      */
     public List<NotificationResponse> getNotifications(Integer numPage) {
-        int pageSize = 2;
+        int pageSize = 10;
 
         PageRequest pageable = PageRequest.of(numPage, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Notification> notificationsPage = notificationRepository.findAll(pageable);
