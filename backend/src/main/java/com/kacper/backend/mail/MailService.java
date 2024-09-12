@@ -42,7 +42,7 @@ public class MailService
         }
 
         MailStructure mailStructure = MailStructure.builder()
-                .message("You have created your account")
+                .message("You have created your account. If it's not you, ignore it.")
                 .subject("GraphMain account created")
                 .build();
 
@@ -51,6 +51,21 @@ public class MailService
         mailMessage.setFrom(fromMail);
         mailMessage.setSubject(mailStructure.subject());
         mailMessage.setText(mailStructure.message());
+
+        javaMailSender.send(mailMessage);
+    }
+
+    public void sendNotificationMail(String to, String Notification) {
+        MailStructure.builder()
+                .message(Notification)
+                .subject("Graph Main notification")
+                .build();
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(to);
+        mailMessage.setFrom(fromMail);
+        mailMessage.setSubject(mailMessage.getSubject());
+        mailMessage.setText(mailMessage.getText());
 
         javaMailSender.send(mailMessage);
     }

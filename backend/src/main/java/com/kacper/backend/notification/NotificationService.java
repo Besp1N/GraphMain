@@ -1,8 +1,11 @@
 package com.kacper.backend.notification;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kacper.backend.mail.MailService;
 import com.kacper.backend.measurement.Measurement;
 import com.kacper.backend.measurement.MeasurementRepository;
+import com.kacper.backend.user.User;
+import com.kacper.backend.user.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -25,6 +28,9 @@ public class NotificationService {
     private final SimpMessagingTemplate messagingTemplate;
     private final MeasurementRepository measurementRepository;
     private final NotificationRepository notificationRepository;
+    private final UserRepository userRepository;
+    private final MailService mailService;
+
 
     /**
      * @param messagingTemplate is template for sending messages
@@ -34,11 +40,14 @@ public class NotificationService {
     public NotificationService(
             SimpMessagingTemplate messagingTemplate,
             MeasurementRepository measurementRepository,
-            NotificationRepository notificationRepository
+            NotificationRepository notificationRepository,
+            UserRepository userRepository, MailService mailService
     ) {
         this.messagingTemplate = messagingTemplate;
         this.measurementRepository = measurementRepository;
         this.notificationRepository = notificationRepository;
+        this.userRepository = userRepository;
+        this.mailService = mailService;
     }
 
     /**
@@ -64,6 +73,8 @@ public class NotificationService {
                     .created_at(createdAt)
                     .measurement(measurement)
                     .build();
+
+             userRepository.findAll().forEach(user -> mailService.sendNotificationMail(user.getEmail(), notification.message()));
 
             messagingTemplate.convertAndSend("/notifications", notification);
         } catch (Exception e) {
