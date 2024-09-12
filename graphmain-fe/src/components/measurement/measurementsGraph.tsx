@@ -1,4 +1,4 @@
-import { ResponsiveLine } from "@nivo/line";
+import { Datum, ResponsiveLine } from "@nivo/line";
 import { Sensor, Measurement } from "../../entities";
 import { FC, useCallback, useEffect } from "react";
 import { useFetchSafe } from "../../http/hooks";
@@ -9,7 +9,7 @@ import ErrorInfo from "../ui/errorInfo";
 
 interface MeasurementGraphProps {
   sensorId: Sensor["id"];
-  anomalies?: Measurement["id"][];
+  anomalies?: Measurement[];
   filters: MeasurementsFilters;
 }
 
@@ -36,7 +36,10 @@ const MeasurementGraph: FC<MeasurementGraphProps> = function ({
   if (error) {
     return <ErrorInfo title="Failed to create graph" error={error} />;
   }
-  const measurements = data?.sensor?.measurementList;
+  const measurements = [
+    ...(data?.sensor?.measurementList ?? []),
+    ...(anomalies ?? []),
+  ];
   if (!measurements?.length) {
     return <>Empty data</>;
   }
@@ -52,7 +55,7 @@ const MeasurementGraph: FC<MeasurementGraphProps> = function ({
         return {
           x: new Date(m.timestamp), // Ensure timestamp is parsed as Date
           y: m.value,
-          anomaly: anomalySet.has(m.id), // Mark as anomaly if in set
+          anomaly: anomalySet.has(m), // Mark as anomaly if in set
         };
       }),
     },
@@ -61,7 +64,7 @@ const MeasurementGraph: FC<MeasurementGraphProps> = function ({
   return (
     <ResponsiveLine
       data={graphData}
-      margin={{ right: 110, left: 60, bottom: 40 }}
+      margin={{ right: 110, left: 60, bottom: 40, top: 40 }}
       xScale={{
         type: "time",
         format: "%Y-%m-%dT%H:%M:%S.",
@@ -93,11 +96,17 @@ const MeasurementGraph: FC<MeasurementGraphProps> = function ({
       pointBorderWidth={2}
       // pointBorderColor={({ datum }: {datum: Datum}) => (datum.anomaly ? "red" : "blue")} // Color based on anomaly
       //   enablePointLabel={true}
-      pointLabel="y"
       pointLabelYOffset={-12}
       enableGridX={false}
       enableGridY={true}
       useMesh={true}
+      enablePointLabel={true}
+      pointLabel={(d: Datum) => {
+        if (d.data.anomaly) {
+          return "A";
+        }
+        return ""; // No label for non-anomalies
+      }}
       tooltip={({ point }) => (
         <div
           style={{

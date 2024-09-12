@@ -1,17 +1,27 @@
-import { useState, useEffect, useImperativeHandle, useCallback, forwardRef } from "react";
+import {
+  useState,
+  useEffect,
+  useImperativeHandle,
+  useCallback,
+  forwardRef,
+} from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Spinner from "../ui/spinner";
 import MeasurementRow from "./measurmentRow";
 import { Measurement, Sensor } from "../../entities";
 import { useFetchSafe } from "../../http/hooks";
-import { getMeasurements, HttpError, MeasurementDataForSensor } from "../../http/fetch";
+import {
+  getMeasurements,
+  HttpError,
+  MeasurementDataForSensor,
+} from "../../http/fetch";
 import { Box } from "@mui/material";
 import MeasurementHead from "./measurementHead";
 import { MeasurementsFilters } from "./measurmentsFilter";
 
 /**
  * Interface exposed by ref for MeasurementInfiniteScroll
- * reset() resets the scroll. 
+ * reset() resets the scroll.
  */
 export interface MeasurementsScrollImperativeHandle {
   page: number;
@@ -20,19 +30,16 @@ export interface MeasurementsScrollImperativeHandle {
   error: Error;
   loading: boolean;
 
-  sensor: Sensor
+  sensor: Sensor;
 }
 interface MeasurementInfiniteScrollProps {
   filters: MeasurementsFilters;
   id: Sensor["id"];
-  anomalies?: Measurement["id"][]
+  anomalies?: Measurement[];
 }
 
 const MeasurementInfiniteScroll = forwardRef(
-  (
-    { id, filters, anomalies }: MeasurementInfiniteScrollProps,
-    ref,
-  ) => {
+  ({ id, filters, anomalies }: MeasurementInfiniteScrollProps, ref) => {
     const [page, setPage] = useState(0); // Add page state
     const [measurements, setMeasurements] = useState<Measurement[]>([]); // Store all loaded measurements
     const [hasMore, setHasMore] = useState(true); // Track if more data is available
@@ -81,7 +88,7 @@ const MeasurementInfiniteScroll = forwardRef(
       );
     }
     // Create a set for quick lookup
-    const anomalySet = new Set(anomalies);
+    const anomalySet = new Set(anomalies?.map((m) => m.id));
     let prevV = measurements?.length ? measurements[0].value : 0;
 
     return (

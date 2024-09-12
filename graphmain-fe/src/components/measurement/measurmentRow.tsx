@@ -4,10 +4,14 @@ import { Box } from "@mui/material";
 interface IMeasurmentRowProps {
   measurement: Measurement;
   delta?: number;
-  anomalous?: boolean
+  anomalous?: boolean;
 }
 
-const MeasurementRow = function ({ measurement, delta, anomalous }: IMeasurmentRowProps) {
+const MeasurementRow = function ({
+  measurement,
+  delta,
+  anomalous,
+}: IMeasurmentRowProps) {
   const deltaText: string = delta
     ? `${delta > 0 ? "+" : ""}${delta.toFixed(3)}`
     : "-";
@@ -24,7 +28,7 @@ const MeasurementRow = function ({ measurement, delta, anomalous }: IMeasurmentR
       padding="8px 16px"
       minHeight="25%"
       borderBottom="1px solid #ddd"
-      border={anomalous ? "1px solid red" : ""}
+      color={anomalous ? "1px solid red" : ""}
     >
       <Box flex="1" textAlign="left">
         {new Date(measurement.timestamp).toLocaleString("pl-PL", {

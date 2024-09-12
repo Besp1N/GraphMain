@@ -204,7 +204,7 @@ export async function registerUser(
 }
 
 type AnomaliesFetchReturnType = {
-  measurement_ids: Measurement["id"][];
+  measurements: Measurement[];
 };
 /**
  * Function for anomalous data from sensor.
@@ -213,7 +213,7 @@ export async function getAnomalousData(
   sensorId: Sensor["id"],
   from?: number,
   to?: number
-): Promise<Result<Option<Measurement["id"][]>, HttpError>> {
+): Promise<Result<Option<Measurement[]>, HttpError>> {
   if (from === undefined) {
     from = 0; // default to all
   }
@@ -225,7 +225,7 @@ export async function getAnomalousData(
     addCredentials({})
   );
   if (data && !(data instanceof HttpError)) {
-    return data.measurement_ids;
+    return data.measurements;
   }
   return data;
 }

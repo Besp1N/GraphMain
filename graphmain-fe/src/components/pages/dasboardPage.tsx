@@ -18,7 +18,7 @@ export default function DashboardPage() {
   return (
     <div className="center">
       <h2>Recent notifications</h2>
-      <Box>
+      <Box mb={"5vh"}>
         <Notifications />
       </Box>
     </div>

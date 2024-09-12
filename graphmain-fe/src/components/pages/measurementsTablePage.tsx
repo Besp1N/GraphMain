@@ -11,7 +11,7 @@ import { useBreadcrumbs } from "../../store/appStore";
 import InfiniteScrollWrapper, {
   MeasurementsScrollImperativeHandle,
 } from "../measurement/measurementInfiniteScroll";
-import { Sensor } from "../../entities";
+import { Measurement } from "../../entities";
 import MeasurementGraph from "../measurement/measurementsGraph";
 
 const MeasurementsTablePage = function () {
@@ -37,7 +37,7 @@ const MeasurementsTablePage = function () {
       404
     );
   }
-  const [anomalies, setAnomalies] = useState<Sensor["id"][]>([]);
+  const [anomalies, setAnomalies] = useState<Measurement[]>([]);
   const [filters, setFilters] = useState<MeasurementsFilters>({
     to: undefined,
     from: undefined,
