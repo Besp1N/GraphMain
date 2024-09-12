@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useState } from "react";
 import {
   getLatestNotifications,
   HttpError,
@@ -7,7 +7,7 @@ import {
 import { useFetchSafe, useProtectedResource } from "../../http/hooks";
 import ErrorInfo from "../ui/errorInfo";
 import Spinner from "../ui/spinner";
-import { useBreadcrumbs } from "../../store/appStore";
+import { AppContext, useBreadcrumbs } from "../../store/appStore";
 import NotificationList from "../notification/notificationList";
 import { Pagination, Paper } from "@mui/material";
 /**
@@ -15,7 +15,11 @@ import { Pagination, Paper } from "@mui/material";
  */
 const Notifications: FC = function () {
   useProtectedResource();
-
+  const { setMessageQueue } = useContext(AppContext)!;
+  // clear message queue on the notifications render
+  useEffect(() => {
+    setMessageQueue([]);
+  }, []);
   const [, setBreadcrumbs] = useBreadcrumbs();
   useEffect(() => {
     setBreadcrumbs([]);

@@ -17,6 +17,7 @@ interface AppContextType {
   breadcrumbs: [string, string][];
   setBreadcrumbs: (breadcrumbs: [string, string][]) => void;
   messageQueue: NotificationEntityQueryReturnType[];
+  setMessageQueue: (queue: NotificationEntityQueryReturnType[]) => void;
   connectWebSocket: (token: string) => void;
   disconnectWebSocket: () => void;
   stompClient: Option<Client>;
@@ -111,8 +112,10 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({
         breadcrumbs,
         setBreadcrumbs,
         messageQueue,
+        setMessageQueue,
         stompClient,
         connectWebSocket,
+
         disconnectWebSocket,
       }}
     >

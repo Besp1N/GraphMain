@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom"; // Import to track the current route
 import classes from "./mainNav.module.css";
 import NavItem from "./navItem";
 
@@ -25,7 +24,6 @@ export default function MainNav() {
   const { loggedIn, email, role } = useContext(AuthContext);
   const { messageQueue, connectWebSocket, stompClient } =
     useContext(AppContext)!;
-  const location = useLocation();
   const [hasNewMessage, setHasNewMessage] = useState(false);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const isSmallScreen = useMediaQuery((theme: Theme) =>
@@ -33,18 +31,8 @@ export default function MainNav() {
   );
 
   useEffect(() => {
-    if (messageQueue.length > 0) {
-      console.log("new notif");
-      if (location.pathname !== "/") {
-        alert(
-          `New notification arrived.\n${
-            messageQueue[messageQueue.length - 1].message
-          }\nPlease refresh the page to see more.`
-        );
-      }
-      setHasNewMessage(true);
-    }
-  }, [messageQueue, location.pathname]);
+    setHasNewMessage(messageQueue.length > 0);
+  }, [messageQueue]);
 
   const token = getToken();
 

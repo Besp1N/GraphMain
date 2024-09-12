@@ -8,6 +8,7 @@ import { Box } from "@mui/material";
 export default function DashboardPage() {
   const navigate = useNavigate();
   const [, setBreadcrumbs] = useBreadcrumbs();
+
   useEffect(() => {
     setBreadcrumbs([]);
   }, []);
