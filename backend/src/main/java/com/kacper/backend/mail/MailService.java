@@ -56,7 +56,7 @@ public class MailService
     }
 
     public void sendNotificationMail(String to, String Notification) {
-        MailStructure.builder()
+        MailStructure mailStructure = MailStructure.builder()
                 .message(Notification)
                 .subject("Graph Main notification")
                 .build();
@@ -64,8 +64,8 @@ public class MailService
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(to);
         mailMessage.setFrom(fromMail);
-        mailMessage.setSubject(mailMessage.getSubject());
-        mailMessage.setText(mailMessage.getText());
+        mailMessage.setSubject(mailStructure.subject());
+        mailMessage.setText(mailStructure.message());
 
         javaMailSender.send(mailMessage);
     }

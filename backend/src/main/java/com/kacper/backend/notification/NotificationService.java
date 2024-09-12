@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +31,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final MailService mailService;
+    Logger logger = Logger.getLogger(NotificationService.class.getName());
 
 
     /**
@@ -74,9 +76,12 @@ public class NotificationService {
                     .measurement(measurement)
                     .build();
 
-             userRepository.findAll().forEach(user -> mailService.sendNotificationMail(user.getEmail(), notification.message()));
-
             messagingTemplate.convertAndSend("/notifications", notification);
+
+            userRepository.findAll()
+                    .forEach(user -> mailService.sendNotificationMail(user.getEmail(), notification.message()));
+
+            logger.info("Notification sent: " + notification);
         } catch (Exception e) {
             e.printStackTrace();
 
