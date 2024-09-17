@@ -21,7 +21,7 @@ include_directories(${PostgreSQL_INCLUDE_DIRS})
 include_directories(${dlib_INCLUDE_DIRS})
 
 # Add the source files
-add_executable(simulator src/main.cpp src/data_reader.cpp src/writer.cpp)
+add_executable(simulator src/main.cpp src/data_reader.cpp src/writer.cpp src/anomaly.cpp)
 
 # Link libraries
 target_link_libraries(simulator 

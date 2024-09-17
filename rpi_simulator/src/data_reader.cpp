@@ -1,6 +1,7 @@
 #include "data_reader.hh"
 #include <algorithm>
-
+#include <chrono>
+#include <iostream>
 #include <random>
 
 SensorData SensorData::operator+(SensorData rhs) {
@@ -72,7 +73,7 @@ DataReader<SensorData>::DataReader(SensorData max, SensorData baseline,
     : max(max), baseline(baseline), time_per_read(time_per_read),
       time_to_peak_anomaly(time_to_peak_anomaly), reads_since_anomaly_start(0),
       in_anomaly(false), rng(std::random_device{}()),
-      normal_dist_temp(0.0, 0.5), normal_dist_humidity(0.0, 0.5) {
+      normal_dist_temp(0.0, 0.1), normal_dist_humidity(0.0, 0.5) {
   history.reserve(history_max_size);
 };
 
@@ -80,7 +81,10 @@ DataReader<SensorData>::~DataReader(){};
 
 SensorData DataReader<SensorData>::next() {
   SensorData reading = baseline;
-
+  auto t = std::chrono::system_clock::now();
+  reading.timestamp_sec =
+      std::chrono::duration_cast<std::chrono::seconds>(t.time_since_epoch())
+          .count();
   // If in anomaly state
   if (in_anomaly) {
     if (reads_since_anomaly_start < time_to_peak_anomaly) {
@@ -112,6 +116,10 @@ SensorData DataReader<SensorData>::next() {
 }
 
 void DataReader<SensorData>::start_anomaly() {
+  if (in_anomaly) {
+    return;
+  }
+  std::cout << "Anomaly started!" << std::endl;
   in_anomaly = true;
   reads_since_anomaly_start = 0;
 }

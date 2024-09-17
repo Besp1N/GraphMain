@@ -6,6 +6,7 @@
 struct SensorData {
   double temperature;
   double humidity;
+  long timestamp_sec;
   SensorData operator+(SensorData rhs);
 };
 // class responsible for generating believable sensor data/
@@ -20,6 +21,7 @@ public:
   ~DataReader();
   T next();
   void start_anomaly();
+  std::vector<T> history;
 
 private:
   int time_per_read;             // in seconds
@@ -27,7 +29,6 @@ private:
   int reads_since_anomaly_start; //
   // magic number, doesn't matter for this project
   int history_max_size = 100;
-  std::vector<T> history;
 
   // random noise stuff
   std::mt19937 rng;
@@ -55,12 +56,13 @@ public:
 
   void start_anomaly();
 
+  std::vector<SensorData> history;
+
 private:
   int time_per_read;
   int time_to_peak_anomaly;
   int reads_since_anomaly_start;
   bool in_anomaly;
-  std::vector<SensorData> history;
   int history_max_size = 100;
 
   std::mt19937 rng;
