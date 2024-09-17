@@ -1,3 +1,4 @@
+#include "anomaly.hh"
 #include "data_reader.hh"
 #include "writer.hh"
 #include <chrono>
@@ -8,7 +9,8 @@ const SensorData BASELINE_SENSOR_DATA{25.0f, 50.0f};
 const SensorData MAX_SENSOR_DATA{29.0f, 43.0f};
 
 int main() {
-  DatabaseMeasurementWriter writer;
+  DatabaseMeasurementWriter m_writer;
+  DatabaseNotificatonWriter n_writer;
   DataReader<SensorData> reader(MAX_SENSOR_DATA, BASELINE_SENSOR_DATA, 1, 5);
 
   for (int i = 0; i < 10; ++i) {
@@ -19,7 +21,13 @@ int main() {
     if (i == 5) {
       reader.start_anomaly();
     }
-    writer.write(data);
+
+    // m_writer.write(data);
+    if (data.temperature > 27.0f) {
+      std::cout << "DATA!" << std::endl;
+      n_writer.write(
+          Anomaly{KETTLE_DEVICE_ID, "Test Anomaly", AnomalyType::Warning});
+    }
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
 

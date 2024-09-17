@@ -1,5 +1,5 @@
 #include "writer.hh"
-// #include "anomaly.hh"
+#include "anomaly.hh"
 #include "data_reader.hh"
 #include <ctime>
 #include <fstream>
@@ -8,14 +8,13 @@
 #include <pqxx/pqxx>
 #include <stdexcept>
 #include <string>
-// #include <unordered_map>
+#include <unordered_map>
 
-// const std::unordered_map<AnomalyType, const char *> anomaly_type_to_string =
-// {
+const std::unordered_map<AnomalyType, const char *> anomaly_type_to_string = {
 
-//     {AnomalyType::Error, "error"}, {AnomalyType::Warning, "warning"}};
+    {AnomalyType::Error, "error"}, {AnomalyType::Warning, "warning"}};
 
-std::string DatabaseMeasurementWriter::get_connection_string() {
+std::string get_aws_conn_string() {
   std::ifstream file("../connection_string.txt");
   if (!file) {
     throw std::runtime_error("Cannot read the connection string file. Make "
@@ -29,6 +28,13 @@ std::string DatabaseMeasurementWriter::get_connection_string() {
   std::string conn_str = buffer.str(); // Convert the stringstream to a string
 
   return conn_str;
+}
+/////////////////////////////////////
+//  MEASUREMENT WRITER IMPLEMENTATION
+/////////////////////////////////////
+
+std::string DatabaseMeasurementWriter::get_connection_string() {
+  return get_aws_conn_string();
 };
 DatabaseMeasurementWriter::DatabaseMeasurementWriter()
     : connection{pqxx::connection(get_connection_string().data())} {
@@ -45,7 +51,6 @@ void DatabaseMeasurementWriter::write(SensorData data) {
       pqxx::work w(connection);
       w.exec(query);
       w.commit();
-      std::cout << "Inserted data!" << std::endl;
 
     } catch (const std::exception &e) {
       std::cerr << e.what() << std::endl;
@@ -71,40 +76,63 @@ std::string DatabaseMeasurementWriter::prepare_query(SensorData data) {
 
   // Use std::format to create the queries
   std::string t_q = std::format("INSERT INTO measurements (timestamp, "
-                                "sensor_id, value) VALUES ('{}', 3, {});",
-                                timestamp, data.temperature);
+                                "sensor_id, value) VALUES ('{}', {}, {});",
+                                timestamp, TEMP_SENSOR_ID, data.temperature);
 
   std::string h_q = std::format("INSERT INTO measurements (timestamp, "
-                                "sensor_id, value) VALUES ('{}', 4, {});",
-                                timestamp, data.humidity);
-
-  std::cout << t_q << std::endl; // prints the first query
+                                "sensor_id, value) VALUES ('{}', {}, {});",
+                                timestamp, HUM_SENSOR_ID, data.humidity);
 
   return t_q + "\n" + h_q;
 }
 
-// void DatabaseNotificatonWriter::write(Anomaly data) {
-//   std::cout << "Sending..." << std::endl;
-// }
-// void test() {
-//   try {
-//     pqxx::connection C("dbname=your_db user=your_user
-//     password=your_password
-//     "
-//                        "host=your_host port=your_port");
-//     if (C.is_open()) {
-//       std::string sql =
-//           "INSERT INTO your_table (temperature, humidity) VALUES (" +
-//           std::to_string(data(0)) + ", " + std::to_string(data(1)) + ");";
+/////////////////////////////////////
+//  NOTIFICATION WRITER IMPLEMENTATION
+/////////////////////////////////////
 
-//       pqxx::work W(C);
-//       W.exec(sql);
-//       W.commit();
-//       std::cout << "Data inserted successfully" << std::endl;
-//     } else {
-//       std::cerr << "Failed to open PostgreSQL connection" << std::endl;
-//     }
-//   } catch (const std::exception &e) {
-//     std::cerr << e.what() << std::endl;
-//   }
-// }
+std::string DatabaseNotificatonWriter::get_connection_string() {
+  return get_aws_conn_string();
+};
+DatabaseNotificatonWriter::DatabaseNotificatonWriter()
+    : connection{pqxx::connection(get_connection_string().data())} {
+  if (!connection.is_open()) {
+    throw std::runtime_error("Connection to the database failed.");
+  } else {
+    std::cout << "Connection established!" << std::endl;
+  }
+}
+void DatabaseNotificatonWriter::write(Anomaly data) {
+  std::string query = prepare_query(data);
+  if (connection.is_open()) {
+    try {
+      pqxx::work w(connection);
+      w.exec(query);
+      w.commit();
+
+    } catch (const std::exception &e) {
+      std::cerr << e.what() << std::endl;
+      throw;
+    }
+  } else {
+    throw std::runtime_error("DB Connection closed.");
+  }
+}
+std::string DatabaseNotificatonWriter::prepare_query(Anomaly data) {
+  auto now = std::chrono::system_clock::now();
+
+  // Convert to time_t for formatting
+  std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
+
+  // Convert to tm structure
+  std::tm now_tm = *std::gmtime(&now_time_t);
+
+  // Create a stringstream to format the time
+  std::stringstream ss;
+  ss << std::put_time(&now_tm, "%Y-%m-%dT%H:%M");
+  std::string timestamp = ss.str();
+
+  return std::format("INSERT INTO notifications (message, type, created_at, "
+                     "device_id) VALUES ('{}', '{}', '{}', {});",
+                     data.message, anomaly_type_to_string.at(data.type),
+                     timestamp, data.device_id);
+}
