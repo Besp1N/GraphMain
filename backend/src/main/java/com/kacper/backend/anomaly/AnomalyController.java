@@ -22,17 +22,17 @@ public class AnomalyController
     }
 
     /**
-     * @param sensorId sensor id
+     * @param deviceId is a device id
      * @param from start of the time range
      * @param to end of the time range
      * @return AnomalyResponse with ids of anomalies
      */
-    @GetMapping("/{sensorId}")
+    @GetMapping("/{deviceId}")
     public AnomalyResponse getAnomalies(
-            @PathVariable String sensorId,
+            @PathVariable Integer deviceId,
             @RequestParam Integer from,
             @RequestParam Integer to
     ) {
-        return anomalyService.getAnomalies(sensorId, from ,to);
+        return anomalyService.getAnomalies(deviceId, from ,to);
     }
 }

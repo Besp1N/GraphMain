@@ -46,9 +46,10 @@ public class Measurement
     @JoinColumn(name = "sensor_id")
     private Sensor sensor;
 
-    @OneToMany(mappedBy = "measurement", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Notification> notifications;
+    // delete that
+//    @OneToMany(mappedBy = "measurement", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JsonIgnore
+//    private List<Notification> notifications;
 
 
 }

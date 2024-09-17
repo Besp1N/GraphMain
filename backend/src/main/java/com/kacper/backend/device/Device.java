@@ -1,5 +1,6 @@
 package com.kacper.backend.device;
 
+import com.kacper.backend.notification.Notification;
 import com.kacper.backend.sensor.Sensor;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -40,6 +41,10 @@ public class Device
 
     @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sensor> sensors;
+
+    // add list of notifications
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications;
 
 
 

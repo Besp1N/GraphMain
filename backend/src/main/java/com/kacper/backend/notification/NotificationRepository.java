@@ -15,17 +15,17 @@ import java.util.List;
 public interface NotificationRepository extends JpaRepository<Notification, Integer>
 {
     /**
-     * @param sensorId is the id of the sensor
+     * @param deviceId is the id of the device
      * @param from is the start date
      * @param to is the end date
      * @return list of notifications by sensor id and created at between
      */
     @Query("SELECT n " +
             "FROM Notification n " +
-            "WHERE n.measurement.sensor.id = :sensorId " +
+            "WHERE n.device.id = :deviceId " +
             "AND n.createdAt BETWEEN :from AND :to")
     List<Notification> findBySensorIdAndCreatedAtBetween(
-            @Param("sensorId") String sensorId,
+            @Param("deviceId") Integer deviceId,
             @Param("from") LocalDateTime from,
             @Param("to") LocalDateTime to
     );

@@ -1,5 +1,6 @@
 package com.kacper.backend.anomaly;
 
+import com.kacper.backend.device.Device;
 import com.kacper.backend.measurement.Measurement;
 import com.kacper.backend.notification.Notification;
 import com.kacper.backend.notification.NotificationRepository;
@@ -31,29 +32,33 @@ public class AnomalyService
     }
 
     /**
-     * @param sensorId sensor id
+     * @param deviceId is a device id
      * @param from start of the time range
      * @param to end of the time range
      * @return AnomalyResponse -  ids array of anomalies
      */
     public AnomalyResponse getAnomalies(
-            String sensorId,
+            Integer deviceId,
             Integer from,
             Integer to
     ) {
         LocalDateTime fromDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(from), ZoneId.systemDefault());
         LocalDateTime toDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(to), ZoneId.systemDefault());
 
-        List<Notification> notifications = notificationRepository.findBySensorIdAndCreatedAtBetween(sensorId, fromDateTime, toDateTime);
+        List<Notification> notifications = notificationRepository.findBySensorIdAndCreatedAtBetween(
+                deviceId,
+                fromDateTime,
+                toDateTime
+        );
 
         Set<Integer> uniqueMeasurementIds = new HashSet<>();
-        List<Measurement> measurements = notifications.stream()
-                .map(Notification::getMeasurement)
-                .filter(measurement -> uniqueMeasurementIds.add(measurement.getId()))
+        List<Device> devices = notifications.stream()
+                .map(Notification::getDevice)
+                .filter(device -> uniqueMeasurementIds.add(device.getId()))
                 .collect(Collectors.toList());
 
         return AnomalyResponse.builder()
-                .measurements(measurements)
+                .devices(devices)
                 .build();
     }
 }

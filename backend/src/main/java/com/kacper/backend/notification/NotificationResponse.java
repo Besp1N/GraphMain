@@ -11,9 +11,7 @@ import java.time.LocalDateTime;
  * @param type is the type of the notification
  * @param created_at is the creation date of the notification
  * @param device_id is the id of the device
- * @param sensor_id is the id of the sensor
  * @param totalPages is the total number of pages
- * @param measurement is the measurement
  *
  * @Author Kacper Karabinowski
  */
@@ -24,8 +22,6 @@ public record NotificationResponse(
         String type,
         LocalDateTime created_at,
         Integer device_id,
-        Integer sensor_id,
-        Integer totalPages,
-        Measurement measurement
+        Integer totalPages
 ) {
 }

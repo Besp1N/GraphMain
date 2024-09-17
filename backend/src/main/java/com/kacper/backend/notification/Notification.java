@@ -1,5 +1,6 @@
 package com.kacper.backend.notification;
 
+import com.kacper.backend.device.Device;
 import com.kacper.backend.measurement.Measurement;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -44,7 +45,12 @@ public class Notification
     )
     private LocalDateTime createdAt;
 
+    // change to device id
+//    @ManyToOne
+//    @JoinColumn(name = "measurement_id", nullable = false)
+//    private Measurement measurement;
+
     @ManyToOne
-    @JoinColumn(name = "measurement_id", nullable = false)
-    private Measurement measurement;
+    @JoinColumn(name = "device_id", nullable = false)
+    private Device device;
 }

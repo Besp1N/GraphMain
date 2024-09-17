@@ -61,9 +61,6 @@ public class NotificationService {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             NotificationMapper notificationMapper = objectMapper.readValue(payload, NotificationMapper.class);
-            Measurement measurement = measurementRepository.findById(
-                    notificationMapper.measurement_id()
-            ).orElseThrow();
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
             LocalDateTime createdAt = LocalDateTime.parse(notificationMapper.created_at(), formatter);
@@ -73,7 +70,7 @@ public class NotificationService {
                     .message(notificationMapper.message())
                     .type(notificationMapper.type())
                     .created_at(createdAt)
-                    .measurement(measurement)
+                    .device_id(notificationMapper.device_id())
                     .build();
 
             messagingTemplate.convertAndSend("/notifications", notification);
@@ -106,9 +103,7 @@ public class NotificationService {
                         .id(notification.getId())
                         .type(notification.getType())
                         .message(notification.getMessage())
-                        .device_id(notification.getMeasurement().getSensor().getDevice().getId())
-                        .sensor_id(notification.getMeasurement().getSensor().getId())
-                        .measurement(notification.getMeasurement())
+                        .device_id(notification.getDevice().getId())
                         .totalPages(totalPages)
                         .build()
                 ).collect(Collectors.toList());
