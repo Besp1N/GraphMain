@@ -1,5 +1,6 @@
 package com.kacper.backend.device;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kacper.backend.notification.Notification;
 import com.kacper.backend.sensor.Sensor;
 import jakarta.persistence.*;
@@ -44,6 +45,7 @@ public class Device
 
     // add list of notifications
     @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Notification> notifications;
 
 
