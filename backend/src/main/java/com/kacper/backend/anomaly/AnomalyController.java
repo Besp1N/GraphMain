@@ -2,6 +2,8 @@ package com.kacper.backend.anomaly;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 /**
  * Controller for handling anomaly requests
@@ -28,7 +30,7 @@ public class AnomalyController
      * @return AnomalyResponse with ids of anomalies
      */
     @GetMapping("/{deviceId}")
-    public AnomalyResponse getAnomalies(
+    public List<AnomalyResponse> getAnomalies(
             @PathVariable Integer deviceId,
             @RequestParam Integer from,
             @RequestParam Integer to

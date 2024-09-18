@@ -4,6 +4,7 @@ import com.kacper.backend.device.Device;
 import com.kacper.backend.measurement.Measurement;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -13,6 +14,7 @@ import java.util.List;
  */
 @Builder
 public record AnomalyResponse(
-        List<Device> devices
+        LocalDateTime created_at,
+        String type
 ) {
 }

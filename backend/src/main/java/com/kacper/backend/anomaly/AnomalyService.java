@@ -37,7 +37,7 @@ public class AnomalyService
      * @param to end of the time range
      * @return AnomalyResponse -  ids array of anomalies
      */
-    public AnomalyResponse getAnomalies(
+    public List<AnomalyResponse> getAnomalies(
             Integer deviceId,
             Integer from,
             Integer to
@@ -51,14 +51,13 @@ public class AnomalyService
                 toDateTime
         );
 
-        Set<Integer> uniqueMeasurementIds = new HashSet<>();
-        List<Device> devices = notifications.stream()
-                .map(Notification::getDevice)
-                .filter(device -> uniqueMeasurementIds.add(device.getId()))
-                .collect(Collectors.toList());
 
-        return AnomalyResponse.builder()
-                .devices(devices)
-                .build();
+        return notifications.stream()
+                .map(notification -> AnomalyResponse.builder()
+                        .created_at(notification.getCreatedAt())
+                        .type(notification.getType())
+                        .build()
+                )
+                .collect(Collectors.toList());
     }
 }
