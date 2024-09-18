@@ -6,7 +6,7 @@
 #include <termio.h>
 #include <thread>
 
-const SensorData BASELINE_SENSOR_DATA{25.0f, 50.0f};
+const SensorData BASELINE_SENSOR_DATA{23.0f, 50.0f};
 const SensorData MAX_SENSOR_DATA{29.0f, 43.0f};
 
 std::atomic<bool> anomaly_requested(false);

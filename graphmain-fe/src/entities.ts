@@ -40,14 +40,14 @@ export type NotificationEntity = {
   message: string;
   type: NotificationEntityType;
   created_at: string;
-  measurement: Measurement;
+  device_id: Device["id"];
 };
 
 export type User = {
-  id: number,
-  email: string,
-  name: string,
-  lastName: string,
-  role: ROLE,
-  createdAt: string
-}
+  id: number;
+  email: string;
+  name: string;
+  lastName: string;
+  role: ROLE;
+  createdAt: string;
+};

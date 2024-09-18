@@ -114,6 +114,7 @@ void DatabaseNotificatonWriter::write(Anomaly data) {
       throw;
     }
   } else {
+
     throw std::runtime_error("DB Connection closed.");
   }
 }

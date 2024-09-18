@@ -44,7 +44,7 @@ const MeasurementInfiniteScroll = forwardRef(
     const [measurements, setMeasurements] = useState<Measurement[]>([]); // Store all loaded measurements
     const [hasMore, setHasMore] = useState(true); // Track if more data is available
 
-    const { loading, error, data, fetch } = useFetchSafe<
+    const { error, data, fetch } = useFetchSafe<
       MeasurementDataForSensor,
       HttpError
     >(async () => {

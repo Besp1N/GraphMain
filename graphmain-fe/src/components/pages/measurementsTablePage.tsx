@@ -20,6 +20,7 @@ const MeasurementsTablePage = function () {
   const [_, setBreadcrumbs] = useBreadcrumbs();
 
   const { deviceId, sensorId } = useParams();
+  // Ref to control InfiniteScroll
   const scrollRef = useRef<MeasurementsScrollImperativeHandle>();
   // Set breadcrumbs once
   useEffect(() => {
@@ -43,9 +44,12 @@ const MeasurementsTablePage = function () {
     from: undefined,
   });
 
+  // Fetch anomalies only when filters change
   useEffect(() => {
     (async () => {
-      const data = await getAnomalousData(id);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-expect-error
+      const data = await getAnomalousData(+deviceId);
       if (data == undefined || data instanceof HttpError) console.error(data);
       else setAnomalies(data!);
     })();

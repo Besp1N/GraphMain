@@ -135,7 +135,6 @@ export async function getMeasurements(
  */
 export interface NotificationEntityQueryReturnType extends NotificationEntity {
   device_id: Device["id"];
-  sensor_id: Sensor["id"];
   totalPages: number;
 }
 /**
@@ -210,7 +209,7 @@ type AnomaliesFetchReturnType = {
  * Function for anomalous data from sensor.
  */
 export async function getAnomalousData(
-  sensorId: Sensor["id"],
+  deviceId: Device["id"],
   from?: number,
   to?: number
 ): Promise<Result<Option<Measurement[]>, HttpError>> {
@@ -221,7 +220,7 @@ export async function getAnomalousData(
     to = Math.floor(Date.now() / 1000); // default to now
   }
   const data = await fetchSafe<AnomaliesFetchReturnType>(
-    `${BACKEND_URI}/api/v1/anomaly/${sensorId}?from=${from}&to=${to}`,
+    `${BACKEND_URI}/api/v1/anomaly/${deviceId}?from=${from}&to=${to}`,
     addCredentials({})
   );
   if (data && !(data instanceof HttpError)) {

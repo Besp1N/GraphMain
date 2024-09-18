@@ -46,11 +46,8 @@ export default function NotificationFullListItem({
             <Typography component="span" variant="body2" color="text.primary">
               {new Date(notification.created_at).toLocaleString()}
             </Typography>
-            <Link
-              to={`/devices/${notification.device_id}/measurements/${notification.sensor_id}`}
-            >
-              {" — Measurement ID: " + notification.measurement.id + "\n"}
-              {"Value: " + notification.measurement.value}
+            <Link to={`/devices/${notification.device_id}`}>
+              {"  Device ID: " + notification.device_id + "\n"}
             </Link>
           </>
         }

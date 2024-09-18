@@ -1,14 +1,18 @@
 #include "anomaly.hh"
+#include <iostream>
 
 const double CRITICAL_THRESHOLD = 27.0;
 // degrees per minute
-const double CRITICAL_INCREASE = 0.1;
+const double CRITICAL_INCREASE = 3.0;
 
 double get_short_term_derivative(SensorData data,
                                  const std::vector<SensorData> &history);
 bool detect_anomaly(SensorData data, const std::vector<SensorData> &history) {
+
   double d_sh = get_short_term_derivative(data, history);
-  if (d_sh >= CRITICAL_INCREASE) {
+  std::cout << d_sh << std::endl;
+  if (d_sh >= CRITICAL_INCREASE || data.temperature >= CRITICAL_THRESHOLD) {
+
     return true;
   }
   return false;
@@ -45,9 +49,7 @@ double get_short_term_derivative(const SensorData data,
     return 0.0;
   }
 
-  avg /= count;
-
+  avg /= count; // * 5
   // Calculate rate of change as degrees per minute
-  return (data.temperature - avg) *
-         ((double)SHORT_TERM_DERIVATIVE_SECONDS / 60.0);
+  return (data.temperature - avg) * 60. / (double)SHORT_TERM_DERIVATIVE_SECONDS;
 }
