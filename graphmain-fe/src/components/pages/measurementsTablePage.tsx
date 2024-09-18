@@ -1,5 +1,9 @@
 import { useParams } from "react-router-dom";
-import { getAnomalousData, HttpError } from "../../http/fetch";
+import {
+  AnomaliesFetchReturnType,
+  getAnomalousData,
+  HttpError,
+} from "../../http/fetch";
 import { useProtectedResource } from "../../http/hooks";
 
 import { useState, useEffect, useRef } from "react";
@@ -11,7 +15,6 @@ import { useBreadcrumbs } from "../../store/appStore";
 import InfiniteScrollWrapper, {
   MeasurementsScrollImperativeHandle,
 } from "../measurement/measurementInfiniteScroll";
-import { Measurement } from "../../entities";
 import MeasurementGraph from "../measurement/measurementsGraph";
 
 const MeasurementsTablePage = function () {
@@ -38,7 +41,7 @@ const MeasurementsTablePage = function () {
       404
     );
   }
-  const [anomalies, setAnomalies] = useState<Measurement[]>([]);
+  const [anomalies, setAnomalies] = useState<AnomaliesFetchReturnType[]>([]);
   const [filters, setFilters] = useState<MeasurementsFilters>({
     to: undefined,
     from: undefined,
@@ -50,6 +53,7 @@ const MeasurementsTablePage = function () {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-expect-error
       const data = await getAnomalousData(+deviceId);
+      console.log(data);
       if (data == undefined || data instanceof HttpError) console.error(data);
       else setAnomalies(data!);
     })();
@@ -89,7 +93,7 @@ const MeasurementsTablePage = function () {
             id={id}
             filters={filters}
             ref={scrollRef}
-            anomalies={anomalies}
+            // anomalies={anomalies}
           />
         </Paper>
 

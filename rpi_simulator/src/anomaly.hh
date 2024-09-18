@@ -12,6 +12,7 @@ struct Anomaly {
   long device_id;
   std::string message;
   AnomalyType type;
+  long timestamp_sec;
 };
 
 bool detect_anomaly(SensorData data, const std::vector<SensorData> &history);

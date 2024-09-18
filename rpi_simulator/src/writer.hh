@@ -6,7 +6,7 @@
 
 const int KETTLE_DEVICE_ID = 3;
 const int TEMP_SENSOR_ID = 3;
-const int HUM_SENSOR_ID = 3;
+const int HUM_SENSOR_ID = 4;
 template <typename T> class Writer {
 public:
   virtual void write(T data) = 0;

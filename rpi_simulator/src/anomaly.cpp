@@ -18,7 +18,7 @@ bool detect_anomaly(SensorData data, const std::vector<SensorData> &history) {
   return false;
 };
 
-const long SHORT_TERM_DERIVATIVE_SECONDS = 5;
+const long SHORT_TERM_DERIVATIVE_SECONDS = 30;
 const long IGNORE_SECONDS =
     10; // Amount of time to ignore before considering data
 

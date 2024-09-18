@@ -59,8 +59,8 @@ int main() {
     m_writer.write(data);
 
     if (detect_anomaly(data, reader.history)) {
-      n_writer.write(
-          Anomaly{KETTLE_DEVICE_ID, "Test Anomaly", AnomalyType::Warning});
+      n_writer.write(Anomaly{KETTLE_DEVICE_ID, "Test Anomaly",
+                             AnomalyType::Warning, data.timestamp_sec});
     }
 
     std::this_thread::sleep_for(std::chrono::seconds(2));

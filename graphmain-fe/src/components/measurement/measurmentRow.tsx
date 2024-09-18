@@ -19,7 +19,6 @@ const MeasurementRow = function ({
   if (delta && delta !== 0) {
     deltaColor = delta > 0 ? "green" : "red";
   }
-
   return (
     <Box
       display="flex"

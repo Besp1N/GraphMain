@@ -1,7 +1,7 @@
 import {
   Device,
-  Measurement,
   NotificationEntity,
+  NotificationEntityType,
   Sensor,
   User,
 } from "../entities";
@@ -202,8 +202,9 @@ export async function registerUser(
   );
 }
 
-type AnomaliesFetchReturnType = {
-  measurements: Measurement[];
+export type AnomaliesFetchReturnType = {
+  created_at: string;
+  type: NotificationEntityType;
 };
 /**
  * Function for anomalous data from sensor.
@@ -212,20 +213,18 @@ export async function getAnomalousData(
   deviceId: Device["id"],
   from?: number,
   to?: number
-): Promise<Result<Option<Measurement[]>, HttpError>> {
+): Promise<Result<Option<AnomaliesFetchReturnType[]>, HttpError>> {
   if (from === undefined) {
     from = 0; // default to all
   }
   if (to === undefined) {
     to = Math.floor(Date.now() / 1000); // default to now
   }
-  const data = await fetchSafe<AnomaliesFetchReturnType>(
+  const data = await fetchSafe<AnomaliesFetchReturnType[]>(
     `${BACKEND_URI}/api/v1/anomaly/${deviceId}?from=${from}&to=${to}`,
     addCredentials({})
   );
-  if (data && !(data instanceof HttpError)) {
-    return data.measurements;
-  }
+
   return data;
 }
 

@@ -71,7 +71,7 @@ std::string DatabaseMeasurementWriter::prepare_query(SensorData data) {
 
   // Create a stringstream to format the time
   std::stringstream ss;
-  ss << std::put_time(&now_tm, "%Y-%m-%dT%H:%M");
+  ss << std::put_time(&now_tm, "%Y-%m-%dT%H:%M:%S");
   std::string timestamp = ss.str();
 
   // Use std::format to create the queries
@@ -119,9 +119,11 @@ void DatabaseNotificatonWriter::write(Anomaly data) {
   }
 }
 std::string DatabaseNotificatonWriter::prepare_query(Anomaly data) {
-  auto now = std::chrono::system_clock::now();
+  std::chrono::seconds duration_since_epoch(data.timestamp_sec);
 
-  // Convert to time_t for formatting
+  // Cast duration to a time_point
+  std::chrono::time_point<std::chrono::system_clock> now(duration_since_epoch);
+
   std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
 
   // Convert to tm structure
@@ -129,7 +131,7 @@ std::string DatabaseNotificatonWriter::prepare_query(Anomaly data) {
 
   // Create a stringstream to format the time
   std::stringstream ss;
-  ss << std::put_time(&now_tm, "%Y-%m-%dT%H:%M");
+  ss << std::put_time(&now_tm, "%Y-%m-%dT%H:%M:%S");
   std::string timestamp = ss.str();
 
   return std::format("INSERT INTO notifications (message, type, created_at, "

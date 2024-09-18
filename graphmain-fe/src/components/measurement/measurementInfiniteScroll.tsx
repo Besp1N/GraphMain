@@ -11,6 +11,7 @@ import MeasurementRow from "./measurmentRow";
 import { Measurement, Sensor } from "../../entities";
 import { useFetchSafe } from "../../http/hooks";
 import {
+  AnomaliesFetchReturnType,
   getMeasurements,
   HttpError,
   MeasurementDataForSensor,
@@ -35,7 +36,7 @@ export interface MeasurementsScrollImperativeHandle {
 interface MeasurementInfiniteScrollProps {
   filters: MeasurementsFilters;
   id: Sensor["id"];
-  anomalies?: Measurement[];
+  anomalies?: AnomaliesFetchReturnType[];
 }
 
 const MeasurementInfiniteScroll = forwardRef(
@@ -88,7 +89,7 @@ const MeasurementInfiniteScroll = forwardRef(
       );
     }
     // Create a set for quick lookup
-    const anomalySet = new Set(anomalies?.map((m) => m.id));
+    const anomalyDateSet = new Set(anomalies?.map((m) => m.created_at));
     let prevV = measurements?.length ? measurements[0].value : 0;
 
     return (
@@ -115,7 +116,7 @@ const MeasurementInfiniteScroll = forwardRef(
                 key={`${m.id}:${Math.random()}`}
                 measurement={m}
                 delta={delta}
-                anomalous={anomalySet.has(m.id)}
+                anomalous={anomalyDateSet.has(m.timestamp)}
               />
             );
           })}

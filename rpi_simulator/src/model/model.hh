@@ -4,21 +4,17 @@
 #include "../data_reader.hh"
 #include <vector>
 
-class Model {
-  void get_training_data();
+// T - expected input
+// R - expected output
+template <typename T, typename R> class Model {
   virtual void train();
-  std::string get_model_file();
+  virtual R run(T data);
 };
 
-class IsolationTreeModel : virtual Model {
+class IsolationTreeModel : virtual Model<std::vector<SensorData>, bool> {
 public:
-  std::vector<SensorData> get_training_data();
-  // Notes: This deletes private training_data freeing much memory.
   void train();
-  std::string get_model_file();
-
-private:
-  std::vector<SensorData> training_data;
+  bool run();
 };
 
 #endif // !MODEL
