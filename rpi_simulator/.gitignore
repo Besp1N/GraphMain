@@ -1,3 +1,4 @@
 .clangd
 connection_string.txt
 build
+__pycache__

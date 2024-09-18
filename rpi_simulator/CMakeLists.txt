@@ -8,28 +8,27 @@ set(CMAKE_CXX_STANDARD 23)
 find_package(OpenBLAS REQUIRED)
 find_package(LAPACK REQUIRED)
 
-# Dlib - Installed via pacman
-find_package(dlib REQUIRED)
 
 # PostgreSQL
 find_package(PostgreSQL REQUIRED)
 include_directories(${PostgreSQL_INCLUDE_DIRS})
 
-
+find_package(PythonLibs REQUIRED)
+include_directories(${PYTHON_INCLUDE_DIRS})
 
 # Include directories for Dlib
 include_directories(${dlib_INCLUDE_DIRS})
 
 # Add the source files
-add_executable(simulator src/main.cpp src/data_reader.cpp src/writer.cpp src/anomaly.cpp)
+add_executable(simulator src/main.cpp src/data_reader.cpp src/writer.cpp src/anomaly.cpp src/model/model.cpp )
 
 # Link libraries
 target_link_libraries(simulator 
 -lpqxx
   ${PostgreSQL_LIBRARIES} 
+  ${PYTHON_LIBRARIES}
   OpenBLAS::OpenBLAS 
   LAPACK::LAPACK 
-  dlib::dlib 
 )
 
 # Display some information for debugging

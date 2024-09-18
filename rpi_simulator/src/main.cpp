@@ -1,5 +1,6 @@
 #include "anomaly.hh"
 #include "data_reader.hh"
+#include "model/model.hh"
 #include "writer.hh"
 #include <chrono>
 #include <iostream>
@@ -48,6 +49,8 @@ int main() {
   DatabaseNotificatonWriter n_writer;
   DataReader<SensorData> reader(MAX_SENSOR_DATA, BASELINE_SENSOR_DATA, 2, 30);
   std::thread input_thread(detect_input);
+  auto v = run_python_script<std::string>("test", "process_data");
+  std::cout << v << std::endl;
   while (true) {
     if (anomaly_requested.load() == true) {
       reader.start_anomaly();

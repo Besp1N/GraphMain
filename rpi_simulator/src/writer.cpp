@@ -2,6 +2,7 @@
 #include "anomaly.hh"
 #include "data_reader.hh"
 #include <ctime>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <ostream>
@@ -10,12 +11,18 @@
 #include <string>
 #include <unordered_map>
 
+const std::filesystem::path CONN_STRING_PATH =
+    std::filesystem::exists("../connection_string.txt")
+        ? "../connection_string.txt"
+        : "connection_string.txt";
+
 const std::unordered_map<AnomalyType, const char *> anomaly_type_to_string = {
 
     {AnomalyType::Error, "error"}, {AnomalyType::Warning, "warning"}};
 
 std::string get_aws_conn_string() {
-  std::ifstream file("../connection_string.txt");
+
+  std::ifstream file(CONN_STRING_PATH);
   if (!file) {
     throw std::runtime_error("Cannot read the connection string file. Make "
                              "sure it's present in the root dir.");
