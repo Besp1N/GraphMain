@@ -8,7 +8,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import { Sensor } from "../../entities";
+import { NotificationEntityType, Sensor } from "../../entities";
 import { FC, useCallback, useEffect, useMemo } from "react";
 import { useFetchSafe } from "../../http/hooks";
 import {
@@ -18,6 +18,23 @@ import {
 import { MeasurementsFilters } from "./measurmentsFilter";
 import Spinner from "../ui/spinner";
 import ErrorInfo from "../ui/errorInfo";
+
+type GraphData = {
+  timestamp: Date;
+  value: number;
+  anomaly: NotificationEntityType | null;
+};
+
+function anomalyTypeToColor(anomalyType: NotificationEntityType): string {
+  switch (anomalyType) {
+    case "error":
+      return "red";
+    case "warning":
+      return "orange";
+    default:
+      return "blue";
+  }
+}
 
 interface MeasurementGraphProps {
   sensorId: Sensor["id"];
@@ -66,23 +83,24 @@ const MeasurementGraph: FC<MeasurementGraphProps> = function ({
     (new Date(measurements?.at(-1)?.timestamp)?.getTime() -
       new Date(measurements?.at(0)?.timestamp)?.getTime() ?? Date.now()) * 0.01;
   // Prepare data for the graph
-  const isNearAnomaly = (
+  const getNearAnomaly = (
     timestamp: string,
     anomalies: AnomaliesFetchReturnType[],
     threshold = _threshold
   ) => {
-    return anomalies.some((anomaly) => {
+    const anomaly = anomalies.find((anomaly) => {
       const anomalyTime = new Date(anomaly.created_at).getTime();
       const measurementTime = new Date(timestamp).getTime();
-      return Math.abs(anomalyTime - measurementTime) <= threshold; // Check if within threshold (e.g., 1 minute)
+      return Math.abs(anomalyTime - measurementTime) <= threshold;
     });
+    return anomaly ? anomaly.type : null;
   };
 
   // Sample data structure for the chart
   const graphData = measurements.map((m) => ({
     timestamp: new Date(m.timestamp).toLocaleString(),
     value: m.value,
-    anomaly: isNearAnomaly(m.timestamp, anomalies ?? []), // Check if any anomaly is near the measurement timestamp
+    anomaly: getNearAnomaly(m.timestamp, anomalies ?? []), // Check if any anomaly is near the measurement timestamp
   }));
 
   return (
@@ -100,7 +118,14 @@ const MeasurementGraph: FC<MeasurementGraphProps> = function ({
           // Color the bar red if it's an anomaly
         >
           {graphData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.anomaly ? "red" : "blue"} />
+            <Cell
+              key={`cell-${index}`}
+              fill={
+                entry.anomaly != null
+                  ? anomalyTypeToColor(entry.anomaly)
+                  : "blue"
+              }
+            />
           ))}
         </Bar>
       </BarChart>

@@ -3,12 +3,16 @@
 #include "writer.hh"
 #include <chrono>
 #include <iostream>
+#include <ostream>
+#include <python3.12/Python.h>
+#include <python3.12/pylifecycle.h>
 #include <termio.h>
 #include <thread>
 
 const SensorData BASELINE_SENSOR_DATA{23.0f, 50.0f};
 const SensorData MAX_SENSOR_DATA{29.0f, 43.0f};
-const int TIME_PER_READ = 10;
+const int TIME_PER_READ = 5;
+
 std::atomic<bool> anomaly_requested(false);
 
 void set_non_blocking_input() {
@@ -44,12 +48,12 @@ void detect_input() {
 }
 
 int main() {
+  Py_Initialize();
   DatabaseMeasurementWriter m_writer;
   DatabaseNotificatonWriter n_writer;
   DataReader<SensorData> reader(MAX_SENSOR_DATA, BASELINE_SENSOR_DATA,
                                 TIME_PER_READ, 30);
   // termios thread
-  std::thread input_thread(detect_input);
 
   while (true) {
     if (anomaly_requested.load() == true) {
@@ -60,15 +64,17 @@ int main() {
               << "C, Humidity: " << data.humidity << "%" << std::endl;
 
     m_writer.write(data);
+    auto anomaly = detect_anomaly(reader.history);
 
-    if (detect_anomaly(reader.history)) {
-      n_writer.write(Anomaly{KETTLE_DEVICE_ID, "Test Anomaly",
-                             AnomalyType::Warning, data.timestamp_sec});
+    if (anomaly.has_value()) {
+      // n_writer.write(Anomaly{KETTLE_DEVICE_ID, "Test Anomaly",
+      // anomaly.value(),
+      //                        data.timestamp_sec});
+      std::cout << anomaly_type_to_string(anomaly.value()) << std::endl;
     }
 
     std::this_thread::sleep_for(std::chrono::seconds(TIME_PER_READ));
   }
-  input_thread
-      .detach(); // Detach the input thread since we don't need to join it
+  Py_Finalize();
   return 0;
 }

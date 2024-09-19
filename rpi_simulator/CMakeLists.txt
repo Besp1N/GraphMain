@@ -2,10 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(RPISimulator)
 
 # Set C++ Standard
-set(CMAKE_CXX_STANDARD 23)
-
-# Dlib and other dependencies
-
+set(CMAKE_CXX_STANDARD 20)
 
 
 # PostgreSQL

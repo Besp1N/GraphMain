@@ -2,13 +2,20 @@
 #include <any>
 #include <exception>
 #include <format>
+#include <iostream>
+#include <optional>
+#include <ostream>
 #include <python3.12/Python.h>
+#include <python3.12/ceval.h>
 #include <python3.12/listobject.h>
 #include <python3.12/object.h>
 #include <python3.12/pylifecycle.h>
+#include <python3.12/pystate.h>
+#include <python3.12/unicodeobject.h>
 #include <stack>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <type_traits>
 #include <vector>
 
@@ -28,85 +35,75 @@ run_python_script<std::vector<bool>>(const char *script, const char *function,
  */
 template <typename T, typename... Args>
 T run_python_script(const char *script, const char *function, Args &&...args) {
-  // Creating object stack to prevent any memory leaks
   std::stack<PyObject *> PyObjectStack;
-  // Helper lambda
+  static bool py_inited = false;
   auto OnStack = [&PyObjectStack](PyObject *obj) {
     PyObjectStack.push(obj);
     return obj;
   };
-  // Helper to clean up Python objects from the stack
-  static auto cleanup = [](std::stack<PyObject *> &pyObjStack) {
+
+  auto cleanup = [](std::stack<PyObject *> &pyObjStack) {
     while (!pyObjStack.empty()) {
       PyObject *obj = pyObjStack.top();
-      Py_DECREF(obj);
+      Py_XDECREF(obj);
       pyObjStack.pop();
     }
   };
 
-  Py_Initialize();
+  // Ensure the Python interpreter is initialized once
 
   try {
 
-    // Manually add the current directory to Python's module search path
-    PyObject *sysPath = OnStack(PySys_GetObject("path"));
-    PyList_Append(sysPath, PyUnicode_FromString("."));
-    PyObject *pName = OnStack(PyUnicode_DecodeFSDefault(script));
+    PyObject *sysPath =
+        PySys_GetObject("path"); // borrowed reference, don't DECREF
+    std::cout << "Getting path" << std::endl;
 
+    PyList_Append(sysPath, PyUnicode_FromString("./models"));
+    std::cout << "Path appended" << std::endl;
+
+    PyObject *pName = OnStack(PyUnicode_DecodeFSDefault(script));
     if (!pName) {
       throw std::runtime_error("Failed to decode script name.");
     }
-
-    // Init the module
-    PyObject *pModule = OnStack(PyImport_Import(pName));
+    PyObject *pModule = PyImport_Import(pName);
 
     if (!pModule) {
       throw std::runtime_error(
           std::format("Cannot initialize the .py script: {}.", script));
     }
 
-    // Find the function
     PyObject *pFunc = OnStack(PyObject_GetAttrString(pModule, function));
     if (!pFunc || !PyCallable_Check(pFunc)) {
       throw std::runtime_error("Python function not found or not callable.");
     }
 
-    // Construct py args
     PyObject *pArgs = OnStack(build_python_args(std::forward<Args>(args)...));
     if (!pArgs) {
       throw std::runtime_error("Failed to create argument tuple.");
     }
 
-    // Try to call the function
     PyObject *pValue = OnStack(PyObject_CallObject(pFunc, pArgs));
-
     if (pValue == nullptr) {
       throw std::runtime_error("Function call failed.");
     }
 
-    // Get the result or throw if cannot cast
     T result;
-
     if constexpr (is_vector_v<T>) {
       result = cast_PyList<typename T::value_type>(pValue);
     } else {
       result = cast_PyObject<T>(pValue);
     }
-
     cleanup(PyObjectStack);
-    Py_Finalize();
+
     return result;
 
-  } // If at any point an error is thrown the stack is cleaned up anyways
-  catch (const std::exception e) {
-
+  } catch (const std::exception &e) {
     cleanup(PyObjectStack);
-
-    Py_Finalize();
 
     throw;
   }
 }
+
 template <typename T> std::vector<T> cast_PyList(PyObject *obj) {
   if (!PyList_Check(obj)) {
     throw std::runtime_error("Expected a Python list.");
@@ -243,7 +240,43 @@ template <typename... Args> PyObject *build_python_args(Args &&...args) {
 void IsolationTreeModel::train() {
   throw std::runtime_error("METHOD NOT IMPLEMENTED.");
 }
+std::optional<bool> IsolationTreeModel::take_result() {
+  auto v = this->result.load();
+  if (v.has_value()) {
+    this->result.store(std::nullopt);
+  }
+  return v;
+}
 
-std::vector<bool> IsolationTreeModel::run(const std::vector<SensorData> &data) {
-  return run_python_script<std::vector<bool>>("test", "run_model", data);
+void IsolationTreeModel::run(const std::vector<SensorData> &data) {
+
+  // Ensure sufficient data before running the job
+  if (data.size() < data_points_required) {
+    return;
+  }
+
+  // If a job is already running, don't start another one
+  if (job_running.load()) {
+    return;
+  }
+  job_running.store(true); // Set job_running to true before starting
+
+  // 1000 datapoints max, so 32kB copied, not great, not terrible
+  auto new_data = data;
+  auto a_result = &this->result;       // atomic bool
+  auto j_running = &this->job_running; // atomic bool
+
+  // Launch the thread
+  // std::thread t([new_data, a_result, j_running] {
+  // Call the Python script and get the result
+  auto result =
+      run_python_script<bool>("isolation_forest", "run_model", new_data);
+  // Store the result atomically
+  a_result->store(result);
+
+  // Job is done, set job_running to false
+  j_running->store(false);
+  // });
+
+  // t.detach();
 }

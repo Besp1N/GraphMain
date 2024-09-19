@@ -4,8 +4,10 @@
 #ifndef ANOMALY_DETECTION
 #define ANOMALY_DETECTION
 #include "data_reader.hh"
+#include <optional>
 #include <vector>
 enum class AnomalyType { Warning, Error };
+std::string anomaly_type_to_string(AnomalyType t);
 
 #include <string>
 struct Anomaly {
@@ -15,6 +17,7 @@ struct Anomaly {
   long timestamp_sec;
 };
 
-bool detect_anomaly(const std::vector<SensorData> &history);
+std::optional<AnomalyType>
+detect_anomaly(const std::vector<SensorData> &history);
 
 #endif

@@ -2,6 +2,8 @@
 #define MODEL
 
 #include "../data_reader.hh"
+#include <atomic>
+#include <optional>
 #include <python3.12/pytypedefs.h>
 #include <vector>
 
@@ -25,15 +27,21 @@ T run_python_script(const char *script, const char *function, Args &&...args);
 template <typename T, typename R> class Model {
 public:
   void train();
-  R run(T data);
+  void run(T data);
 };
 
-class IsolationTreeModel
-    : virtual Model<const std::vector<SensorData>, std::vector<bool>> {
+class IsolationTreeModel : virtual Model<const std::vector<SensorData>, bool> {
 public:
   IsolationTreeModel() = default;
   void train();
-  std::vector<bool> run(const std::vector<SensorData> &data);
+  void run(const std::vector<SensorData> &data);
+  std::atomic<bool> job_running{false};
+  // takes and consumes the result
+  std::optional<bool> take_result();
+
+private:
+  std::atomic<std::optional<bool>> result{std::nullopt};
+  int data_points_required = 1;
 };
 
 // Definitions

@@ -10,7 +10,7 @@
 - C++20 Standard
 - PostgreSQL
 - Python
-
+- Sklearn, Pandas and JobLib Python modules
 ## Dependencies
 
 1. **PostgreSQL**: Relational database management system.

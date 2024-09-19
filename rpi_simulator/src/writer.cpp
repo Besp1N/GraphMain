@@ -16,9 +16,14 @@ const std::filesystem::path CONN_STRING_PATH =
         ? "../connection_string.txt"
         : "connection_string.txt";
 
-const std::unordered_map<AnomalyType, const char *> anomaly_type_to_string = {
+std::string anomaly_type_to_string(AnomalyType t) {
+  static const std::unordered_map<AnomalyType, const char *>
+      anomaly_type_to_string = {
 
-    {AnomalyType::Error, "error"}, {AnomalyType::Warning, "warning"}};
+          {AnomalyType::Error, "error"}, {AnomalyType::Warning, "warning"}};
+
+  return anomaly_type_to_string.at(t);
+}
 
 std::string get_aws_conn_string() {
 
@@ -143,6 +148,6 @@ std::string DatabaseNotificatonWriter::prepare_query(Anomaly data) {
 
   return std::format("INSERT INTO notifications (message, type, created_at, "
                      "device_id) VALUES ('{}', '{}', '{}', {});",
-                     data.message, anomaly_type_to_string.at(data.type),
-                     timestamp, data.device_id);
+                     data.message, anomaly_type_to_string(data.type), timestamp,
+                     data.device_id);
 }

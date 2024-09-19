@@ -1,24 +1,49 @@
 #include "anomaly.hh"
 #include "model/model.hh"
 #include <iostream>
+#include <optional>
 
 const double CRITICAL_THRESHOLD = 27.0;
 // degrees per minute
-const double CRITICAL_INCREASE = 4.0;
+const double CRITICAL_INCREASE = 3.0;
 
-double get_short_term_derivative(const std::vector<SensorData> &history);
-bool detect_anomaly(const std::vector<SensorData> &history) {
+extern double get_short_term_derivative(const std::vector<SensorData> &history);
+
+/**
+ * main function stringing together various systems into a pipeline of
+ * predictions
+ */
+std::optional<AnomalyType>
+detect_anomaly(const std::vector<SensorData> &history) {
+  static IsolationTreeModel model;
+  // A single model between calls.
+
+  std::optional<bool> isol_for_result = model.take_result();
+  if (isol_for_result.has_value() && isol_for_result.value()) {
+    std::cout << "Shitbox returned true" << std::endl;
+    return AnomalyType::Error;
+  }
+
+  // first check if temp is critical
+  if (history.at(history.size() - 1).temperature > CRITICAL_THRESHOLD) {
+    return AnomalyType::Error; // return CRITICAL
+  }
+  // secondly: check if unnatural increase - emit warning
 
   double d_sh = get_short_term_derivative(history);
-  IsolationTreeModel model;
-  auto result = model.run(history);
-
-  if (d_sh >= CRITICAL_INCREASE ||
-      history.at(history.size() - 1).temperature >= CRITICAL_THRESHOLD) {
-
-    return true;
+  if (d_sh >= CRITICAL_INCREASE) {
+    return AnomalyType::Warning;
   }
-  return false;
+
+  // run the shitbox model that detect serious anomalies
+  std::cout << model.job_running.load() << std::endl;
+  if (!model.job_running.load()) {
+    std::cout << "Calling model.run" << std::endl;
+    model.run(history);
+  }
+  // take the result or skip
+
+  return std::nullopt;
 };
 
 const long SHORT_TERM_DERIVATIVE_SECONDS = 30;
