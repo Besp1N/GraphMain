@@ -6,6 +6,7 @@
 #include <iostream>
 #include <termio.h>
 #include <thread>
+#include <vector>
 
 const SensorData BASELINE_SENSOR_DATA{23.0f, 50.0f};
 const SensorData MAX_SENSOR_DATA{29.0f, 43.0f};
@@ -51,10 +52,10 @@ int main() {
   // termios thread
   std::thread input_thread(detect_input);
 
-  auto v = run_python_script<std::string, SensorData>(
-      "test", "process_data", SensorData{10.0f, 20.0f, 30});
+  std::vector<SensorData> test = {{10.0f, 20.0f, 30}, {20.0f, 30.0f, 800}};
+  auto v = run_python_script<std::vector<bool>>("test", "process_data", test);
 
-  std::cout << v << std::endl;
+  std::cout << v.at(0) << std::endl;
   while (true) {
     if (anomaly_requested.load() == true) {
       reader.start_anomaly();
