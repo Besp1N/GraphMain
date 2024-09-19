@@ -3,19 +3,19 @@ package com.kacper.backend;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * Default test class for the Spring Boot application
- *
- * @Author Spring Boot
+ * Spring Boot
  */
 @SpringBootTest
-class BackendApplicationTests {
+class BackendApplicationTest {
 
-    /**
-     * Test for the context loads method
-     */
     @Test
     void contextLoads() {
+        BackendApplication application = new BackendApplication();
+        assertThat(application).isNotNull();
     }
 
 }
