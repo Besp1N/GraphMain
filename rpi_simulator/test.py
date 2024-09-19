@@ -1,5 +1,6 @@
-def process_data():
+def process_data(number):
     print("Hello from Python!")
+    print(f"You provided: {number}")
 
     return "My precious!"
     

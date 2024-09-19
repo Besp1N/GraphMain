@@ -48,8 +48,12 @@ int main() {
   DatabaseMeasurementWriter m_writer;
   DatabaseNotificatonWriter n_writer;
   DataReader<SensorData> reader(MAX_SENSOR_DATA, BASELINE_SENSOR_DATA, 2, 30);
+  // termios thread
   std::thread input_thread(detect_input);
-  auto v = run_python_script<std::string>("test", "process_data");
+
+  auto v = run_python_script<std::string, SensorData>(
+      "test", "process_data", SensorData{10.0f, 20.0f, 30});
+
   std::cout << v << std::endl;
   while (true) {
     if (anomaly_requested.load() == true) {

@@ -4,12 +4,14 @@
 #include "../data_reader.hh"
 #include <python3.12/pytypedefs.h>
 #include <vector>
-template <typename T> T cast_py_object(PyObject *obj);
+
+template <typename T> T cast_PyObject(PyObject *obj);
+template <typename T> PyObject *cast_to_PyObject(T var);
+template <typename... Args> PyObject *build_python_args(Args &&...args);
 
 // T - expected return type
-template <typename T>
-T run_python_script(const char *script, const char *function);
-// T - expected input
+template <typename T, typename... Args>
+T run_python_script(const char *script, const char *function, Args &&...args);
 // R - expected output
 template <typename T, typename R> class Model {
   virtual void train();
