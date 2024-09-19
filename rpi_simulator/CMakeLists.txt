@@ -27,4 +27,3 @@ target_link_libraries(simulator
 # Display some information for debugging
 message(STATUS "PostgreSQL Include Dirs: ${PostgreSQL_INCLUDE_DIRS}")
 message(STATUS "PostgreSQL Libraries: ${PostgreSQL_LIBRARIES}")
-message(STATUS "Dlib Include Dirs: ${dlib_INCLUDE_DIRS}")

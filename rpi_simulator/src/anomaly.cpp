@@ -18,12 +18,6 @@ detect_anomaly(const std::vector<SensorData> &history) {
   static IsolationTreeModel model;
   // A single model between calls.
 
-  std::optional<bool> isol_for_result = model.take_result();
-  if (isol_for_result.has_value() && isol_for_result.value()) {
-    std::cout << "Shitbox returned true" << std::endl;
-    return AnomalyType::Error;
-  }
-
   // first check if temp is critical
   if (history.at(history.size() - 1).temperature > CRITICAL_THRESHOLD) {
     return AnomalyType::Error; // return CRITICAL
@@ -41,6 +35,11 @@ detect_anomaly(const std::vector<SensorData> &history) {
     std::cout << "Calling model.run" << std::endl;
     model.run(history);
   }
+  // Don't run the model :(
+  // std::optional<bool> isol_for_result = model.take_result();
+  // if (isol_for_result.has_value() && isol_for_result.value()) {
+  //   return AnomalyType::Error;
+  // }
   // take the result or skip
 
   return std::nullopt;

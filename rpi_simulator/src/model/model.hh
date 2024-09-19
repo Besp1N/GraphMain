@@ -3,8 +3,11 @@
 
 #include "../data_reader.hh"
 #include <atomic>
+
 #include <optional>
+#include <python3.12/Python.h>
 #include <python3.12/pytypedefs.h>
+
 #include <vector>
 
 // Helpers to differentiate PyList and other PyObjects

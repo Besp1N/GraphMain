@@ -15,7 +15,6 @@
 #include <stack>
 #include <stdexcept>
 #include <string>
-#include <thread>
 #include <type_traits>
 #include <vector>
 
@@ -249,7 +248,6 @@ std::optional<bool> IsolationTreeModel::take_result() {
 }
 
 void IsolationTreeModel::run(const std::vector<SensorData> &data) {
-
   // Ensure sufficient data before running the job
   if (data.size() < data_points_required) {
     return;

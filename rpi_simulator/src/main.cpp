@@ -49,6 +49,7 @@ void detect_input() {
 
 int main() {
   Py_Initialize();
+  auto input_thread = std::thread(detect_input);
   DatabaseMeasurementWriter m_writer;
   DatabaseNotificatonWriter n_writer;
   DataReader<SensorData> reader(MAX_SENSOR_DATA, BASELINE_SENSOR_DATA,
@@ -67,14 +68,14 @@ int main() {
     auto anomaly = detect_anomaly(reader.history);
 
     if (anomaly.has_value()) {
-      // n_writer.write(Anomaly{KETTLE_DEVICE_ID, "Test Anomaly",
-      // anomaly.value(),
-      //                        data.timestamp_sec});
+      n_writer.write(Anomaly{KETTLE_DEVICE_ID, "Test Anomaly", anomaly.value(),
+                             data.timestamp_sec});
       std::cout << anomaly_type_to_string(anomaly.value()) << std::endl;
     }
 
     std::this_thread::sleep_for(std::chrono::seconds(TIME_PER_READ));
   }
   Py_Finalize();
+  input_thread.detach();
   return 0;
 }
