@@ -60,12 +60,11 @@ const MeasurementGraph: FC<MeasurementGraphProps> = function ({
     return <>Empty data</>;
   }
 
-  // threshold is 2% of graph
+  // threshold is 1% of graph
 
   const _threshold =
     (new Date(measurements?.at(-1)?.timestamp)?.getTime() -
-      new Date(measurements?.at(0)?.timestamp)?.getTime()) *
-    0.02;
+      new Date(measurements?.at(0)?.timestamp)?.getTime() ?? Date.now()) * 0.01;
   // Prepare data for the graph
   const isNearAnomaly = (
     timestamp: string,

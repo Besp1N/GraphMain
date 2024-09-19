@@ -5,8 +5,7 @@ project(RPISimulator)
 set(CMAKE_CXX_STANDARD 23)
 
 # Dlib and other dependencies
-find_package(OpenBLAS REQUIRED)
-find_package(LAPACK REQUIRED)
+
 
 
 # PostgreSQL
@@ -17,18 +16,15 @@ find_package(PythonLibs REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
 # Include directories for Dlib
-include_directories(${dlib_INCLUDE_DIRS})
 
 # Add the source files
-add_executable(simulator src/main.cpp src/data_reader.cpp src/writer.cpp src/anomaly.cpp src/model/model.cpp )
+add_executable(simulator src/main.cpp src/data_reader.cpp src/writer.cpp src/model/model.cpp src/anomaly.cpp  )
 
 # Link libraries
 target_link_libraries(simulator 
 -lpqxx
   ${PostgreSQL_LIBRARIES} 
   ${PYTHON_LIBRARIES}
-  OpenBLAS::OpenBLAS 
-  LAPACK::LAPACK 
 )
 
 # Display some information for debugging

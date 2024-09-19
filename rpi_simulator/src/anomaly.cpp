@@ -1,17 +1,20 @@
 #include "anomaly.hh"
+#include "model/model.hh"
 #include <iostream>
 
 const double CRITICAL_THRESHOLD = 27.0;
 // degrees per minute
-const double CRITICAL_INCREASE = 3.0;
+const double CRITICAL_INCREASE = 4.0;
 
-double get_short_term_derivative(SensorData data,
-                                 const std::vector<SensorData> &history);
-bool detect_anomaly(SensorData data, const std::vector<SensorData> &history) {
+double get_short_term_derivative(const std::vector<SensorData> &history);
+bool detect_anomaly(const std::vector<SensorData> &history) {
 
-  double d_sh = get_short_term_derivative(data, history);
-  std::cout << d_sh << std::endl;
-  if (d_sh >= CRITICAL_INCREASE || data.temperature >= CRITICAL_THRESHOLD) {
+  double d_sh = get_short_term_derivative(history);
+  IsolationTreeModel model;
+  auto result = model.run(history);
+
+  if (d_sh >= CRITICAL_INCREASE ||
+      history.at(history.size() - 1).temperature >= CRITICAL_THRESHOLD) {
 
     return true;
   }
@@ -22,9 +25,8 @@ const long SHORT_TERM_DERIVATIVE_SECONDS = 30;
 const long IGNORE_SECONDS =
     10; // Amount of time to ignore before considering data
 
-double get_short_term_derivative(const SensorData data,
-                                 const std::vector<SensorData> &history) {
-  long now = data.timestamp_sec;
+double get_short_term_derivative(const std::vector<SensorData> &history) {
+  long now = history.at(history.size() - 1).timestamp_sec;
   double avg = 0.0;
   int count = 0;
 
@@ -51,5 +53,6 @@ double get_short_term_derivative(const SensorData data,
 
   avg /= count; // * 5
   // Calculate rate of change as degrees per minute
-  return (data.temperature - avg) * 60. / (double)SHORT_TERM_DERIVATIVE_SECONDS;
+  return (history.at(history.size() - 1).temperature - avg) * 60. /
+         (double)SHORT_TERM_DERIVATIVE_SECONDS;
 }

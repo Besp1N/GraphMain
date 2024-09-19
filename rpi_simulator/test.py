@@ -1,6 +1,6 @@
-def process_data(number):
+def run_model(number):
     print("Hello from Python!")
     print(f"You provided: {number}")
 
-    return [1, 2, 3]
+    return [True, False, True]
     

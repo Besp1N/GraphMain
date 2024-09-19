@@ -239,8 +239,11 @@ template <typename... Args> PyObject *build_python_args(Args &&...args) {
 }
 
 // TODO: NOT IMPLEMENTED YET
+
 void IsolationTreeModel::train() {
   throw std::runtime_error("METHOD NOT IMPLEMENTED.");
 }
 
-bool IsolationTreeModel::run(std::vector<SensorData> data) { return true; }
+std::vector<bool> IsolationTreeModel::run(const std::vector<SensorData> &data) {
+  return run_python_script<std::vector<bool>>("test", "run_model", data);
+}

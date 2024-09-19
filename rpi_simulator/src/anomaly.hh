@@ -15,6 +15,6 @@ struct Anomaly {
   long timestamp_sec;
 };
 
-bool detect_anomaly(SensorData data, const std::vector<SensorData> &history);
+bool detect_anomaly(const std::vector<SensorData> &history);
 
 #endif

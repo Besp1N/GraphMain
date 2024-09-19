@@ -1,16 +1,14 @@
 #include "anomaly.hh"
 #include "data_reader.hh"
-#include "model/model.hh"
 #include "writer.hh"
 #include <chrono>
 #include <iostream>
 #include <termio.h>
 #include <thread>
-#include <vector>
 
 const SensorData BASELINE_SENSOR_DATA{23.0f, 50.0f};
 const SensorData MAX_SENSOR_DATA{29.0f, 43.0f};
-
+const int TIME_PER_READ = 10;
 std::atomic<bool> anomaly_requested(false);
 
 void set_non_blocking_input() {
@@ -48,14 +46,11 @@ void detect_input() {
 int main() {
   DatabaseMeasurementWriter m_writer;
   DatabaseNotificatonWriter n_writer;
-  DataReader<SensorData> reader(MAX_SENSOR_DATA, BASELINE_SENSOR_DATA, 2, 30);
+  DataReader<SensorData> reader(MAX_SENSOR_DATA, BASELINE_SENSOR_DATA,
+                                TIME_PER_READ, 30);
   // termios thread
   std::thread input_thread(detect_input);
 
-  std::vector<SensorData> test = {{10.0f, 20.0f, 30}, {20.0f, 30.0f, 800}};
-  auto v = run_python_script<std::vector<bool>>("test", "process_data", test);
-
-  std::cout << v.at(0) << std::endl;
   while (true) {
     if (anomaly_requested.load() == true) {
       reader.start_anomaly();
@@ -66,12 +61,12 @@ int main() {
 
     m_writer.write(data);
 
-    if (detect_anomaly(data, reader.history)) {
+    if (detect_anomaly(reader.history)) {
       n_writer.write(Anomaly{KETTLE_DEVICE_ID, "Test Anomaly",
                              AnomalyType::Warning, data.timestamp_sec});
     }
 
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(TIME_PER_READ));
   }
   input_thread
       .detach(); // Detach the input thread since we don't need to join it
