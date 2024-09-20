@@ -9,11 +9,13 @@ import {
   Cell,
 } from "recharts";
 import { NotificationEntityType, Sensor } from "../../entities";
-import { FC, useCallback, useEffect, useMemo } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useFetchSafe } from "../../http/hooks";
 import {
   AnomaliesFetchReturnType,
+  getAnomalousData,
   getMeasurementsForGraph,
+  HttpError,
 } from "../../http/fetch";
 import { MeasurementsFilters } from "./measurmentsFilter";
 import Spinner from "../ui/spinner";
@@ -196,6 +198,22 @@ export function LastPeriodMeasurementGraph({
     from: timestampFromPeriod(period),
     to: Math.floor(Date.now() / 1000),
   };
+  const [anomalies, setAnomalies] = useState<AnomaliesFetchReturnType[]>([]);
+  useEffect(() => {
+    (async () => {
+      const data = await getAnomalousData(3);
+      if (!data || data instanceof HttpError) {
+        return;
+      }
+      setAnomalies(data);
+    })();
+  }, []);
 
-  return <MeasurementGraph sensorId={sensorId} filters={filters} />;
+  return (
+    <MeasurementGraph
+      sensorId={sensorId}
+      filters={filters}
+      anomalies={anomalies}
+    />
+  );
 }
