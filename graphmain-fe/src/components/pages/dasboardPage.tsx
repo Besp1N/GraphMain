@@ -4,6 +4,7 @@ import { useContext, useEffect } from "react";
 import { useBreadcrumbs } from "../../store/appStore";
 import Notifications from "../notification/notifications";
 import { Box } from "@mui/material";
+import { LastPeriodMeasurementGraph } from "../measurement/measurementsGraph";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -21,6 +22,11 @@ export default function DashboardPage() {
       <h2>Recent notifications</h2>
       <Box mb={"5vh"}>
         <Notifications />
+      </Box>
+      <h2>Last week in the kettle</h2>
+
+      <Box mb={"5vh"} height={"50vh"}>
+        <LastPeriodMeasurementGraph period="week" sensorId={3} />
       </Box>
     </div>
   );
